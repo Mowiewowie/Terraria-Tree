@@ -16,6 +16,7 @@ let isExpandedAll = false;
 // History API State Matrix
 let appHistory = [];
 let historyIdx = -1;
+const MAX_HISTORY = 50;
 
 const FALLBACK_ICON = 'https://terraria.wiki.gg/wiki/Special:FilePath/Angel_Statue.png';
 const JSON_FILENAME = 'terraria_items_final.json';
@@ -138,18 +139,11 @@ function buildUsageIndex() {
                     const addUsage = (targetName, groupName) => {
                         const key = targetName.toLowerCase();
                         if (!usageIndex[key]) usageIndex[key] = [];
-                        usageIndex[key].push({
-                            id: item.id,
-                            amount: ing.amount,
-                            recipe: recipe,
-                            viaGroup: groupName
-                        });
+                        usageIndex[key].push({ id: item.id, amount: ing.amount, recipe: recipe, viaGroup: groupName });
                     };
                     addUsage(ing.name, null);
                     if (RECIPE_GROUPS[ing.name]) {
-                        RECIPE_GROUPS[ing.name].forEach(groupItem => {
-                            addUsage(groupItem, ing.name);
-                        });
+                        RECIPE_GROUPS[ing.name].forEach(groupItem => addUsage(groupItem, ing.name));
                     }
                 });
             });
@@ -178,13 +172,23 @@ function initializeData(data) {
 }
 
 // --- History API & Navigation Controllers ---
+function saveCurrentState() {
+    if (historyIdx >= 0 && appHistory[historyIdx]) {
+        appHistory[historyIdx].x = targetX;
+        appHistory[historyIdx].y = targetY;
+        appHistory[historyIdx].scale = targetScale;
+        appHistory[historyIdx].expanded = Array.from(expandedNodes);
+        history.replaceState({ idx: historyIdx }, "", window.location.search);
+    }
+}
+
 function updateNavButtons() {
     dom.navBack.disabled = historyIdx <= 0;
     dom.navForward.disabled = historyIdx >= appHistory.length - 1;
 }
 
-dom.navBack.onclick = () => history.back();
-dom.navForward.onclick = () => history.forward();
+dom.navBack.onclick = () => { saveCurrentState(); history.back(); };
+dom.navForward.onclick = () => { saveCurrentState(); history.forward(); };
 
 window.addEventListener('popstate', (e) => {
     if (e.state && e.state.idx !== undefined) {
@@ -196,18 +200,28 @@ window.addEventListener('popstate', (e) => {
             if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
             else dom.treeContainer.classList.remove('mode-usage');
             
+            expandedNodes = new Set(state.expanded || []);
             updateNavButtons();
-            loadTree(state.id, false); 
+            
+            loadTree(state.id, true, true); 
+            
+            currentX = state.x; targetX = state.x;
+            currentY = state.y; targetY = state.y;
+            currentScale = state.scale; targetScale = state.scale;
+            dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
         }
     }
 });
 
 function viewItem(id) {
+    saveCurrentState(); 
     appHistory = appHistory.slice(0, historyIdx + 1);
-    appHistory.push({ id: id, mode: treeMode });
-    historyIdx++;
-    history.pushState({ idx: historyIdx }, "", `?id=${id}`);
+    appHistory.push({ id: id, mode: treeMode, expanded: [] });
     
+    if (appHistory.length > MAX_HISTORY) appHistory.shift();
+    else historyIdx++;
+    
+    history.pushState({ idx: historyIdx }, "", `?id=${id}`);
     updateNavButtons();
     loadTree(id, false);
 }
@@ -215,7 +229,10 @@ function viewItem(id) {
 // --- User Interface Events ---
 dom.transmuteCheck.addEventListener('change', (e) => {
     showTransmutations = e.target.checked;
-    if (currentTreeItemId) loadTree(currentTreeItemId, false); 
+    if (currentTreeItemId) {
+        saveCurrentState();
+        loadTree(currentTreeItemId, true); 
+    }
 });
 
 document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
@@ -267,6 +284,7 @@ dom.searchInput.addEventListener('input', (e) => {
 
 dom.resetViewBtn.onclick = () => resetView(false);
 
+let wheelTimeout;
 dom.vizArea.addEventListener('wheel', e => { 
     e.preventDefault(); 
     const rect = dom.vizArea.getBoundingClientRect();
@@ -279,13 +297,22 @@ dom.vizArea.addEventListener('wheel', e => {
     targetX = mouseX - localX * targetScale;
     targetY = mouseY - localY * targetScale;
     triggerAnimation();
+
+    clearTimeout(wheelTimeout);
+    wheelTimeout = setTimeout(saveCurrentState, 300);
 });
 
 dom.vizArea.addEventListener('mousedown', e => { 
     isPanning = true; startX = e.clientX - targetX; startY = e.clientY - targetY; dom.vizArea.classList.add('grabbing'); 
 });
 
-window.addEventListener('mouseup', () => { isPanning = false; dom.vizArea.classList.remove('grabbing'); });
+window.addEventListener('mouseup', () => { 
+    if (isPanning) {
+        isPanning = false; 
+        dom.vizArea.classList.remove('grabbing'); 
+        saveCurrentState();
+    }
+});
 
 window.addEventListener('mousemove', e => { 
     if(isPanning) { e.preventDefault(); targetX = e.clientX - startX; targetY = e.clientY - startY; triggerAnimation(); }
@@ -309,7 +336,58 @@ function syncExpandAllButton() {
     }
 }
 
-function loadTree(id, preserveState = false) {
+function focusSubtree(nodeEl, containerEl) {
+    const tr = dom.treeContainer.getBoundingClientRect();
+    const nr = nodeEl.querySelector('.item-card').getBoundingClientRect();
+    const cr = containerEl.getBoundingClientRect();
+
+    const localNodeLeft = (nr.left - tr.left) / currentScale;
+    const localNodeRight = (nr.right - tr.left) / currentScale;
+    const localNodeTop = (nr.top - tr.top) / currentScale;
+    const localNodeBottom = (nr.bottom - tr.top) / currentScale;
+
+    const localContLeft = (cr.left - tr.left) / currentScale;
+    const localContRight = (cr.right - tr.left) / currentScale;
+    const localContTop = (cr.top - tr.top) / currentScale;
+    const localContBottom = (cr.bottom - tr.top) / currentScale;
+
+    const minX = Math.min(localNodeLeft, localContLeft);
+    const maxX = Math.max(localNodeRight, localContRight);
+    const minY = Math.min(localNodeTop, localContTop);
+    const maxY = Math.max(localNodeBottom, localContBottom);
+
+    const totalHeight = maxY - minY;
+    const pLocalCenterX = (localNodeLeft + localNodeRight) / 2;
+    
+    const distLeft = pLocalCenterX - minX;
+    const distRight = maxX - pLocalCenterX;
+    const maxDistX = Math.max(distLeft, distRight);
+
+    const viz = dom.vizArea.getBoundingClientRect();
+    const padX = 120;
+    const padY = 120;
+
+    const sX = (viz.width - padX) / (maxDistX * 2 || 1);
+    const sY = (viz.height - padY) / (totalHeight || 1);
+    let newS = Math.min(sX, sY, 1.5); 
+
+    const newX = (viz.width / 2) - (pLocalCenterX * newS);
+
+    let newY;
+    if (treeMode === 'recipe') {
+        newY = (padY / 2) - (minY * newS);
+    } else {
+        newY = viz.height - (padY / 2) - (maxY * newS);
+    }
+
+    targetScale = newS;
+    targetX = newX;
+    targetY = newY;
+    triggerAnimation();
+    saveCurrentState();
+}
+
+function loadTree(id, preserveState = false, isHistoryPop = false) {
     currentTreeItemId = id;
     dom.searchInput.value = '';
     dom.searchResults.classList.add('hidden');
@@ -317,7 +395,7 @@ function loadTree(id, preserveState = false) {
     
     dom.vizArea.classList.remove('hidden');
     dom.controls.classList.remove('hidden');
-    dom.navControls.classList.remove('hidden'); // Show navigation buttons
+    dom.navControls.classList.remove('hidden'); 
     dom.treeContainer.innerHTML = '';
     
     let isFirstLoad = false;
@@ -331,8 +409,10 @@ function loadTree(id, preserveState = false) {
     dom.treeContainer.appendChild(createTreeNode(id, true));
     syncExpandAllButton();
     
-    if (!preserveState) {
+    if (!preserveState && !isHistoryPop) {
         setTimeout(() => resetView(isFirstLoad), 50);
+    } else if (!isHistoryPop) {
+        triggerAnimation();
     }
 }
 
@@ -355,6 +435,7 @@ function resetView(isInitialLoad = false) {
     } else {
         triggerAnimation();
     }
+    saveCurrentState();
 }
 
 function getSmartRecipe(recipes, itemName = "") {
@@ -490,24 +571,54 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                 btn.classList.add(btnColor);
                 expandedNodes.add(id); 
                 
+                // THE FIX: Unified line event handler showing PARENT tooltip
+                const attachLineEvents = (el) => {
+                    el.onmouseenter = (e) => {
+                        container.classList.add('lines-hovered');
+                        showTooltip(e, data); 
+                    };
+                    el.onmouseleave = () => {
+                        container.classList.remove('lines-hovered');
+                        dom.tooltip.el.classList.add('hidden');
+                    };
+                    el.onmousemove = moveTooltip;
+                    el.onclick = (e) => {
+                        e.stopPropagation();
+                        focusSubtree(node, container);
+                    };
+                };
+
+                // Inject interactive main trunk line
+                const lineBtn = document.createElement('button');
+                lineBtn.className = 'tree-line-btn';
+                attachLineEvents(lineBtn);
+                container.appendChild(lineBtn);
+
                 const newVis = new Set(visited).add(id);
                 
                 if (treeMode === 'recipe') {
                     childrenData.forEach(ing => {
                         const isGroup = ing.name.toLowerCase().startsWith("any ");
+                        let childNode;
                         if (isGroup) {
-                            container.appendChild(createGroupNode(ing.name, ing.amount));
+                            childNode = createGroupNode(ing.name, ing.amount, attachLineEvents);
                         } else {
                             const cid = itemIndex.find(i => i.name === ing.name)?.id;
-                            let child = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
+                            childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
                             if(cid) {
                                 const b = document.createElement('span');
                                 b.className = 'absolute -top-2 -right-2 bg-slate-900 border border-slate-500 text-slate-300 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono';
                                 b.textContent = `x${ing.amount}`;
-                                child.querySelector('.item-card').appendChild(b);
+                                childNode.querySelector('.item-card').appendChild(b);
                             }
-                            container.appendChild(child);
                         }
+                        
+                        // Inject interactive DOM horizontal and vertical line segments
+                        const hLine = document.createElement('div'); hLine.className = 'line-h'; attachLineEvents(hLine);
+                        const vLine = document.createElement('div'); vLine.className = 'line-v'; attachLineEvents(vLine);
+                        childNode.appendChild(hLine); childNode.appendChild(vLine);
+                        
+                        container.appendChild(childNode);
                     });
                 } else {
                     childrenData.forEach(usage => {
@@ -516,8 +627,22 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                         b.className = 'absolute -top-2 -right-2 bg-purple-900 border border-purple-500 text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
                         b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
                         childNode.querySelector('.item-card').appendChild(b);
+                        
+                        // Inject interactive DOM horizontal and vertical line segments
+                        const hLine = document.createElement('div'); hLine.className = 'line-h'; attachLineEvents(hLine);
+                        const vLine = document.createElement('div'); vLine.className = 'line-v'; attachLineEvents(vLine);
+                        childNode.appendChild(hLine); childNode.appendChild(vLine);
+
                         container.appendChild(childNode);
                     });
+                }
+
+                // Tag children so CSS draws the correct horizontal line lengths
+                const cNodes = Array.from(container.children).filter(c => c.classList.contains('tree-node'));
+                if (cNodes.length > 0) {
+                    cNodes[0].classList.add('is-first');
+                    cNodes[cNodes.length - 1].classList.add('is-last');
+                    if (cNodes.length === 1) cNodes[0].classList.add('is-only');
                 }
             }
             return true; 
@@ -525,12 +650,43 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
         
         btn.onclick = e => { 
             e.stopPropagation(); 
+            const wasClosed = container.classList.contains('hidden');
             btn.toggle(); 
             setTimeout(() => syncExpandAllButton(), 10);
+            
+            if (wasClosed && !isExpandedAll) {
+                setTimeout(() => {
+                    const vizRect = dom.vizArea.getBoundingClientRect();
+                    const nRect = node.getBoundingClientRect();
+                    const cRect = container.getBoundingClientRect();
+                    
+                    const top = Math.min(nRect.top, cRect.top);
+                    const bottom = Math.max(nRect.bottom, cRect.bottom);
+                    const left = Math.min(nRect.left, cRect.left);
+                    const right = Math.max(nRect.right, cRect.right);
+
+                    let dx = 0; let dy = 0;
+                    const padding = 60;
+
+                    if (left < vizRect.left + padding) dx = (vizRect.left + padding) - left;
+                    else if (right > vizRect.right - padding) dx = (vizRect.right - padding) - right;
+
+                    if (top < vizRect.top + padding) dy = (vizRect.top + padding) - top;
+                    else if (bottom > vizRect.bottom - padding) dy = (vizRect.bottom - padding) - bottom;
+
+                    if (dx !== 0 || dy !== 0) {
+                        targetX += dx;
+                        targetY += dy;
+                        triggerAnimation();
+                    }
+                    saveCurrentState();
+                }, 50);
+            } else {
+                saveCurrentState();
+            }
         };
         
         node.append(btn, container);
-        
         if(isRoot || expandedNodes.has(id)) btn.toggle('open');
     }
 

@@ -67,19 +67,18 @@
             <div id="treeContainer"></div>
         </div>
 
-        <!-- NEW: Floating Navigation Controls (Top Left) -->
+        <!-- Floating Navigation Controls -->
         <div id="navControls" class="absolute top-6 left-6 flex gap-3 z-30 hidden">
-            <button id="navBack" disabled class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
+            <button id="navBack" disabled title="Go Back" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
-            <button id="navForward" disabled class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
+            <button id="navForward" disabled title="Go Forward" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
                 <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
 
-        <!-- Floating Action Controls (Bottom Left) -->
+        <!-- Floating Action Controls -->
         <div id="controls" class="absolute bottom-6 left-6 flex flex-col gap-3 z-30 hidden">
-            
             <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
                 <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Tree Mode</span>
                 <div class="flex items-center gap-4 pt-1 justify-center">
@@ -107,7 +106,7 @@
         </div>
     </main>
 
-    <div id="globalTooltip" class="tooltip fixed hidden bg-slate-900 border border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left">
+    <div id="globalTooltip" class="tooltip fixed hidden bg-slate-900 border border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] pointer-events-none">
         <div class="flex items-start gap-4 mb-3">
             <img id="ttImage" src="" alt="" class="w-12 h-12 object-contain rounded bg-slate-800 p-1 border border-slate-700">
             <div>
