@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerrariTree</title>
+    
+    <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
     
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     
+    <!-- Application Logic -->
     <script src="app.js" defer></script>
 </head>
 <body class="h-screen flex flex-col">
@@ -64,15 +68,33 @@
         </div>
 
         <div id="controls" class="absolute bottom-6 left-6 flex flex-col gap-3 z-30 hidden">
-            <div class="bg-slate-800 border border-slate-600 rounded-lg shadow-lg p-3 flex flex-col gap-2">
+            
+            <!-- Tree Mode Selector -->
+            <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
+                <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Tree Mode</span>
+                <div class="flex items-center gap-4 pt-1 justify-center">
+                    <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer hover:text-white transition-colors">
+                        <input type="radio" name="treeMode" value="recipe" checked class="text-blue-600 focus:ring-blue-500 bg-slate-700 border-slate-600 cursor-pointer">
+                        <i class="fa-solid fa-hammer text-slate-400"></i> Recipe
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer hover:text-white transition-colors">
+                        <input type="radio" name="treeMode" value="usage" class="text-purple-500 focus:ring-purple-500 bg-slate-700 border-slate-600 cursor-pointer">
+                        <i class="fa-solid fa-code-branch text-slate-400"></i> Used In
+                    </label>
+                </div>
+            </div>
+
+            <!-- Existing Filters -->
+            <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
                 <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Filters</span>
-                <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer px-2 pt-1">
-                    <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-700 border-slate-600 text-blue-600 focus:ring-0">
+                <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer px-2 pt-1 hover:text-white transition-colors">
+                    <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-700 border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
                     Show Transmutations
                 </label>
             </div>
-            <button id="expandAllBtn" class="bg-slate-800 border border-slate-600 text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-layer-group"></i> Expand All</button>
-            <button id="resetViewBtn" class="bg-slate-800 border border-slate-600 text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-compress-arrows-alt"></i> Reset View</button>
+            
+            <button id="expandAllBtn" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-layer-group"></i> Expand All</button>
+            <button id="resetViewBtn" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-compress-arrows-alt"></i> Reset View</button>
         </div>
     </main>
 

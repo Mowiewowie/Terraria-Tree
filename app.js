@@ -1,13 +1,14 @@
-// --- State Variables & References ---
+// --- State Variables & Dependencies ---
 let itemsDatabase = {}, itemIndex = [];
+let usageIndex = {}; 
 
-// Physics / Rendering State
 let currentX = 0, currentY = 0, currentScale = 1;
 let targetX = 0, targetY = 0, targetScale = 1;   
 let isAnimating = false;
 
 let isPanning = false, startX = 0, startY = 0;
 let showTransmutations = false;
+let treeMode = 'recipe'; // 'recipe' or 'usage'
 let currentTreeItemId = null;
 let expandedNodes = new Set(); 
 let isExpandedAll = false;
@@ -86,7 +87,6 @@ function triggerAnimation() {
     }
 }
 
-// --- Data Fetching & Initialization ---
 function createDirectImageUrl(name) {
     if (!name) return FALLBACK_ICON;
     const f = name.replace(/ /g, '_') + '.png';
@@ -94,6 +94,7 @@ function createDirectImageUrl(name) {
     return `https://terraria.wiki.gg/images/${h[0]}/${h.substring(0, 2)}/${f}`;
 }
 
+// --- Data Fetching & Initialization ---
 dom.fileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
 document.body.addEventListener('dragover', e => e.preventDefault());
 document.body.addEventListener('drop', e => { e.preventDefault(); if(e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
@@ -121,9 +122,42 @@ async function loadDefaultData() {
     }
 }
 
+function buildUsageIndex() {
+    usageIndex = {};
+    Object.values(itemsDatabase).forEach(item => {
+        if (item.crafting && item.crafting.recipes) {
+            item.crafting.recipes.forEach(recipe => {
+                recipe.ingredients.forEach(ing => {
+                    const addUsage = (targetName, groupName) => {
+                        const key = targetName.toLowerCase();
+                        if (!usageIndex[key]) usageIndex[key] = [];
+                        usageIndex[key].push({
+                            id: item.id,
+                            amount: ing.amount,
+                            recipe: recipe,
+                            viaGroup: groupName
+                        });
+                    };
+
+                    addUsage(ing.name, null);
+
+                    if (RECIPE_GROUPS[ing.name]) {
+                        RECIPE_GROUPS[ing.name].forEach(groupItem => {
+                            addUsage(groupItem, ing.name);
+                        });
+                    }
+                });
+            });
+        }
+    });
+}
+
 function initializeData(data) {
     itemsDatabase = data;
     itemIndex = Object.values(itemsDatabase).map(i => ({ id: i.id, name: i.name, fallback_image: i.image_url }));
+    
+    buildUsageIndex(); 
+
     dom.uploadSection.classList.add('hidden');
     dom.searchInput.disabled = false;
     dom.searchInput.placeholder = "Search item...";
@@ -136,7 +170,19 @@ function initializeData(data) {
 // --- User Interface Events ---
 dom.transmuteCheck.addEventListener('change', (e) => {
     showTransmutations = e.target.checked;
-    if (currentTreeItemId) loadTree(currentTreeItemId, true); 
+    if (currentTreeItemId) loadTree(currentTreeItemId, false); 
+});
+
+document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        treeMode = e.target.value;
+        if (treeMode === 'usage') {
+            dom.treeContainer.classList.add('mode-usage');
+        } else {
+            dom.treeContainer.classList.remove('mode-usage');
+        }
+        if (currentTreeItemId) loadTree(currentTreeItemId, false);
+    });
 });
 
 document.addEventListener('click', (e) => {
@@ -179,42 +225,26 @@ dom.resetViewBtn.onclick = () => resetView(false);
 
 dom.vizArea.addEventListener('wheel', e => { 
     e.preventDefault(); 
-    
     const rect = dom.vizArea.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-
     const localX = (mouseX - targetX) / targetScale;
     const localY = (mouseY - targetY) / targetScale;
-
     const zoomDelta = -e.deltaY * 0.0015; 
     targetScale = Math.min(Math.max(0.1, targetScale + zoomDelta), 4);
-    
     targetX = mouseX - localX * targetScale;
     targetY = mouseY - localY * targetScale;
-    
     triggerAnimation();
 });
 
 dom.vizArea.addEventListener('mousedown', e => { 
-    isPanning = true; 
-    startX = e.clientX - targetX; 
-    startY = e.clientY - targetY; 
-    dom.vizArea.classList.add('grabbing'); 
+    isPanning = true; startX = e.clientX - targetX; startY = e.clientY - targetY; dom.vizArea.classList.add('grabbing'); 
 });
 
-window.addEventListener('mouseup', () => { 
-    isPanning = false; 
-    dom.vizArea.classList.remove('grabbing'); 
-});
+window.addEventListener('mouseup', () => { isPanning = false; dom.vizArea.classList.remove('grabbing'); });
 
 window.addEventListener('mousemove', e => { 
-    if(isPanning) { 
-        e.preventDefault(); 
-        targetX = e.clientX - startX; 
-        targetY = e.clientY - startY; 
-        triggerAnimation(); 
-    }
+    if(isPanning) { e.preventDefault(); targetX = e.clientX - startX; targetY = e.clientY - startY; triggerAnimation(); }
 });
 
 // --- Tree Generation Logic ---
@@ -243,14 +273,10 @@ function loadTree(id, preserveState = false) {
 
 function resetView(isInitialLoad = false) { 
     if (!currentTreeItemId) return;
-    
     const vizRect = dom.vizArea.getBoundingClientRect();
     const treeWidth = dom.treeContainer.scrollWidth;
     const treeHeight = dom.treeContainer.scrollHeight;
-    
-    const paddingX = 80; 
-    const paddingY = 80;
-    
+    const paddingX = 80; const paddingY = 80;
     const scaleX = (vizRect.width - paddingX) / treeWidth;
     const scaleY = (vizRect.height - paddingY) / treeHeight;
     
@@ -273,7 +299,6 @@ function getSmartRecipe(recipes, itemName = "") {
     if (!showTransmutations) {
         valid = recipes.filter(r => {
             if (r.transmutation) return false;
-            
             if (r.ingredients.length === 1 && itemName) {
                 const ingName = r.ingredients[0].name.toLowerCase();
                 const outName = itemName.toLowerCase();
@@ -296,10 +321,8 @@ function getSmartRecipe(recipes, itemName = "") {
     return pool.reduce((best, curr) => {
         const bestLen = best.ingredients.length;
         const currLen = curr.ingredients.length;
-        
         if (currLen > bestLen) return curr;
         if (currLen < bestLen) return best;
-
         const bestCost = best.ingredients.reduce((a, i) => a + i.amount, 0);
         const currCost = curr.ingredients.reduce((a, i) => a + i.amount, 0);
         return currCost < bestCost ? curr : best;
@@ -314,7 +337,8 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     node.className = 'tree-node';
     
     const card = document.createElement('div');
-    card.className = `item-card relative flex flex-col items-center justify-center rounded-lg z-10 ${isRoot ? 'w-32 h-32 border-blue-500 ring-4 ring-blue-500/20' : 'w-24 h-24'}`;
+    const rootBorder = treeMode === 'recipe' ? 'border-blue-500 ring-blue-500/20' : 'border-purple-500 ring-purple-500/20';
+    card.className = `item-card relative flex flex-col items-center justify-center rounded-lg z-10 ${isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24'}`;
     
     const img = document.createElement('img');
     img.src = createDirectImageUrl(data.name);
@@ -332,39 +356,70 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     card.onmousemove = moveTooltip;
     node.appendChild(card);
 
-    let hasValidRecipe = false;
+    let hasValidChildren = false;
+    let childrenData = []; 
 
-    if (data.crafting && data.crafting.is_craftable && !visited.has(id)) {
-        const recipe = getSmartRecipe(data.crafting.recipes, data.name);
-        if (recipe && recipe.ingredients.length > 0) {
-            hasValidRecipe = true;
-            const btn = document.createElement('button');
-            btn.className = 'expand-btn mt-2 mb-2 w-6 h-6 rounded-full bg-slate-700 hover:bg-blue-600 text-white text-xs flex items-center justify-center transition-colors shadow-lg z-20';
-            btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+    if (treeMode === 'recipe') {
+        if (data.crafting && data.crafting.is_craftable && !visited.has(id)) {
+            const recipe = getSmartRecipe(data.crafting.recipes, data.name);
+            if (recipe && recipe.ingredients.length > 0) {
+                hasValidChildren = true;
+                childrenData = recipe.ingredients;
+            }
+        }
+    } else if (treeMode === 'usage') {
+        const allUsages = usageIndex[data.name.toLowerCase()] || [];
+        const validUsages = allUsages.filter(u => showTransmutations || !u.recipe.transmutation);
+        
+        const uniqueUsagesMap = new Map();
+        validUsages.forEach(u => {
+            if (!uniqueUsagesMap.has(u.id)) {
+                uniqueUsagesMap.set(u.id, u);
+            }
+        });
+        
+        const uniqueUsages = Array.from(uniqueUsagesMap.values());
+        uniqueUsages.sort((a,b) => itemsDatabase[a.id]?.name.localeCompare(itemsDatabase[b.id]?.name));
+
+        if (uniqueUsages.length > 0 && !visited.has(id)) {
+            hasValidChildren = true;
+            childrenData = uniqueUsages;
+        }
+    }
+
+    if (hasValidChildren) {
+        const btn = document.createElement('button');
+        const btnColor = treeMode === 'recipe' ? 'bg-blue-600' : 'bg-purple-600';
+        const btnHover = treeMode === 'recipe' ? 'hover:bg-blue-600' : 'hover:bg-purple-600';
+        
+        btn.className = `expand-btn mt-2 mb-2 w-6 h-6 rounded-full bg-slate-700 ${btnHover} text-white text-xs flex items-center justify-center transition-colors shadow-lg z-20`;
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+        
+        const container = document.createElement('div');
+        container.className = 'tree-children hidden';
+        
+        btn.toggle = (targetState) => {
+            const isClosed = container.classList.contains('hidden');
             
-            const container = document.createElement('div');
-            container.className = 'tree-children hidden';
-            
-            btn.toggle = (targetState) => {
-                const isClosed = container.classList.contains('hidden');
+            if (targetState === 'open' && !isClosed) return false;
+            if (targetState === 'close' && isClosed) return false;
+
+            if (!isClosed) {
+                container.classList.add('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                btn.classList.remove(btnColor);
+                expandedNodes.delete(id); 
+            } else {
+                container.innerHTML = '';
+                container.classList.remove('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+                btn.classList.add(btnColor);
+                expandedNodes.add(id); 
                 
-                if (targetState === 'open' && !isClosed) return false;
-                if (targetState === 'close' && isClosed) return false;
-
-                if (!isClosed) {
-                    container.classList.add('hidden');
-                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
-                    btn.classList.remove('bg-blue-600');
-                    expandedNodes.delete(id); 
-                } else {
-                    container.innerHTML = '';
-                    container.classList.remove('hidden');
-                    btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
-                    btn.classList.add('bg-blue-600');
-                    expandedNodes.add(id); 
-                    
-                    const newVis = new Set(visited).add(id);
-                    recipe.ingredients.forEach(ing => {
+                const newVis = new Set(visited).add(id);
+                
+                if (treeMode === 'recipe') {
+                    childrenData.forEach(ing => {
                         const isGroup = ing.name.toLowerCase().startsWith("any ");
                         if (isGroup) {
                             container.appendChild(createGroupNode(ing.name, ing.amount));
@@ -380,28 +435,39 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                             container.appendChild(child);
                         }
                     });
+                } else {
+                    childrenData.forEach(usage => {
+                        const childNode = createTreeNode(usage.id, false, newVis);
+                        const b = document.createElement('span');
+                        b.className = 'absolute -top-2 -right-2 bg-purple-900 border border-purple-500 text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
+                        b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
+                        childNode.querySelector('.item-card').appendChild(b);
+                        container.appendChild(childNode);
+                    });
                 }
-                return true; 
-            };
-            
-            btn.onclick = e => { 
-                e.stopPropagation(); 
-                btn.toggle();
-            };
-            
-            node.append(btn, container);
-            
-            if(isRoot || expandedNodes.has(id)) {
-                btn.toggle('open');
             }
-        }
+            return true; 
+        };
+        
+        btn.onclick = e => { e.stopPropagation(); btn.toggle(); };
+        node.append(btn, container);
+        
+        if(isRoot || expandedNodes.has(id)) btn.toggle('open');
     }
 
-    if (isRoot && !hasValidRecipe) {
-        const noCraftingMsg = document.createElement('div');
-        noCraftingMsg.className = 'mt-5 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg shadow-lg text-slate-400 text-sm flex items-center gap-2 z-10';
-        noCraftingMsg.innerHTML = '<i class="fa-solid fa-hammer text-slate-500"></i> Not craftable (Base Item)';
-        node.appendChild(noCraftingMsg);
+    if (isRoot && !hasValidChildren) {
+        const noDataMsg = document.createElement('div');
+        noDataMsg.className = 'px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg shadow-lg text-slate-400 text-sm flex items-center gap-2 z-10';
+        
+        if (treeMode === 'recipe') {
+            noDataMsg.innerHTML = '<i class="fa-solid fa-hammer text-slate-500"></i> Not craftable (Base Item)';
+            noDataMsg.classList.add('mt-5');
+            node.appendChild(noDataMsg); 
+        } else {
+            noDataMsg.innerHTML = '<i class="fa-solid fa-leaf text-slate-500"></i> Not used in any recipes (End Item)';
+            noDataMsg.classList.add('mb-5');
+            node.insertBefore(noDataMsg, node.firstChild); 
+        }
     }
 
     return node;
@@ -431,7 +497,6 @@ function createGroupNode(ingName, amount) {
 
     displayNames.forEach(altName => {
         const altId = itemIndex.find(i => i.name === altName)?.id;
-        
         const miniCard = document.createElement('div');
         miniCard.className = 'item-card flex flex-col items-center justify-center w-16 h-16 rounded bg-slate-800 border border-slate-600';
         
@@ -452,7 +517,6 @@ function createGroupNode(ingName, amount) {
             miniCard.onmouseleave = () => dom.tooltip.el.classList.add('hidden');
             miniCard.onmousemove = moveTooltip;
         }
-        
         itemsRow.appendChild(miniCard);
     });
 
@@ -480,7 +544,6 @@ function createGenericNode(name, amount) {
 dom.expandAllBtn.onclick = async () => {
     isExpandedAll = !isExpandedAll;
     const targetState = isExpandedAll ? 'open' : 'close';
-    
     dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
     
     await new Promise(r => requestAnimationFrame(r));
@@ -496,14 +559,10 @@ dom.expandAllBtn.onclick = async () => {
         d++;
     }
     
-    dom.expandAllBtn.innerHTML = isExpandedAll 
-        ? '<i class="fa-solid fa-compress"></i> Collapse All' 
-        : '<i class="fa-solid fa-layer-group"></i> Expand All';
-        
+    dom.expandAllBtn.innerHTML = isExpandedAll ? '<i class="fa-solid fa-compress"></i> Collapse All' : '<i class="fa-solid fa-layer-group"></i> Expand All';
     setTimeout(() => resetView(false), 100);
 };
 
-// --- Tooltip Logic ---
 function showTooltip(e, data) {
     dom.tooltip.name.textContent = data.name;
     dom.tooltip.desc.textContent = data.description || "No description.";
@@ -539,15 +598,12 @@ function showTooltip(e, data) {
         const sources = data.acquisition.slice(0, 3);
         sources.forEach(src => {
             const li = document.createElement('li');
-            
             const srcSpan = document.createElement('span');
             srcSpan.className = 'text-slate-300';
             srcSpan.textContent = src.source + ' ';
-            
             const rateSpan = document.createElement('span');
             rateSpan.className = 'text-emerald-500 text-xs';
             rateSpan.textContent = `(${src.rate})`;
-
             li.append(srcSpan, rateSpan);
             dom.tooltip.acqList.appendChild(li);
         });
@@ -563,7 +619,6 @@ function showTooltip(e, data) {
     }
     
     dom.tooltip.el.classList.remove('hidden');
-    
     moveTooltip(e);
 }
 
@@ -572,20 +627,12 @@ function moveTooltip(e) {
     const w = tooltipEl.offsetWidth;
     const h = tooltipEl.offsetHeight;
     const offset = 15;
-
     let l = e.clientX + offset;
     let t = e.clientY + offset;
 
-    if (l + w > window.innerWidth) {
-        l = e.clientX - w - offset;
-    }
-    
-    if (t + h > window.innerHeight) {
-        t = e.clientY - h - offset;
-    }
-
-    l = Math.max(10, l);
-    t = Math.max(10, t);
+    if (l + w > window.innerWidth) l = e.clientX - w - offset;
+    if (t + h > window.innerHeight) t = e.clientY - h - offset;
+    l = Math.max(10, l); t = Math.max(10, t);
 
     tooltipEl.style.left = `${l}px`; 
     tooltipEl.style.top = `${t}px`;
