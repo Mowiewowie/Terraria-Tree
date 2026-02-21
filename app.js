@@ -1,3 +1,4 @@
+// --- State Variables & Dependencies ---
 let itemsDatabase = {}, itemIndex = [];
 let usageIndex = {}; 
 
@@ -13,7 +14,7 @@ let expandedNodes = new Set();
 let isExpandedAll = false;
 
 let lineTooltipTimeout = null;
-let lastMouseE = null;
+let lastMouseCoords = { x: 0, y: 0 };
 
 let appHistory = [];
 let historyIdx = -1;
@@ -22,6 +23,7 @@ const MAX_HISTORY = 50;
 // Mobile Touch Tracking
 let initialPinchDist = null;
 let initialScale = 1;
+let activeMobileCard = null; // State machine for 2-tap mobile tooltips
 
 const FALLBACK_ICON = 'https://terraria.wiki.gg/wiki/Special:FilePath/Angel_Statue.png';
 const JSON_FILENAME = 'terraria_items_final.json';
@@ -73,12 +75,12 @@ const dom = {
     }
 };
 
-// Responsive Minimum Zoom Math
+// --- Physics Engine ---
 function getMinScale() {
     const w = window.innerWidth;
-    if (w < 600) return 0.40; // Mobile
-    if (w < 1024) return 0.25; // Tablet
-    return 0.15; // Desktop
+    if (w < 600) return 0.40; 
+    if (w < 1024) return 0.25; 
+    return 0.15; 
 }
 
 function renderLoop() {
@@ -115,6 +117,7 @@ function createDirectImageUrl(name) {
     return `https://terraria.wiki.gg/images/${h[0]}/${h.substring(0, 2)}/${f}`;
 }
 
+// --- Data Fetching & Initialization ---
 dom.fileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
 document.body.addEventListener('dragover', e => e.preventDefault());
 document.body.addEventListener('drop', e => { e.preventDefault(); if(e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
@@ -172,8 +175,8 @@ function initializeData(data) {
     dom.searchInput.disabled = false;
     dom.searchInput.placeholder = "Search item...";
     dom.dbStatus.innerText = `${Object.keys(itemsDatabase).length.toLocaleString()} Items`;
-    dom.dbStatus.classList.add('text-green-400');
-    dom.dbStatus.classList.remove('text-red-400');
+    dom.dbStatus.classList.add('text-green-500');
+    dom.dbStatus.classList.remove('text-slate-500');
     dom.searchInput.focus();
 
     const params = new URLSearchParams(window.location.search);
@@ -183,6 +186,7 @@ function initializeData(data) {
     }
 }
 
+// --- History API & Navigation Controllers ---
 function saveCurrentState() {
     if (historyIdx >= 0 && appHistory[historyIdx]) {
         appHistory[historyIdx].x = targetX;
@@ -237,7 +241,10 @@ function viewItem(id) {
     loadTree(id, false);
 }
 
-dom.mobileMenuBtn.addEventListener('click', () => {
+// --- User Interface Events ---
+
+dom.mobileMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     dom.toolbarTools.classList.toggle('hidden');
 });
 
@@ -262,8 +269,19 @@ document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
 });
 
 document.addEventListener('click', (e) => {
+    // Hide search results
     if (!dom.searchInput.contains(e.target) && !dom.searchResults.contains(e.target)) {
         dom.searchResults.classList.add('hidden');
+    }
+    // Mobile Toolbar Clickaway
+    if (!dom.mobileMenuBtn.contains(e.target) && !dom.toolbarTools.contains(e.target)) {
+        dom.toolbarTools.classList.add('hidden');
+    }
+    // Mobile Tooltip Clickaway
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouch && activeMobileCard && !activeMobileCard.contains(e.target)) {
+        activeMobileCard = null;
+        dom.tooltip.el.classList.add('hidden');
     }
 });
 
@@ -288,8 +306,8 @@ dom.searchInput.addEventListener('input', (e) => {
         dom.searchResults.classList.remove('hidden');
         matches.forEach(i => {
             const d = document.createElement('div');
-            d.className = 'flex items-center gap-3 p-2 hover:bg-slate-700 cursor-pointer border-b border-slate-700 text-sm';
-            d.innerHTML = `<img src="${createDirectImageUrl(i.name)}" class="w-6 h-6 object-contain"><span class="text-slate-200 font-medium">${i.name}</span>`;
+            d.className = 'flex items-center gap-3 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-200 dark:border-slate-700 text-sm';
+            d.innerHTML = `<img src="${createDirectImageUrl(i.name)}" class="w-6 h-6 object-contain"><span class="text-slate-800 dark:text-slate-200 font-medium">${i.name}</span>`;
             d.onclick = () => viewItem(i.id); 
             dom.searchResults.appendChild(d);
         });
@@ -317,7 +335,7 @@ dom.vizArea.addEventListener('wheel', e => {
     wheelTimeout = setTimeout(saveCurrentState, 300);
 });
 
-// Mobile Touch Control Events
+// Touch Navigation overrides native scroll
 dom.vizArea.addEventListener('touchstart', e => {
     if (e.touches.length === 1) {
         isPanning = true;
@@ -379,7 +397,6 @@ dom.vizArea.addEventListener('touchend', e => {
     }
 });
 
-// Desktop Mouse Tracking
 dom.vizArea.addEventListener('mousedown', e => { 
     isPanning = true; startX = e.clientX - targetX; startY = e.clientY - targetY; dom.vizArea.classList.add('grabbing'); 
 });
@@ -396,20 +413,21 @@ window.addEventListener('mousemove', e => {
     if(isPanning) { e.preventDefault(); targetX = e.clientX - startX; targetY = e.clientY - startY; triggerAnimation(); }
 });
 
+// --- Tree Engine ---
 function syncExpandAllButton() {
     const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn'));
     if (expandBtns.length === 0) {
         isExpandedAll = false;
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand All';
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand';
         return;
     }
     const allExpanded = expandBtns.every(btn => btn.innerHTML.includes('fa-minus'));
     isExpandedAll = allExpanded;
     
     if (allExpanded) {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-compress"></i> Collapse All';
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-compress"></i> Collapse';
     } else {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand All';
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand';
     }
 }
 
@@ -560,7 +578,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     
     const card = document.createElement('div');
     const rootBorder = treeMode === 'recipe' ? 'border-blue-500 ring-blue-500/20' : 'border-purple-500 ring-purple-500/20';
-    card.className = `item-card relative flex flex-col items-center justify-center rounded-lg z-10 ${isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24'}`;
+    card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24'}`;
     
     const img = document.createElement('img');
     img.src = createDirectImageUrl(data.name);
@@ -569,12 +587,24 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     
     const name = document.createElement('span');
     name.textContent = data.name;
-    name.className = `text-center font-semibold leading-tight px-2 line-clamp-2 ${isRoot ? 'text-sm' : 'text-xs'}`;
+    name.className = `text-center font-semibold leading-tight px-2 line-clamp-2 text-slate-800 dark:text-slate-200 ${isRoot ? 'text-sm' : 'text-xs'}`;
     
     card.append(img, name);
     
     card.onclick = (e) => { 
         e.stopPropagation(); 
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        
+        if (isTouch) {
+            if (activeMobileCard !== card) {
+                activeMobileCard = card;
+                showTooltip(e, data);
+                return;
+            }
+        }
+        
+        activeMobileCard = null;
+        dom.tooltip.el.classList.add('hidden');
         if (e.ctrlKey || e.metaKey) {
             if(data.url) window.open(data.url, '_blank'); 
         } else {
@@ -583,11 +613,21 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     };
     
     card.onmouseenter = e => {
-        clearTimeout(lineTooltipTimeout);
-        showTooltip(e, data);
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        if(!isTouch) {
+            clearTimeout(lineTooltipTimeout);
+            showTooltip(e, data);
+        }
     };
-    card.onmouseleave = () => dom.tooltip.el.classList.add('hidden');
-    card.onmousemove = moveTooltip;
+    card.onmouseleave = () => {
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        if(!isTouch) dom.tooltip.el.classList.add('hidden');
+    };
+    card.onmousemove = e => {
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        if(!isTouch) moveTooltip(e);
+    };
+    
     node.appendChild(card);
 
     let hasValidChildren = false;
@@ -624,9 +664,9 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     if (hasValidChildren) {
         const btn = document.createElement('button');
         const btnColor = treeMode === 'recipe' ? 'bg-blue-600' : 'bg-purple-600';
-        const btnHover = treeMode === 'recipe' ? 'hover:bg-blue-600' : 'hover:bg-purple-600';
+        const btnHover = treeMode === 'recipe' ? 'hover:bg-blue-700' : 'hover:bg-purple-700';
         
-        btn.className = `expand-btn mt-2 mb-2 w-6 h-6 rounded-full bg-slate-700 ${btnHover} text-white text-xs flex items-center justify-center transition-colors shadow-lg z-20`;
+        btn.className = `expand-btn mt-2 mb-2 w-6 h-6 rounded-full bg-slate-400 dark:bg-slate-700 ${btnHover} text-white text-xs flex items-center justify-center transition-colors shadow-md z-20`;
         btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
         
         const container = document.createElement('div');
@@ -650,16 +690,19 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                 btn.classList.add(btnColor);
                 expandedNodes.add(id); 
                 
+                // Line Events (300ms Delay)
                 const attachLineEvents = (el) => {
                     el.onmousemove = (e) => { 
-                        lastMouseE = e; 
-                        moveTooltip(e); 
+                        lastMouseCoords = { x: e.clientX, y: e.clientY };
+                        if (!dom.tooltip.el.classList.contains('hidden')) {
+                            moveTooltip(e);
+                        }
                     };
                     el.onmouseenter = (e) => {
                         container.classList.add('lines-hovered');
-                        lastMouseE = e;
+                        lastMouseCoords = { x: e.clientX, y: e.clientY };
                         lineTooltipTimeout = setTimeout(() => {
-                            showTooltip(lastMouseE, data); 
+                            showTooltip(lastMouseCoords, data); 
                         }, 300);
                     };
                     el.onmouseleave = () => {
@@ -691,7 +734,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                             childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
                             if(cid) {
                                 const b = document.createElement('span');
-                                b.className = 'absolute -top-2 -right-2 bg-slate-900 border border-slate-500 text-slate-300 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono';
+                                b.className = 'absolute -top-2 -right-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 text-slate-700 dark:text-slate-300 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
                                 b.textContent = `x${ing.amount}`;
                                 childNode.querySelector('.item-card').appendChild(b);
                             }
@@ -707,7 +750,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                     childrenData.forEach(usage => {
                         const childNode = createTreeNode(usage.id, false, newVis);
                         const b = document.createElement('span');
-                        b.className = 'absolute -top-2 -right-2 bg-purple-900 border border-purple-500 text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
+                        b.className = 'absolute -top-2 -right-2 bg-purple-100 dark:bg-purple-900 border border-purple-300 dark:border-purple-500 text-purple-800 dark:text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
                         b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
                         childNode.querySelector('.item-card').appendChild(b);
                         
@@ -773,14 +816,14 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
 
     if (isRoot && !hasValidChildren) {
         const noDataMsg = document.createElement('div');
-        noDataMsg.className = 'px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg shadow-lg text-slate-400 text-sm flex items-center gap-2 z-10';
+        noDataMsg.className = 'px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg text-slate-500 dark:text-slate-400 text-sm flex items-center gap-2 z-10';
         
         if (treeMode === 'recipe') {
-            noDataMsg.innerHTML = '<i class="fa-solid fa-hammer text-slate-500"></i> Not craftable (Base Item)';
+            noDataMsg.innerHTML = '<i class="fa-solid fa-hammer text-slate-400 dark:text-slate-500"></i> Not craftable (Base Item)';
             noDataMsg.classList.add('mt-5');
             node.appendChild(noDataMsg); 
         } else {
-            noDataMsg.innerHTML = '<i class="fa-solid fa-leaf text-slate-500"></i> Not used in any recipes (End Item)';
+            noDataMsg.innerHTML = '<i class="fa-solid fa-leaf text-slate-400 dark:text-slate-500"></i> Not used in any recipes (End Item)';
             noDataMsg.classList.add('mb-5');
             node.appendChild(noDataMsg); 
         }
@@ -794,10 +837,10 @@ function createGroupNode(ingName, amount, lineEventsFn) {
     container.className = 'tree-node';
 
     const box = document.createElement('div');
-    box.className = 'relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-800/40 border border-dashed border-slate-500 shadow-inner z-10';
+    box.className = 'relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-dashed border-slate-300 dark:border-slate-500 shadow-inner z-10';
 
     const label = document.createElement('div');
-    label.className = 'text-xs text-slate-400 font-bold uppercase tracking-wider mb-2';
+    label.className = 'text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider mb-2';
     label.textContent = `${ingName} (x${amount})`;
     box.appendChild(label);
 
@@ -814,7 +857,7 @@ function createGroupNode(ingName, amount, lineEventsFn) {
     displayNames.forEach(altName => {
         const altId = itemIndex.find(i => i.name === altName)?.id;
         const miniCard = document.createElement('div');
-        miniCard.className = 'item-card flex flex-col items-center justify-center w-16 h-16 rounded bg-slate-800 border border-slate-600';
+        miniCard.className = 'item-card flex flex-col items-center justify-center w-16 h-16 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600';
         
         const img = document.createElement('img');
         img.src = createDirectImageUrl(altName);
@@ -822,7 +865,7 @@ function createGroupNode(ingName, amount, lineEventsFn) {
         
         const nameSpan = document.createElement('span');
         nameSpan.textContent = altName;
-        nameSpan.className = 'text-[10px] text-center leading-tight px-1 line-clamp-2';
+        nameSpan.className = 'text-[10px] text-center leading-tight px-1 line-clamp-2 text-slate-800 dark:text-slate-200';
         
         miniCard.append(img, nameSpan);
         
@@ -831,6 +874,16 @@ function createGroupNode(ingName, amount, lineEventsFn) {
             
             miniCard.onclick = (e) => { 
                 e.stopPropagation(); 
+                const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                if (isTouch) {
+                    if (activeMobileCard !== miniCard) {
+                        activeMobileCard = miniCard;
+                        showTooltip(e, data);
+                        return;
+                    }
+                }
+                activeMobileCard = null;
+                dom.tooltip.el.classList.add('hidden');
                 if (e.ctrlKey || e.metaKey) {
                     if(data.url) window.open(data.url, '_blank'); 
                 } else {
@@ -839,18 +892,27 @@ function createGroupNode(ingName, amount, lineEventsFn) {
             };
             
             miniCard.onmouseenter = e => {
-                clearTimeout(lineTooltipTimeout);
-                showTooltip(e, data);
+                const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                if(!isTouch) {
+                    clearTimeout(lineTooltipTimeout);
+                    showTooltip(e, data);
+                }
             };
-            miniCard.onmouseleave = () => dom.tooltip.el.classList.add('hidden');
-            miniCard.onmousemove = moveTooltip;
+            miniCard.onmouseleave = () => {
+                const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                if(!isTouch) dom.tooltip.el.classList.add('hidden');
+            };
+            miniCard.onmousemove = e => {
+                const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                if(!isTouch) moveTooltip(e);
+            };
         }
         itemsRow.appendChild(miniCard);
     });
 
     if (remaining > 0) {
         const moreNode = document.createElement('div');
-        moreNode.className = 'flex items-center justify-center w-16 h-16 rounded bg-slate-800/50 border border-dashed border-slate-600 text-slate-500 text-xs font-bold';
+        moreNode.className = 'flex items-center justify-center w-16 h-16 rounded bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-600 text-slate-500 text-xs font-bold';
         moreNode.textContent = `+${remaining}`;
         itemsRow.appendChild(moreNode);
     }
@@ -864,7 +926,7 @@ function createGenericNode(name, amount) {
     const d = document.createElement('div');
     d.className = 'tree-node';
     const amountText = document.createTextNode(name);
-    d.innerHTML = `<div class="item-card relative flex flex-col items-center justify-center w-24 h-24 rounded-lg bg-slate-800/50 border border-dashed border-slate-600"><i class="fa-solid fa-layer-group text-slate-500 text-2xl mb-1"></i><span class="text-xs text-center text-slate-400 font-medium px-2 sanitize-target"></span><span class="absolute -top-2 -right-2 bg-slate-800 border border-slate-600 text-slate-400 text-[10px] px-1.5 py-0.5 rounded-full">x${amount}</span></div>`;
+    d.innerHTML = `<div class="item-card relative flex flex-col items-center justify-center w-24 h-24 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-600"><i class="fa-solid fa-layer-group text-slate-400 dark:text-slate-500 text-2xl mb-1"></i><span class="text-xs text-center text-slate-600 dark:text-slate-400 font-medium px-2 sanitize-target"></span><span class="absolute -top-2 -right-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 text-[10px] px-1.5 py-0.5 rounded-full shadow">x${amount}</span></div>`;
     d.querySelector('.sanitize-target').appendChild(amountText);
     return d;
 }
@@ -872,7 +934,7 @@ function createGenericNode(name, amount) {
 dom.expandAllBtn.onclick = async () => {
     isExpandedAll = !isExpandedAll;
     const targetState = isExpandedAll ? 'open' : 'close';
-    dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
     
     await new Promise(r => requestAnimationFrame(r));
     
@@ -918,7 +980,7 @@ function showTooltip(e, data) {
             keySpan.className = 'text-slate-500 capitalize';
             keySpan.textContent = k + ': ';
             const valSpan = document.createElement('span');
-            valSpan.className = 'text-white';
+            valSpan.className = 'text-slate-900 dark:text-white';
             valSpan.textContent = v;
             statDiv.append(keySpan, valSpan);
             dom.tooltip.stats.appendChild(statDiv);
@@ -939,10 +1001,10 @@ function showTooltip(e, data) {
         sources.forEach(src => {
             const li = document.createElement('li');
             const srcSpan = document.createElement('span');
-            srcSpan.className = 'text-slate-300';
+            srcSpan.className = 'text-slate-700 dark:text-slate-300';
             srcSpan.textContent = src.source + ' ';
             const rateSpan = document.createElement('span');
-            rateSpan.className = 'text-emerald-500 text-xs';
+            rateSpan.className = 'text-emerald-600 dark:text-emerald-500 text-xs';
             rateSpan.textContent = `(${src.rate})`;
             li.append(srcSpan, rateSpan);
             dom.tooltip.acqList.appendChild(li);
@@ -959,7 +1021,17 @@ function showTooltip(e, data) {
     }
     
     dom.tooltip.el.classList.remove('hidden');
-    moveTooltip(e);
+    
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouch) {
+        const touchEvent = e.touches ? e.touches[0] : e;
+        moveTooltip({ clientX: touchEvent.clientX, clientY: touchEvent.clientY });
+    } else if (e.clientX !== undefined) {
+        moveTooltip(e);
+    } else {
+        // Fallback for custom objects like lastMouseCoords
+        moveTooltip({ clientX: e.x, clientY: e.y });
+    }
 }
 
 function moveTooltip(e) {

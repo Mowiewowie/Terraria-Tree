@@ -1,110 +1,157 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* --- Native Light/Dark Mode Variables --- */
+:root {
+    --bg-main: #f8fafc;
+    --text-main: #0f172a;
+    --line-normal: #94a3b8;
+    --line-hover: #f59e0b;
+    --card-bg: #ffffff;
+    --card-border: #cbd5e1;
+    --card-border-hover: #3b82f6;
+    --grid-dots: #cbd5e1;
+    --panel-bg: rgba(255, 255, 255, 0.95);
+    --panel-border: #cbd5e1;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-main: #0b101e;
+        --text-main: #e2e8f0;
+        --line-normal: #475569;
+        --line-hover: #f59e0b;
+        --card-bg: #1a264a;
+        --card-border: #0f152d;
+        --card-border-hover: #fde047;
+        --grid-dots: #1e293b;
+        --panel-bg: rgba(26, 38, 74, 0.95);
+        --panel-border: #0f152d;
+    }
+}
+
 body { 
     font-family: 'Inter', sans-serif; 
-    background-color: #0b101e; 
-    color: #e2e8f0; 
+    background-color: var(--bg-main); 
+    color: var(--text-main); 
     overflow: hidden; 
 }
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #0f152d; }
-::-webkit-scrollbar-thumb { background: #1a264a; border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-normal); border-radius: 4px; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 .tree-children.hidden { display: none !important; }
 
+/* --- Explicit DOM Tree Geometry --- */
 .tree-node { 
     position: relative; 
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    padding: 20px 8px 0 8px; 
+    padding: 24px 8px 0 8px; 
 }
 
 .tree-children { 
     display: flex; 
     justify-content: center; 
-    padding-top: 20px; 
+    padding-top: 24px; 
     position: relative; 
 }
 
-/* REAL DOM LINES */
+/* Interactive Hitboxes (Thick & Invisible) */
 .tree-line-btn {
     position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
-    width: 40px; height: 20px; z-index: 20; background: transparent; border: none; cursor: pointer; outline: none; padding: 0;
+    width: 30px; height: 24px; z-index: 20; background: transparent; border: none; cursor: pointer; outline: none; padding: 0;
 }
 .tree-line-btn::after {
     content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
-    width: 2px; height: 100%; background-color: #475569; transition: all 0.2s ease;
+    width: 2px; height: 100%; background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
 .line-h {
-    position: absolute; top: -10px; left: 0; width: 100%; height: 20px; cursor: pointer; z-index: 10;
+    position: absolute; top: -15px; left: 0; width: 100%; height: 30px; cursor: pointer; z-index: 10;
 }
 .line-h::after {
-    content: ''; position: absolute; top: 9px; left: 0; width: 100%; height: 2px; 
-    background-color: #475569; transition: all 0.2s ease;
+    content: ''; position: absolute; top: 14px; left: 0; width: 100%; height: 2px; 
+    background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
 .line-v {
     position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
-    width: 40px; height: 20px; cursor: pointer; z-index: 10;
+    width: 30px; height: 24px; cursor: pointer; z-index: 10;
 }
 .line-v::after {
     content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
-    width: 2px; height: 100%; background-color: #475569; transition: all 0.2s ease;
+    width: 2px; height: 100%; background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
+/* Horizontal Line Boundaries controlled purely by JS classes to prevent CSS breakage */
 .tree-node.is-first > .line-h { left: 50%; width: 50%; }
 .tree-node.is-last > .line-h { width: 50%; }
 .tree-node.is-only > .line-h { display: none; }
 
+/* Unified Hover States for all interconnected lines */
 .tree-children.lines-hovered > .tree-line-btn::after,
 .tree-children.lines-hovered > .tree-node > .line-h::after,
-.tree-children.lines-hovered > .tree-node > .line-v::after {
-    background-color: #f59e0b;
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.9);
+.tree-children.lines-hovered > .tree-node > .line-v::after,
+.tree-line-btn:hover::after,
+.line-h:hover::after,
+.line-v:hover::after {
+    background-color: var(--line-hover) !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.9) !important;
 }
 .tree-children.lines-hovered > .tree-line-btn::after,
-.tree-children.lines-hovered > .tree-node > .line-v::after {
+.tree-children.lines-hovered > .tree-node > .line-v::after,
+.tree-line-btn:hover::after, .line-v:hover::after {
     width: 6px;
 }
-.tree-children.lines-hovered > .tree-node > .line-h::after {
-    height: 6px; top: 7px;
+.tree-children.lines-hovered > .tree-node > .line-h::after,
+.line-h:hover::after {
+    height: 6px; top: 12px;
 }
 
 /* REVERSE TREE OVERRIDES (Usage Mode) */
 #treeContainer.mode-usage .tree-node {
     flex-direction: column-reverse;
-    padding: 0 8px 20px 8px;
+    padding: 0 8px 24px 8px;
 }
 #treeContainer.mode-usage .tree-children {
     padding-top: 0;
-    padding-bottom: 20px;
+    padding-bottom: 24px;
 }
 #treeContainer.mode-usage .tree-line-btn { top: auto; bottom: 0; }
 #treeContainer.mode-usage .tree-line-btn::after { top: auto; bottom: 0; }
-#treeContainer.mode-usage .line-h { top: auto; bottom: -10px; }
+#treeContainer.mode-usage .line-h { top: auto; bottom: -15px; }
 #treeContainer.mode-usage .line-v { top: auto; bottom: 0; }
 #treeContainer.mode-usage > .tree-node { padding-bottom: 0; }
 
 
-.item-card { transition: all 0.2s ease; cursor: pointer; background: #1a264a; border: 2px solid #0f152d; box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5); user-select: none; z-index: 10; }
-.item-card:hover { transform: translateY(-4px); border-color: #fde047; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8); z-index: 15; }
+/* UI Elements */
+.item-card { 
+    transition: all 0.2s ease; cursor: pointer; user-select: none; z-index: 10;
+    background: var(--card-bg); border: 2px solid var(--card-border);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1); 
+}
+.item-card:hover { 
+    transform: translateY(-4px); border-color: var(--card-border-hover); 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); z-index: 15; 
+}
 
 .controls-panel {
-    background: rgba(26, 38, 74, 0.95) !important;
-    border: 2px solid #0f152d !important;
+    background: var(--panel-bg) !important;
+    border: 2px solid var(--panel-border) !important;
     backdrop-filter: blur(4px);
 }
 
-/* Touch Action override to block native mobile panning over the canvas */
 #visualizationArea { 
     cursor: grab; 
     overflow: hidden; 
     position: relative; 
-    background-image: radial-gradient(#1e293b 1px, transparent 1px); 
+    background-image: radial-gradient(var(--grid-dots) 1px, transparent 1px); 
     background-size: 20px 20px; 
-    touch-action: none;
+    touch-action: none; /* Crucial for custom mobile pinch/pan */
 }
 #visualizationArea.grabbing { cursor: grabbing; }
 
