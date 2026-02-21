@@ -67,42 +67,57 @@
             <div id="treeContainer"></div>
         </div>
 
-        <!-- Floating Navigation Controls -->
-        <div id="navControls" class="absolute top-6 left-6 flex gap-3 z-30 hidden">
-            <button id="navBack" disabled title="Go Back" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <button id="navForward" disabled title="Go Forward" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-        </div>
+        <!-- NEW: Unified, Responsive Top-Left Toolbar -->
+        <div id="mainToolbar" class="absolute top-6 left-6 z-40 flex items-start gap-2 hidden">
+            
+            <!-- History Navigation (Always Visible) -->
+            <div class="controls-panel flex gap-1 p-1 rounded-lg shadow-lg">
+                <button id="navBack" disabled title="Go Back" class="w-10 h-10 rounded-md text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button id="navForward" disabled title="Go Forward" class="w-10 h-10 rounded-md text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
 
-        <!-- Floating Action Controls -->
-        <div id="controls" class="absolute bottom-6 left-6 flex flex-col gap-3 z-30 hidden">
-            <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
-                <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Tree Mode</span>
-                <div class="flex items-center gap-4 pt-1 justify-center">
+            <!-- Mobile Toggle Button (Visible only on small screens) -->
+            <button id="mobileMenuBtn" class="md:hidden controls-panel w-12 h-12 rounded-lg text-slate-300 hover:text-white shadow-lg flex items-center justify-center text-xl transition-all">
+                <i class="fa-solid fa-ellipsis-v"></i>
+            </button>
+
+            <!-- Tools Container (Row on Desktop, Dropdown on Mobile) -->
+            <div id="toolbarTools" class="hidden md:flex flex-col md:flex-row gap-2 absolute md:static top-14 left-0 md:top-0 md:left-0 bg-slate-900/95 md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none border border-slate-700 md:border-none shadow-2xl md:shadow-none backdrop-blur-md md:backdrop-blur-none w-max">
+                
+                <!-- Tree Mode -->
+                <div class="controls-panel rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-r border-slate-700 pr-3">Mode</span>
                     <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer hover:text-white transition-colors">
                         <input type="radio" name="treeMode" value="recipe" checked class="text-blue-600 focus:ring-blue-500 bg-slate-700 border-slate-600 cursor-pointer">
-                        <i class="fa-solid fa-hammer text-slate-400"></i> Recipe
+                        <i class="fa-solid fa-hammer text-slate-400 text-xs"></i> Recipe
                     </label>
                     <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer hover:text-white transition-colors">
                         <input type="radio" name="treeMode" value="usage" class="text-purple-500 focus:ring-purple-500 bg-slate-700 border-slate-600 cursor-pointer">
-                        <i class="fa-solid fa-code-branch text-slate-400"></i> Used In
+                        <i class="fa-solid fa-code-branch text-slate-400 text-xs"></i> Used In
                     </label>
                 </div>
-            </div>
 
-            <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
-                <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Filters</span>
-                <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer px-2 pt-1 hover:text-white transition-colors">
-                    <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-700 border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
-                    Show Transmutations
-                </label>
+                <!-- Filters -->
+                <div class="controls-panel rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-r border-slate-700 pr-3">Filters</span>
+                    <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer hover:text-white transition-colors whitespace-nowrap">
+                        <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-700 border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
+                        Show Transmutations
+                    </label>
+                </div>
+                
+                <!-- Actions -->
+                <button id="expandAllBtn" class="controls-panel px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap">
+                    <i class="fa-solid fa-layer-group"></i> Expand All
+                </button>
+                <button id="resetViewBtn" class="controls-panel px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap">
+                    <i class="fa-solid fa-compress-arrows-alt"></i> Reset
+                </button>
             </div>
-            
-            <button id="expandAllBtn" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-layer-group"></i> Expand All</button>
-            <button id="resetViewBtn" class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-compress-arrows-alt"></i> Reset View</button>
         </div>
     </main>
 

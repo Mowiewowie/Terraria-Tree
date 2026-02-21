@@ -13,6 +13,10 @@ let currentTreeItemId = null;
 let expandedNodes = new Set(); 
 let isExpandedAll = false;
 
+// Tooltip Delay State
+let lineTooltipTimeout = null;
+let lastMouseE = null;
+
 // History API State Matrix
 let appHistory = [];
 let historyIdx = -1;
@@ -45,8 +49,9 @@ const dom = {
     searchResults: document.getElementById('searchResults'),
     vizArea: document.getElementById('visualizationArea'),
     treeContainer: document.getElementById('treeContainer'),
-    controls: document.getElementById('controls'),
-    navControls: document.getElementById('navControls'),
+    mainToolbar: document.getElementById('mainToolbar'),
+    mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+    toolbarTools: document.getElementById('toolbarTools'),
     expandAllBtn: document.getElementById('expandAllBtn'),
     resetViewBtn: document.getElementById('resetViewBtn'),
     transmuteCheck: document.getElementById('showTransmutations'),
@@ -227,6 +232,12 @@ function viewItem(id) {
 }
 
 // --- User Interface Events ---
+
+// Mobile menu toggle
+dom.mobileMenuBtn.addEventListener('click', () => {
+    dom.toolbarTools.classList.toggle('hidden');
+});
+
 dom.transmuteCheck.addEventListener('change', (e) => {
     showTransmutations = e.target.checked;
     if (currentTreeItemId) {
@@ -293,7 +304,10 @@ dom.vizArea.addEventListener('wheel', e => {
     const localX = (mouseX - targetX) / targetScale;
     const localY = (mouseY - targetY) / targetScale;
     const zoomDelta = -e.deltaY * 0.0015; 
-    targetScale = Math.min(Math.max(0.1, targetScale + zoomDelta), 4);
+    
+    // Feature: Lower bound clamp to keep huge trees visible
+    targetScale = Math.max(0.2, Math.min(targetScale + zoomDelta, 4));
+    
     targetX = mouseX - localX * targetScale;
     targetY = mouseY - localY * targetScale;
     triggerAnimation();
@@ -369,7 +383,9 @@ function focusSubtree(nodeEl, containerEl) {
 
     const sX = (viz.width - padX) / (maxDistX * 2 || 1);
     const sY = (viz.height - padY) / (totalHeight || 1);
-    let newS = Math.min(sX, sY, 1.5); 
+    
+    // Feature: Lower bound clamp for Subtree Focus
+    let newS = Math.max(0.2, Math.min(sX, sY, 1.5)); 
 
     const newX = (viz.width / 2) - (pLocalCenterX * newS);
 
@@ -394,8 +410,7 @@ function loadTree(id, preserveState = false, isHistoryPop = false) {
     dom.tooltip.el.classList.add('hidden'); 
     
     dom.vizArea.classList.remove('hidden');
-    dom.controls.classList.remove('hidden');
-    dom.navControls.classList.remove('hidden'); 
+    dom.mainToolbar.classList.remove('hidden'); 
     dom.treeContainer.innerHTML = '';
     
     let isFirstLoad = false;
@@ -425,7 +440,8 @@ function resetView(isInitialLoad = false) {
     const scaleX = (vizRect.width - paddingX) / treeWidth;
     const scaleY = (vizRect.height - paddingY) / treeHeight;
     
-    targetScale = Math.min(scaleX, scaleY, 1.1);
+    // Feature: Lower bound clamp for automatic reset zoom
+    targetScale = Math.max(0.2, Math.min(scaleX, scaleY, 1.1));
     targetX = (vizRect.width - (treeWidth * targetScale)) / 2;
     targetY = Math.max(40, (vizRect.height - (treeHeight * targetScale)) / 2);
     
@@ -571,24 +587,30 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                 btn.classList.add(btnColor);
                 expandedNodes.add(id); 
                 
-                // THE FIX: Unified line event handler showing PARENT tooltip
+                // --- LINE EVENTS W/ 300MS DELAY ---
                 const attachLineEvents = (el) => {
+                    el.onmousemove = (e) => { 
+                        lastMouseE = e; 
+                        moveTooltip(e); 
+                    };
                     el.onmouseenter = (e) => {
                         container.classList.add('lines-hovered');
-                        showTooltip(e, data); 
+                        lastMouseE = e;
+                        lineTooltipTimeout = setTimeout(() => {
+                            showTooltip(lastMouseE, data); 
+                        }, 300);
                     };
                     el.onmouseleave = () => {
                         container.classList.remove('lines-hovered');
+                        clearTimeout(lineTooltipTimeout);
                         dom.tooltip.el.classList.add('hidden');
                     };
-                    el.onmousemove = moveTooltip;
                     el.onclick = (e) => {
                         e.stopPropagation();
                         focusSubtree(node, container);
                     };
                 };
 
-                // Inject interactive main trunk line
                 const lineBtn = document.createElement('button');
                 lineBtn.className = 'tree-line-btn';
                 attachLineEvents(lineBtn);
@@ -601,7 +623,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                         const isGroup = ing.name.toLowerCase().startsWith("any ");
                         let childNode;
                         if (isGroup) {
-                            childNode = createGroupNode(ing.name, ing.amount, attachLineEvents);
+                            childNode = createGroupNode(ing.name, ing.amount);
                         } else {
                             const cid = itemIndex.find(i => i.name === ing.name)?.id;
                             childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
@@ -613,7 +635,6 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                             }
                         }
                         
-                        // Inject interactive DOM horizontal and vertical line segments
                         const hLine = document.createElement('div'); hLine.className = 'line-h'; attachLineEvents(hLine);
                         const vLine = document.createElement('div'); vLine.className = 'line-v'; attachLineEvents(vLine);
                         childNode.appendChild(hLine); childNode.appendChild(vLine);
@@ -628,7 +649,6 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                         b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
                         childNode.querySelector('.item-card').appendChild(b);
                         
-                        // Inject interactive DOM horizontal and vertical line segments
                         const hLine = document.createElement('div'); hLine.className = 'line-h'; attachLineEvents(hLine);
                         const vLine = document.createElement('div'); vLine.className = 'line-v'; attachLineEvents(vLine);
                         childNode.appendChild(hLine); childNode.appendChild(vLine);
@@ -637,7 +657,6 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                     });
                 }
 
-                // Tag children so CSS draws the correct horizontal line lengths
                 const cNodes = Array.from(container.children).filter(c => c.classList.contains('tree-node'));
                 if (cNodes.length > 0) {
                     cNodes[0].classList.add('is-first');
@@ -757,7 +776,11 @@ function createGroupNode(ingName, amount) {
                 }
             };
             
-            miniCard.onmouseenter = e => showTooltip(e, data);
+            miniCard.onmouseenter = e => {
+                // Clear any lingering line timeouts if hovering an item card
+                clearTimeout(lineTooltipTimeout);
+                showTooltip(e, data);
+            };
             miniCard.onmouseleave = () => dom.tooltip.el.classList.add('hidden');
             miniCard.onmousemove = moveTooltip;
         }
@@ -809,7 +832,15 @@ dom.expandAllBtn.onclick = async () => {
 
 function showTooltip(e, data) {
     dom.tooltip.name.textContent = data.name;
-    dom.tooltip.desc.textContent = data.description || "No description.";
+    
+    // Feature 4: Hide empty or N/A descriptions
+    if (!data.description || data.description.trim() === "N/A" || data.description.trim() === "") {
+        dom.tooltip.desc.classList.add('hidden');
+    } else {
+        dom.tooltip.desc.textContent = data.description;
+        dom.tooltip.desc.classList.remove('hidden');
+    }
+    
     dom.tooltip.image.src = createDirectImageUrl(data.name);
     dom.tooltip.image.onerror = () => { if(dom.tooltip.image.src !== data.image_url) dom.tooltip.image.src = data.image_url; else dom.tooltip.image.src = FALLBACK_ICON; };
     
