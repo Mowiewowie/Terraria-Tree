@@ -8,7 +8,7 @@ let isAnimating = false;
 
 let isPanning = false, startX = 0, startY = 0;
 let showTransmutations = false;
-let treeMode = 'recipe'; // 'recipe' or 'usage'
+let treeMode = 'recipe'; 
 let currentTreeItemId = null;
 let expandedNodes = new Set(); 
 let isExpandedAll = false;
@@ -350,7 +350,17 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     name.className = `text-center font-semibold leading-tight px-2 line-clamp-2 ${isRoot ? 'text-sm' : 'text-xs'}`;
     
     card.append(img, name);
-    card.onclick = (e) => { e.stopPropagation(); if(data.url) window.open(data.url, '_blank'); };
+    
+    // NEW: Shift-Click logic
+    card.onclick = (e) => { 
+        e.stopPropagation(); 
+        if (e.ctrlKey) {
+            if(data.url) window.open(data.url, '_blank'); 
+        } else {
+            loadTree(id, false); // Reload tree with this item as base
+        }
+    };
+    
     card.onmouseenter = e => showTooltip(e, data);
     card.onmouseleave = () => dom.tooltip.el.classList.add('hidden');
     card.onmousemove = moveTooltip;
@@ -455,6 +465,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
         if(isRoot || expandedNodes.has(id)) btn.toggle('open');
     }
 
+    // THE FIX: Proper placement and spacing of No Data message
     if (isRoot && !hasValidChildren) {
         const noDataMsg = document.createElement('div');
         noDataMsg.className = 'px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg shadow-lg text-slate-400 text-sm flex items-center gap-2 z-10';
@@ -462,11 +473,11 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
         if (treeMode === 'recipe') {
             noDataMsg.innerHTML = '<i class="fa-solid fa-hammer text-slate-500"></i> Not craftable (Base Item)';
             noDataMsg.classList.add('mt-5');
-            node.appendChild(noDataMsg); 
+            node.appendChild(noDataMsg); // Normal Flex: Puts element below the icon
         } else {
             noDataMsg.innerHTML = '<i class="fa-solid fa-leaf text-slate-500"></i> Not used in any recipes (End Item)';
             noDataMsg.classList.add('mb-5');
-            node.insertBefore(noDataMsg, node.firstChild); 
+            node.appendChild(noDataMsg); // Reverse Flex: Puts element at bottom of DOM = Visually at the TOP
         }
     }
 
@@ -512,7 +523,17 @@ function createGroupNode(ingName, amount) {
         
         if (altId) {
             const data = itemsDatabase[altId];
-            miniCard.onclick = (e) => { e.stopPropagation(); if(data.url) window.open(data.url, '_blank'); };
+            
+            // NEW: Shift-Click logic for mini group cards
+            miniCard.onclick = (e) => { 
+                e.stopPropagation(); 
+                if (e.ctrlKey) {
+                    if(data.url) window.open(data.url, '_blank'); 
+                } else {
+                    loadTree(altId, false);
+                }
+            };
+            
             miniCard.onmouseenter = e => showTooltip(e, data);
             miniCard.onmouseleave = () => dom.tooltip.el.classList.add('hidden');
             miniCard.onmousemove = moveTooltip;
@@ -568,7 +589,13 @@ function showTooltip(e, data) {
     dom.tooltip.desc.textContent = data.description || "No description.";
     dom.tooltip.image.src = createDirectImageUrl(data.name);
     dom.tooltip.image.onerror = () => { if(dom.tooltip.image.src !== data.image_url) dom.tooltip.image.src = data.image_url; else dom.tooltip.image.src = FALLBACK_ICON; };
-    dom.tooltip.wiki.href = data.url;
+    
+    // Toggle the Wiki hint visibility based on valid URL
+    if (data.url) {
+        dom.tooltip.wiki.classList.remove('hidden');
+    } else {
+        dom.tooltip.wiki.classList.add('hidden');
+    }
     
     dom.tooltip.stats.innerHTML = '';
     if (data.stats) {

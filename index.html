@@ -69,7 +69,6 @@
 
         <div id="controls" class="absolute bottom-6 left-6 flex flex-col gap-3 z-30 hidden">
             
-            <!-- Tree Mode Selector -->
             <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
                 <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Tree Mode</span>
                 <div class="flex items-center gap-4 pt-1 justify-center">
@@ -84,7 +83,6 @@
                 </div>
             </div>
 
-            <!-- Existing Filters -->
             <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
                 <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Filters</span>
                 <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer px-2 pt-1 hover:text-white transition-colors">
@@ -103,7 +101,12 @@
             <img id="ttImage" src="" alt="" class="w-12 h-12 object-contain rounded bg-slate-800 p-1 border border-slate-700">
             <div>
                 <h3 id="ttName" class="font-bold text-blue-300 text-lg leading-tight"></h3>
-                <a id="ttWiki" href="#" target="_blank" class="text-xs text-slate-500 hover:text-blue-400 underline flex items-center mt-1">View on Wiki <i class="fa-solid fa-external-link-alt ml-1 text-[10px]"></i></a>
+                <!-- Refactored wiki link to a dynamic hint -->
+                <div id="ttWiki" class="text-xs text-slate-400 mt-1.5 flex items-center gap-1.5 hidden">
+                    <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[9px] font-mono text-slate-300 shadow-inner">CTRL</kbd> 
+                    <span>+ Click for Wiki</span>
+                    <i class="fa-solid fa-external-link-alt text-[10px] ml-0.5 text-slate-500"></i>
+                </div>
             </div>
         </div>
         <div id="ttStats" class="grid grid-cols-2 gap-x-4 gap-y-1 mb-3 text-sm font-mono text-slate-300 border-b border-slate-700 pb-2"></div>
