@@ -67,6 +67,17 @@
             <div id="treeContainer"></div>
         </div>
 
+        <!-- NEW: Floating Navigation Controls (Top Left) -->
+        <div id="navControls" class="absolute top-6 left-6 flex gap-3 z-30 hidden">
+            <button id="navBack" disabled class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <button id="navForward" disabled class="controls-panel text-slate-300 hover:text-white hover:border-blue-500 disabled:opacity-40 disabled:hover:border-[#0f152d] disabled:cursor-not-allowed w-12 h-12 rounded-lg flex items-center justify-center transition-all text-2xl shadow-lg">
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Floating Action Controls (Bottom Left) -->
         <div id="controls" class="absolute bottom-6 left-6 flex flex-col gap-3 z-30 hidden">
             
             <div class="controls-panel rounded-lg p-3 flex flex-col gap-2">
@@ -101,7 +112,6 @@
             <img id="ttImage" src="" alt="" class="w-12 h-12 object-contain rounded bg-slate-800 p-1 border border-slate-700">
             <div>
                 <h3 id="ttName" class="font-bold text-blue-300 text-lg leading-tight"></h3>
-                <!-- Refactored wiki link to a dynamic hint -->
                 <div id="ttWiki" class="text-xs text-slate-400 mt-1.5 flex items-center gap-1.5 hidden">
                     <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[9px] font-mono text-slate-300 shadow-inner">CTRL</kbd> 
                     <span>+ Click for Wiki</span>

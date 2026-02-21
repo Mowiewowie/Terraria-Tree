@@ -13,6 +13,10 @@ let currentTreeItemId = null;
 let expandedNodes = new Set(); 
 let isExpandedAll = false;
 
+// History API State Matrix
+let appHistory = [];
+let historyIdx = -1;
+
 const FALLBACK_ICON = 'https://terraria.wiki.gg/wiki/Special:FilePath/Angel_Statue.png';
 const JSON_FILENAME = 'terraria_items_final.json';
 
@@ -41,10 +45,13 @@ const dom = {
     vizArea: document.getElementById('visualizationArea'),
     treeContainer: document.getElementById('treeContainer'),
     controls: document.getElementById('controls'),
+    navControls: document.getElementById('navControls'),
     expandAllBtn: document.getElementById('expandAllBtn'),
     resetViewBtn: document.getElementById('resetViewBtn'),
     transmuteCheck: document.getElementById('showTransmutations'),
     dbStatus: document.getElementById('dbStatus'),
+    navBack: document.getElementById('navBack'),
+    navForward: document.getElementById('navForward'),
     tooltip: {
         el: document.getElementById('globalTooltip'),
         name: document.getElementById('ttName'),
@@ -138,9 +145,7 @@ function buildUsageIndex() {
                             viaGroup: groupName
                         });
                     };
-
                     addUsage(ing.name, null);
-
                     if (RECIPE_GROUPS[ing.name]) {
                         RECIPE_GROUPS[ing.name].forEach(groupItem => {
                             addUsage(groupItem, ing.name);
@@ -155,7 +160,6 @@ function buildUsageIndex() {
 function initializeData(data) {
     itemsDatabase = data;
     itemIndex = Object.values(itemsDatabase).map(i => ({ id: i.id, name: i.name, fallback_image: i.image_url }));
-    
     buildUsageIndex(); 
 
     dom.uploadSection.classList.add('hidden');
@@ -165,6 +169,47 @@ function initializeData(data) {
     dom.dbStatus.classList.add('text-green-400');
     dom.dbStatus.classList.remove('text-red-400');
     dom.searchInput.focus();
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id && itemsDatabase[id]) {
+        viewItem(id);
+    }
+}
+
+// --- History API & Navigation Controllers ---
+function updateNavButtons() {
+    dom.navBack.disabled = historyIdx <= 0;
+    dom.navForward.disabled = historyIdx >= appHistory.length - 1;
+}
+
+dom.navBack.onclick = () => history.back();
+dom.navForward.onclick = () => history.forward();
+
+window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.idx !== undefined) {
+        historyIdx = e.state.idx;
+        const state = appHistory[historyIdx];
+        if (state) {
+            treeMode = state.mode;
+            document.querySelector(`input[name="treeMode"][value="${state.mode}"]`).checked = true;
+            if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
+            else dom.treeContainer.classList.remove('mode-usage');
+            
+            updateNavButtons();
+            loadTree(state.id, false); 
+        }
+    }
+});
+
+function viewItem(id) {
+    appHistory = appHistory.slice(0, historyIdx + 1);
+    appHistory.push({ id: id, mode: treeMode });
+    historyIdx++;
+    history.pushState({ idx: historyIdx }, "", `?id=${id}`);
+    
+    updateNavButtons();
+    loadTree(id, false);
 }
 
 // --- User Interface Events ---
@@ -181,7 +226,7 @@ document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
         } else {
             dom.treeContainer.classList.remove('mode-usage');
         }
-        if (currentTreeItemId) loadTree(currentTreeItemId, false);
+        if (currentTreeItemId) viewItem(currentTreeItemId);
     });
 });
 
@@ -214,13 +259,12 @@ dom.searchInput.addEventListener('input', (e) => {
             const d = document.createElement('div');
             d.className = 'flex items-center gap-3 p-2 hover:bg-slate-700 cursor-pointer border-b border-slate-700 text-sm';
             d.innerHTML = `<img src="${createDirectImageUrl(i.name)}" class="w-6 h-6 object-contain"><span class="text-slate-200 font-medium">${i.name}</span>`;
-            d.onclick = () => loadTree(i.id); 
+            d.onclick = () => viewItem(i.id); 
             dom.searchResults.appendChild(d);
         });
     } else dom.searchResults.classList.add('hidden');
 });
 
-// --- Viewport Controls ---
 dom.resetViewBtn.onclick = () => resetView(false);
 
 dom.vizArea.addEventListener('wheel', e => { 
@@ -247,13 +291,33 @@ window.addEventListener('mousemove', e => {
     if(isPanning) { e.preventDefault(); targetX = e.clientX - startX; targetY = e.clientY - startY; triggerAnimation(); }
 });
 
-// --- Tree Generation Logic ---
+// --- Tree Engine ---
+function syncExpandAllButton() {
+    const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn'));
+    if (expandBtns.length === 0) {
+        isExpandedAll = false;
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand All';
+        return;
+    }
+    const allExpanded = expandBtns.every(btn => btn.innerHTML.includes('fa-minus'));
+    isExpandedAll = allExpanded;
+    
+    if (allExpanded) {
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-compress"></i> Collapse All';
+    } else {
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand All';
+    }
+}
+
 function loadTree(id, preserveState = false) {
     currentTreeItemId = id;
     dom.searchInput.value = '';
     dom.searchResults.classList.add('hidden');
+    dom.tooltip.el.classList.add('hidden'); 
+    
     dom.vizArea.classList.remove('hidden');
     dom.controls.classList.remove('hidden');
+    dom.navControls.classList.remove('hidden'); // Show navigation buttons
     dom.treeContainer.innerHTML = '';
     
     let isFirstLoad = false;
@@ -261,10 +325,11 @@ function loadTree(id, preserveState = false) {
     if (!preserveState) {
         expandedNodes.clear();
         isExpandedAll = false;
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand All';
         isFirstLoad = true;
     }
+    
     dom.treeContainer.appendChild(createTreeNode(id, true));
+    syncExpandAllButton();
     
     if (!preserveState) {
         setTimeout(() => resetView(isFirstLoad), 50);
@@ -351,13 +416,12 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     
     card.append(img, name);
     
-    // NEW: Shift-Click logic
     card.onclick = (e) => { 
         e.stopPropagation(); 
-        if (e.ctrlKey) {
+        if (e.ctrlKey || e.metaKey) {
             if(data.url) window.open(data.url, '_blank'); 
         } else {
-            loadTree(id, false); // Reload tree with this item as base
+            viewItem(id);
         }
     };
     
@@ -459,13 +523,17 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
             return true; 
         };
         
-        btn.onclick = e => { e.stopPropagation(); btn.toggle(); };
+        btn.onclick = e => { 
+            e.stopPropagation(); 
+            btn.toggle(); 
+            setTimeout(() => syncExpandAllButton(), 10);
+        };
+        
         node.append(btn, container);
         
         if(isRoot || expandedNodes.has(id)) btn.toggle('open');
     }
 
-    // THE FIX: Proper placement and spacing of No Data message
     if (isRoot && !hasValidChildren) {
         const noDataMsg = document.createElement('div');
         noDataMsg.className = 'px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg shadow-lg text-slate-400 text-sm flex items-center gap-2 z-10';
@@ -473,11 +541,11 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
         if (treeMode === 'recipe') {
             noDataMsg.innerHTML = '<i class="fa-solid fa-hammer text-slate-500"></i> Not craftable (Base Item)';
             noDataMsg.classList.add('mt-5');
-            node.appendChild(noDataMsg); // Normal Flex: Puts element below the icon
+            node.appendChild(noDataMsg); 
         } else {
             noDataMsg.innerHTML = '<i class="fa-solid fa-leaf text-slate-500"></i> Not used in any recipes (End Item)';
             noDataMsg.classList.add('mb-5');
-            node.appendChild(noDataMsg); // Reverse Flex: Puts element at bottom of DOM = Visually at the TOP
+            node.appendChild(noDataMsg); 
         }
     }
 
@@ -524,13 +592,12 @@ function createGroupNode(ingName, amount) {
         if (altId) {
             const data = itemsDatabase[altId];
             
-            // NEW: Shift-Click logic for mini group cards
             miniCard.onclick = (e) => { 
                 e.stopPropagation(); 
-                if (e.ctrlKey) {
+                if (e.ctrlKey || e.metaKey) {
                     if(data.url) window.open(data.url, '_blank'); 
                 } else {
-                    loadTree(altId, false);
+                    viewItem(altId);
                 }
             };
             
@@ -580,7 +647,7 @@ dom.expandAllBtn.onclick = async () => {
         d++;
     }
     
-    dom.expandAllBtn.innerHTML = isExpandedAll ? '<i class="fa-solid fa-compress"></i> Collapse All' : '<i class="fa-solid fa-layer-group"></i> Expand All';
+    syncExpandAllButton();
     setTimeout(() => resetView(false), 100);
 };
 
@@ -590,7 +657,6 @@ function showTooltip(e, data) {
     dom.tooltip.image.src = createDirectImageUrl(data.name);
     dom.tooltip.image.onerror = () => { if(dom.tooltip.image.src !== data.image_url) dom.tooltip.image.src = data.image_url; else dom.tooltip.image.src = FALLBACK_ICON; };
     
-    // Toggle the Wiki hint visibility based on valid URL
     if (data.url) {
         dom.tooltip.wiki.classList.remove('hidden');
     } else {
