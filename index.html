@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerrariTree</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script src="app.js" defer></script>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="w-full bg-slate-800 border-b border-slate-700 py-3 px-6 shadow-lg z-50 flex-none">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-tree text-green-400 text-2xl"></i>
+                <h1 class="text-2xl font-bold text-white hidden md:block">Terrari<span class="text-green-400">Tree</span></h1>
+            </div>
+            
+            <div class="relative w-full max-w-xl search-container flex gap-2">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-search text-slate-400 text-sm"></i>
+                    </div>
+                    <input type="text" id="searchInput" disabled
+                        class="block w-full pl-10 pr-3 py-2 border border-slate-600 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-sm"
+                        placeholder="Loading database..." autocomplete="off">
+                    <div id="searchResults" class="hidden absolute mt-1 w-full bg-slate-800 border border-slate-600 rounded-md shadow-2xl max-h-96 overflow-y-auto z-50"></div>
+                </div>
+            </div>
+
+            <div class="text-sm font-medium text-slate-400 whitespace-nowrap">
+                <span id="dbStatus">Initializing...</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full relative overflow-hidden bg-slate-900">
+        
+        <div id="uploadSection" class="absolute inset-0 flex items-center justify-center z-40 bg-slate-900/90 backdrop-blur-sm hidden">
+            <div class="p-10 border-2 border-dashed border-slate-600 rounded-xl bg-slate-800 flex flex-col items-center text-center max-w-lg">
+                <i class="fa-solid fa-file-code text-5xl text-slate-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-white mb-2">Ingest Data File</h2>
+                <div id="autoLoadStatus" class="mb-6">
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-400 text-3xl"></i>
+                    <p class="text-sm text-slate-300 mt-3">Attempting to auto-load <code class="text-blue-300">terraria_items_final.json</code>...</p>
+                </div>
+                <div id="manualUpload" class="hidden animate-fade-in">
+                    <p class="text-base text-slate-400 mb-4">Auto-load failed. Please drop your JSON file here.</p>
+                    <input type="file" id="fileInput" accept=".json" class="hidden">
+                    <button onclick="document.getElementById('fileInput').click()" 
+                        class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-base rounded-lg font-medium transition-colors">Select File</button>
+                    <p class="text-xs text-slate-500 mt-4 max-w-xs mx-auto"><i class="fa-solid fa-circle-info mr-1"></i> Browsers block auto-loading local files. To fix, use Drag & Drop or run a local server.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="visualizationArea" class="w-full h-full hidden">
+            <div id="treeContainer"></div>
+        </div>
+
+        <div id="controls" class="absolute bottom-6 left-6 flex flex-col gap-3 z-30 hidden">
+            <div class="bg-slate-800 border border-slate-600 rounded-lg shadow-lg p-3 flex flex-col gap-2">
+                <span class="text-xs text-slate-500 font-bold uppercase tracking-wider text-center border-b border-slate-700 pb-1">Filters</span>
+                <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer px-2 pt-1">
+                    <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-700 border-slate-600 text-blue-600 focus:ring-0">
+                    Show Transmutations
+                </label>
+            </div>
+            <button id="expandAllBtn" class="bg-slate-800 border border-slate-600 text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-layer-group"></i> Expand All</button>
+            <button id="resetViewBtn" class="bg-slate-800 border border-slate-600 text-slate-300 hover:text-white hover:border-blue-500 px-4 py-2 rounded shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium"><i class="fa-solid fa-compress-arrows-alt"></i> Reset View</button>
+        </div>
+    </main>
+
+    <div id="globalTooltip" class="tooltip fixed hidden bg-slate-900 border border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left">
+        <div class="flex items-start gap-4 mb-3">
+            <img id="ttImage" src="" alt="" class="w-12 h-12 object-contain rounded bg-slate-800 p-1 border border-slate-700">
+            <div>
+                <h3 id="ttName" class="font-bold text-blue-300 text-lg leading-tight"></h3>
+                <a id="ttWiki" href="#" target="_blank" class="text-xs text-slate-500 hover:text-blue-400 underline flex items-center mt-1">View on Wiki <i class="fa-solid fa-external-link-alt ml-1 text-[10px]"></i></a>
+            </div>
+        </div>
+        <div id="ttStats" class="grid grid-cols-2 gap-x-4 gap-y-1 mb-3 text-sm font-mono text-slate-300 border-b border-slate-700 pb-2"></div>
+        <div id="ttStation" class="mb-2 text-sm text-yellow-500/80 font-semibold hidden"><i class="fa-solid fa-hammer mr-2"></i> <span id="ttStationText"></span></div>
+        <div id="ttAcquisition" class="mb-3 text-sm text-emerald-400 font-semibold hidden">
+            <div class="uppercase tracking-wide text-slate-500 text-xs mb-1">Obtained From:</div>
+            <ul id="ttAcquisitionList" class="list-disc list-inside space-y-0.5"></ul>
+        </div>
+        <p id="ttDesc" class="text-sm text-slate-400 italic leading-snug"></p>
+    </div>
+
+</body>
+</html>
