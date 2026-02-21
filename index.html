@@ -67,10 +67,10 @@
             <div id="treeContainer"></div>
         </div>
 
-        <!-- NEW: Unified, Responsive Top-Left Toolbar -->
+        <!-- Floating Navigation Controls -->
         <div id="mainToolbar" class="absolute top-6 left-6 z-40 flex items-start gap-2 hidden">
             
-            <!-- History Navigation (Always Visible) -->
+            <!-- History Navigation (Aligned strictly to 12x12) -->
             <div class="controls-panel flex gap-1 p-1 rounded-lg shadow-lg">
                 <button id="navBack" disabled title="Go Back" class="w-10 h-10 rounded-md text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all flex items-center justify-center text-xl">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -80,16 +80,17 @@
                 </button>
             </div>
 
-            <!-- Mobile Toggle Button (Visible only on small screens) -->
-            <button id="mobileMenuBtn" class="md:hidden controls-panel w-12 h-12 rounded-lg text-slate-300 hover:text-white shadow-lg flex items-center justify-center text-xl transition-all">
-                <i class="fa-solid fa-ellipsis-v"></i>
-            </button>
+            <!-- Mobile Toggle Button (Matched padding & dimensions) -->
+            <div class="controls-panel md:hidden p-1 rounded-lg shadow-lg">
+                <button id="mobileMenuBtn" class="w-10 h-10 rounded-md text-slate-300 hover:text-white hover:bg-slate-700 flex items-center justify-center text-xl transition-all">
+                    <i class="fa-solid fa-ellipsis-v"></i>
+                </button>
+            </div>
 
-            <!-- Tools Container (Row on Desktop, Dropdown on Mobile) -->
-            <div id="toolbarTools" class="hidden md:flex flex-col md:flex-row gap-2 absolute md:static top-14 left-0 md:top-0 md:left-0 bg-slate-900/95 md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none border border-slate-700 md:border-none shadow-2xl md:shadow-none backdrop-blur-md md:backdrop-blur-none w-max">
+            <!-- Tools Container -->
+            <div id="toolbarTools" class="hidden md:flex flex-col md:flex-row gap-2 absolute md:static top-[3.5rem] left-0 md:top-0 md:left-0 bg-slate-900/95 md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none border border-slate-700 md:border-none shadow-2xl md:shadow-none backdrop-blur-md md:backdrop-blur-none w-max">
                 
-                <!-- Tree Mode -->
-                <div class="controls-panel rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg">
+                <div class="controls-panel rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg h-12">
                     <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-r border-slate-700 pr-3">Mode</span>
                     <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer hover:text-white transition-colors">
                         <input type="radio" name="treeMode" value="recipe" checked class="text-blue-600 focus:ring-blue-500 bg-slate-700 border-slate-600 cursor-pointer">
@@ -101,8 +102,7 @@
                     </label>
                 </div>
 
-                <!-- Filters -->
-                <div class="controls-panel rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg">
+                <div class="controls-panel rounded-lg px-4 py-2 flex items-center gap-3 shadow-lg h-12">
                     <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-r border-slate-700 pr-3">Filters</span>
                     <label class="flex items-center gap-2 text-sm font-medium text-slate-300 cursor-pointer hover:text-white transition-colors whitespace-nowrap">
                         <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-700 border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
@@ -110,11 +110,10 @@
                     </label>
                 </div>
                 
-                <!-- Actions -->
-                <button id="expandAllBtn" class="controls-panel px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap">
+                <button id="expandAllBtn" class="controls-panel px-4 rounded-lg text-slate-300 hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap h-12">
                     <i class="fa-solid fa-layer-group"></i> Expand All
                 </button>
-                <button id="resetViewBtn" class="controls-panel px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap">
+                <button id="resetViewBtn" class="controls-panel px-4 rounded-lg text-slate-300 hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap h-12">
                     <i class="fa-solid fa-compress-arrows-alt"></i> Reset
                 </button>
             </div>

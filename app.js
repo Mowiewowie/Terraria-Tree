@@ -1,4 +1,3 @@
-// --- State Variables & Dependencies ---
 let itemsDatabase = {}, itemIndex = [];
 let usageIndex = {}; 
 
@@ -13,14 +12,16 @@ let currentTreeItemId = null;
 let expandedNodes = new Set(); 
 let isExpandedAll = false;
 
-// Tooltip Delay State
 let lineTooltipTimeout = null;
 let lastMouseE = null;
 
-// History API State Matrix
 let appHistory = [];
 let historyIdx = -1;
 const MAX_HISTORY = 50;
+
+// Mobile Touch Tracking
+let initialPinchDist = null;
+let initialScale = 1;
 
 const FALLBACK_ICON = 'https://terraria.wiki.gg/wiki/Special:FilePath/Angel_Statue.png';
 const JSON_FILENAME = 'terraria_items_final.json';
@@ -72,7 +73,14 @@ const dom = {
     }
 };
 
-// --- Physics Engine ---
+// Responsive Minimum Zoom Math
+function getMinScale() {
+    const w = window.innerWidth;
+    if (w < 600) return 0.40; // Mobile
+    if (w < 1024) return 0.25; // Tablet
+    return 0.15; // Desktop
+}
+
 function renderLoop() {
     const factor = 0.15;
     currentX += (targetX - currentX) * factor;
@@ -82,7 +90,7 @@ function renderLoop() {
     dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
 
     const diff = Math.abs(targetX - currentX) + Math.abs(targetY - currentY) + Math.abs(targetScale - currentScale);
-    if (diff < 0.001 && !isPanning) {
+    if (diff < 0.001 && !isPanning && !initialPinchDist) {
         currentX = targetX;
         currentY = targetY;
         currentScale = targetScale;
@@ -107,7 +115,6 @@ function createDirectImageUrl(name) {
     return `https://terraria.wiki.gg/images/${h[0]}/${h.substring(0, 2)}/${f}`;
 }
 
-// --- Data Fetching & Initialization ---
 dom.fileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
 document.body.addEventListener('dragover', e => e.preventDefault());
 document.body.addEventListener('drop', e => { e.preventDefault(); if(e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
@@ -176,7 +183,6 @@ function initializeData(data) {
     }
 }
 
-// --- History API & Navigation Controllers ---
 function saveCurrentState() {
     if (historyIdx >= 0 && appHistory[historyIdx]) {
         appHistory[historyIdx].x = targetX;
@@ -231,9 +237,6 @@ function viewItem(id) {
     loadTree(id, false);
 }
 
-// --- User Interface Events ---
-
-// Mobile menu toggle
 dom.mobileMenuBtn.addEventListener('click', () => {
     dom.toolbarTools.classList.toggle('hidden');
 });
@@ -305,9 +308,7 @@ dom.vizArea.addEventListener('wheel', e => {
     const localY = (mouseY - targetY) / targetScale;
     const zoomDelta = -e.deltaY * 0.0015; 
     
-    // Feature: Lower bound clamp to keep huge trees visible
-    targetScale = Math.max(0.2, Math.min(targetScale + zoomDelta, 4));
-    
+    targetScale = Math.max(getMinScale(), Math.min(targetScale + zoomDelta, 4));
     targetX = mouseX - localX * targetScale;
     targetY = mouseY - localY * targetScale;
     triggerAnimation();
@@ -316,6 +317,69 @@ dom.vizArea.addEventListener('wheel', e => {
     wheelTimeout = setTimeout(saveCurrentState, 300);
 });
 
+// Mobile Touch Control Events
+dom.vizArea.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+        isPanning = true;
+        startX = e.touches[0].clientX - targetX;
+        startY = e.touches[0].clientY - targetY;
+        dom.vizArea.classList.add('grabbing');
+    } else if (e.touches.length === 2) {
+        isPanning = false; 
+        initialPinchDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        initialScale = targetScale;
+    }
+}, { passive: false });
+
+dom.vizArea.addEventListener('touchmove', e => {
+    e.preventDefault(); 
+    if (isPanning && e.touches.length === 1) {
+        targetX = e.touches[0].clientX - startX;
+        targetY = e.touches[0].clientY - startY;
+        triggerAnimation();
+    } else if (e.touches.length === 2 && initialPinchDist) {
+        const currentDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        const zoomDelta = currentDist / initialPinchDist;
+        
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        const rect = dom.vizArea.getBoundingClientRect();
+        const mouseX = midX - rect.left;
+        const mouseY = midY - rect.top;
+        const localX = (mouseX - targetX) / targetScale;
+        const localY = (mouseY - targetY) / targetScale;
+
+        const newScale = Math.max(getMinScale(), Math.min(initialScale * zoomDelta, 4));
+        if (Number.isFinite(newScale)) {
+            targetScale = newScale;
+            targetX = mouseX - localX * targetScale;
+            targetY = mouseY - localY * targetScale;
+            triggerAnimation();
+        }
+    }
+}, { passive: false });
+
+dom.vizArea.addEventListener('touchend', e => {
+    if (e.touches.length === 0) {
+        isPanning = false;
+        initialPinchDist = null;
+        dom.vizArea.classList.remove('grabbing');
+        saveCurrentState();
+    } else if (e.touches.length === 1) {
+        initialPinchDist = null;
+        isPanning = true;
+        startX = e.touches[0].clientX - targetX;
+        startY = e.touches[0].clientY - targetY;
+    }
+});
+
+// Desktop Mouse Tracking
 dom.vizArea.addEventListener('mousedown', e => { 
     isPanning = true; startX = e.clientX - targetX; startY = e.clientY - targetY; dom.vizArea.classList.add('grabbing'); 
 });
@@ -332,7 +396,6 @@ window.addEventListener('mousemove', e => {
     if(isPanning) { e.preventDefault(); targetX = e.clientX - startX; targetY = e.clientY - startY; triggerAnimation(); }
 });
 
-// --- Tree Engine ---
 function syncExpandAllButton() {
     const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn'));
     if (expandBtns.length === 0) {
@@ -383,9 +446,7 @@ function focusSubtree(nodeEl, containerEl) {
 
     const sX = (viz.width - padX) / (maxDistX * 2 || 1);
     const sY = (viz.height - padY) / (totalHeight || 1);
-    
-    // Feature: Lower bound clamp for Subtree Focus
-    let newS = Math.max(0.2, Math.min(sX, sY, 1.5)); 
+    let newS = Math.max(getMinScale(), Math.min(sX, sY, 1.5)); 
 
     const newX = (viz.width / 2) - (pLocalCenterX * newS);
 
@@ -440,8 +501,7 @@ function resetView(isInitialLoad = false) {
     const scaleX = (vizRect.width - paddingX) / treeWidth;
     const scaleY = (vizRect.height - paddingY) / treeHeight;
     
-    // Feature: Lower bound clamp for automatic reset zoom
-    targetScale = Math.max(0.2, Math.min(scaleX, scaleY, 1.1));
+    targetScale = Math.max(getMinScale(), Math.min(scaleX, scaleY, 1.1));
     targetX = (vizRect.width - (treeWidth * targetScale)) / 2;
     targetY = Math.max(40, (vizRect.height - (treeHeight * targetScale)) / 2);
     
@@ -522,7 +582,10 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
         }
     };
     
-    card.onmouseenter = e => showTooltip(e, data);
+    card.onmouseenter = e => {
+        clearTimeout(lineTooltipTimeout);
+        showTooltip(e, data);
+    };
     card.onmouseleave = () => dom.tooltip.el.classList.add('hidden');
     card.onmousemove = moveTooltip;
     node.appendChild(card);
@@ -587,7 +650,6 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                 btn.classList.add(btnColor);
                 expandedNodes.add(id); 
                 
-                // --- LINE EVENTS W/ 300MS DELAY ---
                 const attachLineEvents = (el) => {
                     el.onmousemove = (e) => { 
                         lastMouseE = e; 
@@ -623,7 +685,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                         const isGroup = ing.name.toLowerCase().startsWith("any ");
                         let childNode;
                         if (isGroup) {
-                            childNode = createGroupNode(ing.name, ing.amount);
+                            childNode = createGroupNode(ing.name, ing.amount, attachLineEvents);
                         } else {
                             const cid = itemIndex.find(i => i.name === ing.name)?.id;
                             childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
@@ -727,7 +789,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     return node;
 }
 
-function createGroupNode(ingName, amount) {
+function createGroupNode(ingName, amount, lineEventsFn) {
     const container = document.createElement('div');
     container.className = 'tree-node';
 
@@ -777,7 +839,6 @@ function createGroupNode(ingName, amount) {
             };
             
             miniCard.onmouseenter = e => {
-                // Clear any lingering line timeouts if hovering an item card
                 clearTimeout(lineTooltipTimeout);
                 showTooltip(e, data);
             };
@@ -833,7 +894,6 @@ dom.expandAllBtn.onclick = async () => {
 function showTooltip(e, data) {
     dom.tooltip.name.textContent = data.name;
     
-    // Feature 4: Hide empty or N/A descriptions
     if (!data.description || data.description.trim() === "N/A" || data.description.trim() === "") {
         dom.tooltip.desc.classList.add('hidden');
     } else {

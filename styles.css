@@ -10,11 +10,9 @@ body {
 ::-webkit-scrollbar-track { background: #0f152d; }
 ::-webkit-scrollbar-thumb { background: #1a264a; border-radius: 4px; }
 
-/* Enforce hidden utility against flexbox overrides */
 .tree-children.hidden { display: none !important; }
 
-/* --- Normal Tree Geometry (Recipe Mode - Downward) --- */
-div.tree-node { 
+.tree-node { 
     position: relative; 
     display: flex; 
     flex-direction: column; 
@@ -22,17 +20,17 @@ div.tree-node {
     padding: 20px 8px 0 8px; 
 }
 
-div.tree-children { 
+.tree-children { 
     display: flex; 
     justify-content: center; 
     padding-top: 20px; 
     position: relative; 
 }
 
-/* REAL DOM LINES FOR PERFECT RENDERING & HITBOXES */
+/* REAL DOM LINES */
 .tree-line-btn {
     position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
-    width: 40px; height: 20px; z-index: 20; background: transparent; border: none; cursor: pointer;
+    width: 40px; height: 20px; z-index: 20; background: transparent; border: none; cursor: pointer; outline: none; padding: 0;
 }
 .tree-line-btn::after {
     content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
@@ -56,16 +54,14 @@ div.tree-children {
     width: 2px; height: 100%; background-color: #475569; transition: all 0.2s ease;
 }
 
-/* Horizontal logic via explicit JS classes */
 .tree-node.is-first > .line-h { left: 50%; width: 50%; }
 .tree-node.is-last > .line-h { width: 50%; }
 .tree-node.is-only > .line-h { display: none; }
 
-/* Unified Glowing Hover State */
 .tree-children.lines-hovered > .tree-line-btn::after,
 .tree-children.lines-hovered > .tree-node > .line-h::after,
 .tree-children.lines-hovered > .tree-node > .line-v::after {
-    background-color: #f59e0b; /* Bright Yellow-Orange */
+    background-color: #f59e0b;
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.9);
 }
 .tree-children.lines-hovered > .tree-line-btn::after,
@@ -76,7 +72,7 @@ div.tree-children {
     height: 6px; top: 7px;
 }
 
-/* REVERSE TREE OVERRIDES (Usage Mode - Upward) */
+/* REVERSE TREE OVERRIDES (Usage Mode) */
 #treeContainer.mode-usage .tree-node {
     flex-direction: column-reverse;
     padding: 0 8px 20px 8px;
@@ -92,7 +88,6 @@ div.tree-children {
 #treeContainer.mode-usage > .tree-node { padding-bottom: 0; }
 
 
-/* UI Elements */
 .item-card { transition: all 0.2s ease; cursor: pointer; background: #1a264a; border: 2px solid #0f152d; box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5); user-select: none; z-index: 10; }
 .item-card:hover { transform: translateY(-4px); border-color: #fde047; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8); z-index: 15; }
 
@@ -102,7 +97,15 @@ div.tree-children {
     backdrop-filter: blur(4px);
 }
 
-#visualizationArea { cursor: grab; overflow: hidden; position: relative; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 20px 20px; }
+/* Touch Action override to block native mobile panning over the canvas */
+#visualizationArea { 
+    cursor: grab; 
+    overflow: hidden; 
+    position: relative; 
+    background-image: radial-gradient(#1e293b 1px, transparent 1px); 
+    background-size: 20px 20px; 
+    touch-action: none;
+}
 #visualizationArea.grabbing { cursor: grabbing; }
 
 #treeContainer { 
