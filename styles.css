@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* --- Native Light/Dark Mode Variables --- */
 :root {
     --bg-main: #f8fafc;
     --text-main: #0f172a;
@@ -44,6 +43,45 @@ body {
 
 .tree-children.hidden { display: none !important; }
 
+/* --- In-Game Rarity Styling --- */
+.terraria-text {
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 2px 2px 3px rgba(0,0,0,0.6);
+}
+
+.rarity--1 { color: #828282 !important; } /* Gray */
+.rarity-0 { color: #ffffff !important; }  /* White */
+.rarity-1 { color: #9696ff !important; }  /* Blue */
+.rarity-2 { color: #96ff96 !important; }  /* Green */
+.rarity-3 { color: #ffc896 !important; }  /* Orange */
+.rarity-4 { color: #ff9696 !important; }  /* Light Red */
+.rarity-5 { color: #ff96ff !important; }  /* Pink */
+.rarity-6 { color: #d2a0ff !important; }  /* Light Purple */
+.rarity-7 { color: #96ff00 !important; }  /* Lime */
+.rarity-8 { color: #ffff00 !important; }  /* Yellow */
+.rarity-9 { color: #05c8ff !important; }  /* Cyan */
+.rarity-10 { color: #ff2864 !important; } /* Red */
+.rarity-11 { color: #b428ff !important; } /* Purple */
+.rarity--11 { color: #ff9600 !important; }/* Amber / Quest */
+
+.rarity--12 { animation: rarityRainbow 2s linear infinite !important; } /* Expert */
+.rarity--13 { animation: rarityFiery 0.2s alternate infinite !important; } /* Master - Flashes rapidly */
+
+@keyframes rarityRainbow {
+    0% { color: #FF4000; }
+    14% { color: #FFC800; }
+    28% { color: #FFFF00; }
+    42% { color: #00FF00; }
+    56% { color: #00FFFF; }
+    70% { color: #0000FF; }
+    84% { color: #C800FF; }
+    100% { color: #FF4000; }
+}
+
+@keyframes rarityFiery {
+    0% { color: #FF0000; }
+    100% { color: #FF7D00; }
+}
+
 /* --- Explicit DOM Tree Geometry --- */
 .tree-node { 
     position: relative; 
@@ -60,7 +98,6 @@ body {
     position: relative; 
 }
 
-/* Interactive Hitboxes (Thick & Invisible) */
 .tree-line-btn {
     position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
     width: 30px; height: 24px; z-index: 20; background: transparent; border: none; cursor: pointer; outline: none; padding: 0;
@@ -87,12 +124,10 @@ body {
     width: 2px; height: 100%; background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
-/* Horizontal Line Boundaries controlled purely by JS classes to prevent CSS breakage */
 .tree-node.is-first > .line-h { left: 50%; width: 50%; }
 .tree-node.is-last > .line-h { width: 50%; }
 .tree-node.is-only > .line-h { display: none; }
 
-/* Unified Hover States for all interconnected lines */
 .tree-children.lines-hovered > .tree-line-btn::after,
 .tree-children.lines-hovered > .tree-node > .line-h::after,
 .tree-children.lines-hovered > .tree-node > .line-v::after,
@@ -112,7 +147,6 @@ body {
     height: 6px; top: 12px;
 }
 
-/* REVERSE TREE OVERRIDES (Usage Mode) */
 #treeContainer.mode-usage .tree-node {
     flex-direction: column-reverse;
     padding: 0 8px 24px 8px;
@@ -127,8 +161,6 @@ body {
 #treeContainer.mode-usage .line-v { top: auto; bottom: 0; }
 #treeContainer.mode-usage > .tree-node { padding-bottom: 0; }
 
-
-/* UI Elements */
 .item-card { 
     transition: all 0.2s ease; cursor: pointer; user-select: none; z-index: 10;
     background: var(--card-bg); border: 2px solid var(--card-border);
@@ -137,6 +169,49 @@ body {
 .item-card:hover { 
     transform: translateY(-4px); border-color: var(--card-border-hover); 
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); z-index: 15; 
+}
+
+/* Fix: Disable native image dragging to prevent click/drag conflicts */
+.item-card img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+/* Lateral Category Box */
+.category-box {
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    min-width: 320px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+}
+.category-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+    border-bottom: 2px solid var(--line-normal);
+    padding-bottom: 12px;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 100%;
+    max-width: 1000px;
+    justify-content: center;
 }
 
 .controls-panel {
@@ -151,7 +226,7 @@ body {
     position: relative; 
     background-image: radial-gradient(var(--grid-dots) 1px, transparent 1px); 
     background-size: 20px 20px; 
-    touch-action: none; /* Crucial for custom mobile pinch/pan */
+    touch-action: none; 
 }
 #visualizationArea.grabbing { cursor: grabbing; }
 
