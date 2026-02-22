@@ -93,7 +93,6 @@ function isMobileUX() {
     return window.matchMedia("(any-pointer: coarse) and (hover: none)").matches;
 }
 
-// --- Browser File System Safety Wrappers ---
 function safeReplaceState(state, url) {
     try { history.replaceState(state, "", url); } catch (e) { console.warn("Local file history blocked."); }
 }
@@ -101,6 +100,40 @@ function safeReplaceState(state, url) {
 function safePushState(state, url) {
     try { history.pushState(state, "", url); } catch (e) { console.warn("Local file history blocked."); }
 }
+
+// --- Toolbar Drag-to-Scroll Logic ---
+let isToolbarDragging = false;
+let toolbarStartX;
+let toolbarScrollLeft;
+
+dom.toolbarTools.addEventListener('mousedown', (e) => {
+    isToolbarDragging = true;
+    toolbarStartX = e.pageX - dom.toolbarTools.offsetLeft;
+    toolbarScrollLeft = dom.toolbarTools.scrollLeft;
+    dom.toolbarTools.style.cursor = 'grabbing';
+});
+
+dom.toolbarTools.addEventListener('mouseleave', () => {
+    isToolbarDragging = false;
+    dom.toolbarTools.style.cursor = '';
+    dom.toolbarTools.style.pointerEvents = '';
+});
+
+dom.toolbarTools.addEventListener('mouseup', () => {
+    isToolbarDragging = false;
+    dom.toolbarTools.style.cursor = '';
+    setTimeout(() => { dom.toolbarTools.style.pointerEvents = ''; }, 10);
+});
+
+dom.toolbarTools.addEventListener('mousemove', (e) => {
+    if (!isToolbarDragging) return;
+    e.preventDefault();
+    const x = e.pageX - dom.toolbarTools.offsetLeft;
+    const walk = (x - toolbarStartX) * 1.5; 
+    if (Math.abs(walk) > 5) dom.toolbarTools.style.pointerEvents = 'none';
+    dom.toolbarTools.scrollLeft = toolbarScrollLeft - walk;
+});
+
 
 // --- Home Mode FLIP Animation Engine ---
 let hideVizTimeout = null;
@@ -576,6 +609,51 @@ window.addEventListener('popstate', (e) => {
     }
 });
 
+// Mode Switching Integration with Kinematic History Engine
+function switchModeKinematic(newMode) {
+    if (treeMode === newMode) return;
+    
+    const radio = document.querySelector(`input[name="treeMode"][value="${newMode}"]`);
+    if (radio) radio.checked = true;
+
+    if (currentViewType !== 'tree' || !currentTreeItemId) {
+        treeMode = newMode;
+        return;
+    }
+
+    const rootCard = dom.treeContainer.querySelector('.is-root > .item-card');
+    
+    if (rootCard) {
+        removeHomeMode();
+        const startLocal = getLocalCenter(rootCard);
+        
+        rootCard.classList.add('hero-active');
+        dom.treeContainer.classList.add('fade-unfocused');
+        
+        if (historyIdx >= 0 && appHistory[historyIdx]) {
+            appHistory[historyIdx].bridgeId = currentTreeItemId; 
+        }
+        saveCurrentState();
+        
+        treeMode = newMode; 
+        
+        appHistory = appHistory.slice(0, historyIdx + 1);
+        appHistory.push({ viewType: 'tree', id: currentTreeItemId, mode: treeMode, expanded: [] });
+        
+        historyIdx++;
+        safePushState({ idx: historyIdx }, `?id=${currentTreeItemId}`);
+        updateNavButtons();
+        
+        loadTree(currentTreeItemId, false, false, 'forward', {
+            startLocal: startLocal,
+            targetState: null 
+        });
+    } else {
+        treeMode = newMode;
+        viewItem(currentTreeItemId);
+    }
+}
+
 function transitionToNewItem(cardEl, targetId) {
     removeHomeMode();
     const startLocal = getLocalCenter(cardEl);
@@ -639,13 +717,9 @@ dom.mobileMenuBtn.addEventListener('click', (e) => {
 });
 
 dom.toolbarTools.addEventListener('click', (e) => {
-    // Only auto-hide if on Mobile (where the mobile menu button is visible)
     if (window.getComputedStyle(dom.mobileMenuBtn.parentElement).display !== 'none') {
         if (e.target === dom.toolbarTools) return;
-        
-        // Exception: Don't hide menu if clicking anywhere on the transmutation checkbox/label
         if (e.target.closest('#toolFilters') || e.target.id === 'showTransmutations') return;
-        
         setTimeout(() => { dom.toolbarTools.classList.add('hidden'); }, 150);
     }
 });
@@ -660,14 +734,8 @@ dom.transmuteCheck.addEventListener('change', (e) => {
 
 document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
-        treeMode = e.target.value;
-        if (treeMode === 'usage') {
-            dom.treeContainer.classList.add('mode-usage');
-        } else {
-            dom.treeContainer.classList.remove('mode-usage');
-        }
-        if (currentViewType === 'tree' && currentTreeItemId) {
-            viewItem(currentTreeItemId);
+        if (treeMode !== e.target.value) {
+            switchModeKinematic(e.target.value);
         }
     });
 });
@@ -1289,22 +1357,18 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         toggleModeBtn.className = 'absolute left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-xl border border-slate-300 dark:border-slate-600 text-sm font-bold z-50 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap cursor-pointer';
         
         if (treeMode === 'recipe') {
-            toggleModeBtn.style.top = '-48px'; 
+            toggleModeBtn.style.top = '-54px'; 
             toggleModeBtn.innerHTML = '<i class="fa-solid fa-code-branch text-purple-500"></i> Used In';
             toggleModeBtn.onclick = (e) => {
                 e.stopPropagation();
-                const radio = document.querySelector(`input[name="treeMode"][value="usage"]`);
-                radio.checked = true;
-                radio.dispatchEvent(new Event('change'));
+                switchModeKinematic('usage');
             };
         } else {
-            toggleModeBtn.style.bottom = '-48px'; 
+            toggleModeBtn.style.bottom = '-54px'; 
             toggleModeBtn.innerHTML = '<i class="fa-solid fa-hammer text-blue-500"></i> Recipe';
             toggleModeBtn.onclick = (e) => {
                 e.stopPropagation();
-                const radio = document.querySelector(`input[name="treeMode"][value="recipe"]`);
-                radio.checked = true;
-                radio.dispatchEvent(new Event('change'));
+                switchModeKinematic('recipe');
             };
         }
         card.appendChild(toggleModeBtn);
