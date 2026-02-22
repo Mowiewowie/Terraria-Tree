@@ -43,6 +43,68 @@ body {
 
 .tree-children.hidden { display: none !important; }
 
+/* --- Home Mode Float Animation --- */
+body.home-mode #mainHeader {
+    height: 100vh;
+    background: transparent !important;
+    border-bottom-color: transparent !important;
+    box-shadow: none !important;
+}
+body.home-mode #logoContainer {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(2);
+}
+body.home-mode #logoText {
+    display: block !important;
+}
+body.home-mode #searchWrapper {
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.2);
+    max-width: 600px;
+}
+body.home-mode #statusWrapper {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+body.home-mode #mainToolbar, 
+body.home-mode #visualizationArea {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- Seamless Animations & Hero States --- */
+.fade-unfocused .item-card:not(.hero-active),
+.fade-unfocused .tree-line-btn,
+.fade-unfocused .line-h,
+.fade-unfocused .line-v,
+.fade-unfocused .expand-btn,
+.fade-unfocused .tree-children::before {
+    opacity: 0 !important;
+    transition: opacity 0.3s ease;
+}
+
+.item-card.hero-active {
+    transform: scale(1.2);
+    z-index: 9999;
+    box-shadow: 0 0 40px rgba(245, 158, 11, 0.5);
+    border-color: var(--line-hover);
+}
+
+.fade-in-rapid {
+    animation: fadeInRapid 0.5s ease forwards;
+}
+@keyframes fadeInRapid {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+
 /* --- In-Game Rarity Styling --- */
 .terraria-text {
     text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 2px 2px 3px rgba(0,0,0,0.6);
