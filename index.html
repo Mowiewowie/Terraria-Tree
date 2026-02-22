@@ -67,10 +67,8 @@
             <div id="treeContainer"></div>
         </div>
 
-        <!-- NEW: Unified Responsive Top-Left Toolbar -->
         <div id="mainToolbar" class="absolute top-6 left-6 right-6 z-40 flex items-start gap-2 hidden pointer-events-none">
             
-            <!-- Navigation (Fixed size) -->
             <div class="controls-panel flex gap-1 p-1 rounded-lg shadow-lg pointer-events-auto shrink-0">
                 <button id="navBack" disabled title="Go Back" class="w-10 h-10 rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all flex items-center justify-center text-xl">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -80,17 +78,15 @@
                 </button>
             </div>
 
-            <!-- Mobile Toggle -->
             <div class="controls-panel md:hidden p-1 rounded-lg shadow-lg pointer-events-auto shrink-0">
                 <button id="mobileMenuBtn" class="w-10 h-10 rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-xl transition-all">
                     <i class="fa-solid fa-ellipsis-v"></i>
                 </button>
             </div>
 
-            <!-- Scrollable Tools Container (Row on desktop, column dropdown on mobile) -->
             <div id="toolbarTools" class="pointer-events-auto hidden flex-col md:flex md:flex-row gap-2 absolute md:static top-[3.5rem] left-0 md:top-0 md:left-0 bg-white/95 dark:bg-slate-900/95 md:bg-transparent dark:md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none border border-slate-300 dark:border-slate-700 md:border-none shadow-2xl md:shadow-none backdrop-blur-md md:backdrop-blur-none w-max md:w-full overflow-x-auto hide-scrollbar">
                 
-                <div class="controls-panel rounded-lg px-4 flex items-center gap-3 shadow-lg shrink-0 h-12">
+                <div id="toolMode" class="controls-panel rounded-lg px-4 flex items-center gap-3 shadow-lg shrink-0 h-12">
                     <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-r border-slate-300 dark:border-slate-700 pr-3">Mode</span>
                     <label class="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
                         <input type="radio" name="treeMode" value="recipe" checked class="text-blue-600 focus:ring-blue-500 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 cursor-pointer">
@@ -102,7 +98,7 @@
                     </label>
                 </div>
 
-                <div class="controls-panel rounded-lg px-4 flex items-center gap-3 shadow-lg shrink-0 h-12">
+                <div id="toolFilters" class="controls-panel rounded-lg px-4 flex items-center gap-3 shadow-lg shrink-0 h-12">
                     <label class="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
                         <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
                         Show Transmutations
@@ -121,14 +117,32 @@
 
     <div id="globalTooltip" class="tooltip fixed hidden bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] pointer-events-none transition-colors">
         <div class="flex items-start gap-4 mb-3">
-            <img id="ttImage" src="" alt="" class="w-12 h-12 object-contain rounded bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700">
-            <div>
-                <h3 id="ttName" class="font-bold text-blue-600 dark:text-blue-300 text-lg leading-tight"></h3>
-                <div id="ttWiki" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1.5 hidden">
-                    <kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded text-[9px] font-mono text-slate-600 dark:text-slate-300 shadow-inner">CTRL</kbd> 
-                    <span>+ Click for Wiki</span>
-                    <i class="fa-solid fa-external-link-alt text-[10px] ml-0.5 text-slate-400 dark:text-slate-500"></i>
+            <img id="ttImage" src="" alt="" draggable="false" class="w-12 h-12 object-contain rounded bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shrink-0">
+            <div class="w-full">
+                <h3 id="ttName" class="font-bold text-lg leading-tight terraria-text"></h3>
+                
+                <div id="ttWikiDesktop" class="text-[10px] text-slate-500 dark:text-slate-400 mt-2 flex flex-col gap-1.5 hidden">
+                    <div class="flex items-center gap-1.5">
+                        <kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded font-mono text-slate-600 dark:text-slate-300 shadow-inner">CTRL</kbd> 
+                        <span>+ Click for Wiki</span>
+                        <i class="fa-solid fa-external-link-alt ml-0.5"></i>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded font-mono text-slate-600 dark:text-slate-300 shadow-inner">SHIFT</kbd> 
+                        <span>+ Click for Category</span>
+                        <i class="fa-solid fa-layer-group ml-0.5"></i>
+                    </div>
                 </div>
+
+                <div id="ttWikiMobile" class="mt-3 flex gap-2 hidden pointer-events-auto">
+                    <button id="ttBtnWiki" class="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
+                        <i class="fa-solid fa-external-link-alt"></i> Wiki
+                    </button>
+                    <button id="ttBtnCategory" class="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
+                        <i class="fa-solid fa-layer-group"></i> Category
+                    </button>
+                </div>
+
             </div>
         </div>
         <div id="ttStats" class="grid grid-cols-2 gap-x-4 gap-y-1 mb-3 text-sm font-mono text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 pb-2"></div>
