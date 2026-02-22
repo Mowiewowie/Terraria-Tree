@@ -9,15 +9,12 @@ let isAnimating = false;
 let isPanning = false, startX = 0, startY = 0;
 let showTransmutations = false;
 
-// Drag vs Click Safety Threshold
 let isDraggingThresholdMet = false;
 let dragStartX = 0, dragStartY = 0;
 
-// Search Keyboard Nav State
 let searchActiveIndex = -1;
 
-// Unified View State
-let currentViewType = 'tree'; 
+let currentViewType = 'home';
 let currentTreeItemId = null;
 let currentCategoryName = null;
 let treeMode = 'recipe'; 
@@ -27,11 +24,10 @@ let isExpandedAll = false;
 let lineTooltipTimeout = null;
 let lastMouseCoords = { x: 0, y: 0 };
 
+// History Engine
 let appHistory = [];
 let historyIdx = -1;
-const MAX_HISTORY = 50;
 
-// Mobile Touch Tracking
 let initialPinchDist = null;
 let initialScale = 1;
 let activeMobileCard = null; 
@@ -93,68 +89,115 @@ const dom = {
     }
 };
 
-// --- System Device Diagnostics ---
 function isMobileUX() {
-    // Specifically targets touch-only devices without a mouse (phones/tablets).
-    // Safely excludes 4K Desktop Monitors and Laptops that have both touch and a mouse pointer.
     return window.matchMedia("(any-pointer: coarse) and (hover: none)").matches;
 }
 
-// --- FLIP Animation for Google-style Home Search ---
-function removeHomeMode() {
-    if (!document.body.classList.contains('home-mode')) return;
-    
-    const logo = document.getElementById('logoContainer');
-    const search = document.getElementById('searchWrapper');
-    
-    // First Snapshot
-    const lFirst = logo.getBoundingClientRect();
-    const sFirst = search.getBoundingClientRect();
-    
-    // Trigger State Change
-    document.body.classList.remove('home-mode');
-    
-    // Last Snapshot
-    const lLast = logo.getBoundingClientRect();
-    const sLast = search.getBoundingClientRect();
-    
-    // Invert calculations
-    const lInvertX = lFirst.left - lLast.left;
-    const lInvertY = lFirst.top - lLast.top;
-    const lInvertScale = lFirst.width / lLast.width;
-    
-    const sInvertX = sFirst.left - sLast.left;
-    const sInvertY = sFirst.top - sLast.top;
-    const sInvertScale = sFirst.width / sLast.width;
-    
-    // Invert Apply
-    logo.style.transform = `translate(${lInvertX}px, ${lInvertY}px) scale(${lInvertScale})`;
-    search.style.transform = `translate(${sInvertX}px, ${sInvertY}px) scale(${sInvertScale})`;
-    logo.style.transition = 'none';
-    search.style.transition = 'none';
-    
-    // Play Animation
-    requestAnimationFrame(() => {
-        logo.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        search.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        logo.style.transform = '';
-        search.style.transform = '';
-        
-        setTimeout(() => {
-            logo.style.transition = '';
-            search.style.transition = '';
-            dom.vizArea.classList.remove('hidden');
-            // Fade in content
-            requestAnimationFrame(() => {
-                dom.vizArea.style.opacity = '1';
-                dom.mainToolbar.classList.remove('hidden');
-                setTimeout(()=> dom.mainToolbar.style.opacity = '1', 50);
-            });
-        }, 600);
-    });
+// --- Browser File System Safety Wrappers ---
+function safeReplaceState(state, url) {
+    try { history.replaceState(state, "", url); } catch (e) { console.warn("Local file history blocked."); }
 }
 
-// --- Formatters (Terraria Standard Logic) ---
+function safePushState(state, url) {
+    try { history.pushState(state, "", url); } catch (e) { console.warn("Local file history blocked."); }
+}
+
+// --- Home Mode FLIP Animation Engine ---
+let hideVizTimeout = null;
+
+function toggleHomeMode(isGoingHome, isHistoryPop = false) {
+    if (isGoingHome === document.body.classList.contains('home-mode')) return;
+
+    if (pendingDOMSwap) {
+        clearTimeout(transitionTimeout);
+        pendingDOMSwap = null;
+    }
+    const existingGhost = document.getElementById('ghostContainer');
+    if (existingGhost) existingGhost.remove();
+
+    const els = [
+        document.getElementById('logoContainer'),
+        document.getElementById('searchWrapper'),
+        document.getElementById('dbStatus') 
+    ];
+
+    const firstRects = els.map(el => el.getBoundingClientRect());
+
+    if (isGoingHome) {
+        document.body.classList.add('home-mode');
+        dom.vizArea.style.opacity = '0';
+        dom.mainToolbar.style.opacity = '0';
+        
+        hideVizTimeout = setTimeout(() => {
+            dom.vizArea.classList.add('hidden');
+            dom.mainToolbar.classList.add('hidden');
+        }, 500);
+
+        dom.treeContainer.innerHTML = '';
+        dom.searchInput.value = '';
+        dom.searchResults.classList.add('hidden');
+        currentViewType = 'home';
+        currentTreeItemId = null;
+        
+        // FIX: Only construct a new history entry if we explicitly clicked the logo.
+        // If we arrived here via the "Back" button, keep the future history perfectly intact!
+        if (!isHistoryPop) {
+            saveCurrentState();
+            appHistory = appHistory.slice(0, historyIdx + 1);
+            historyIdx++;
+            appHistory.push({ isHome: true, viewType: 'home' });
+            safePushState({ idx: historyIdx, isHome: true }, window.location.pathname);
+        }
+        updateNavButtons();
+    } else {
+        document.body.classList.remove('home-mode');
+        clearTimeout(hideVizTimeout);
+        dom.vizArea.classList.remove('hidden');
+        dom.mainToolbar.classList.remove('hidden');
+    }
+
+    const lastRects = els.map(el => el.getBoundingClientRect());
+
+    els.forEach((el, i) => {
+        const invertX = firstRects[i].left - lastRects[i].left;
+        const invertY = firstRects[i].top - lastRects[i].top;
+        const invertScaleX = firstRects[i].width / (lastRects[i].width || 1);
+        
+        el.style.transformOrigin = 'top left';
+        el.style.transition = 'none';
+        
+        if (el.id === 'logoContainer') {
+            el.style.transform = `translate(${invertX}px, ${invertY}px) scale(${invertScaleX})`;
+        } else {
+            el.style.transform = `translate(${invertX}px, ${invertY}px)`;
+        }
+    });
+
+    void document.body.offsetWidth; 
+
+    els.forEach(el => {
+        el.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        el.style.transform = '';
+    });
+
+    if (!isGoingHome) {
+        requestAnimationFrame(() => {
+            dom.vizArea.style.opacity = '1';
+            dom.mainToolbar.style.opacity = '1';
+        });
+    }
+
+    setTimeout(() => {
+        els.forEach(el => {
+            el.style.transition = '';
+            el.style.transformOrigin = '';
+        });
+    }, 600);
+}
+
+window.restoreHomeMode = () => toggleHomeMode(true, false);
+function removeHomeMode() { toggleHomeMode(false); }
+
 function getFriendlyKnockback(value) {
     if (value === 0) return "No knockback";
     if (value <= 1.4) return "Extremely weak knockback";
@@ -179,7 +222,6 @@ function getFriendlyUseTime(value) {
     return "Snail speed";
 }
 
-// --- Physics Engine ---
 function getMinScale() {
     const w = window.innerWidth;
     if (w < 600) return 0.40; 
@@ -221,7 +263,6 @@ function createDirectImageUrl(name) {
     return `https://terraria.wiki.gg/images/${h[0]}/${h.substring(0, 2)}/${f}`;
 }
 
-// --- Data Fetching & Initialization ---
 dom.fileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
 document.body.addEventListener('dragover', e => e.preventDefault());
 document.body.addEventListener('drop', e => { e.preventDefault(); if(e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
@@ -237,9 +278,17 @@ window.addEventListener('load', loadDefaultData);
 
 async function loadDefaultData() {
     dom.uploadSection.classList.remove('hidden');
+    
+    const fallbackTimer = setTimeout(() => {
+        if (Object.keys(itemsDatabase).length === 0) {
+            dom.dbStatus.innerHTML = `Loading failed. <button onclick="document.getElementById('fileInput').click()" class="text-blue-500 hover:text-blue-600 underline ml-1 pointer-events-auto">Upload Data</button>`;
+        }
+    }, 5000);
+
     try {
         const res = await fetch(JSON_FILENAME);
         if (!res.ok) throw new Error("Fetch failed");
+        clearTimeout(fallbackTimer);
         initializeData(await res.json());
     } catch (e) {
         setTimeout(() => {
@@ -283,7 +332,6 @@ function initializeData(data) {
 
     dom.uploadSection.classList.add('hidden');
     dom.searchInput.disabled = false;
-    dom.searchInput.placeholder = "Search items, weapons, or types (Arrows to navigate)...";
     dom.dbStatus.innerText = `${Object.keys(itemsDatabase).length.toLocaleString()} Items`;
     dom.dbStatus.classList.add('text-green-500');
     dom.dbStatus.classList.remove('text-slate-500');
@@ -293,23 +341,60 @@ function initializeData(data) {
     const id = params.get('id');
     const cat = params.get('category');
     
+    appHistory = [];
+    
     if (id && itemsDatabase[id]) {
-        viewItem(id);
+        historyIdx = 0;
+        appHistory[historyIdx] = { viewType: 'tree', id: id, mode: treeMode, expanded: [] };
+        safeReplaceState({ idx: historyIdx }, window.location.search);
+        removeHomeMode();
+        viewItem(id, true); 
     } else if (cat) {
+        historyIdx = 0;
+        appHistory[historyIdx] = { viewType: 'category', category: cat };
+        safeReplaceState({ idx: historyIdx }, window.location.search);
+        removeHomeMode();
         viewCategory(cat);
+    } else {
+        historyIdx = 0;
+        appHistory[historyIdx] = { isHome: true, viewType: 'home' };
+        safeReplaceState({ idx: historyIdx, isHome: true }, window.location.pathname);
     }
 }
 
-// --- History API & Seamless Transition Controllers ---
-function saveCurrentState() {
+// --- History API & Two-Phase IK Controllers ---
+
+function getLocalCenter(element) {
+    const tr = dom.treeContainer.getBoundingClientRect();
+    const er = element.getBoundingClientRect();
+    return {
+        x: (er.left - tr.left) / currentScale + (er.width / currentScale) / 2,
+        y: (er.top - tr.top) / currentScale + (er.height / currentScale) / 2,
+        w: er.width / currentScale // Physical width scaling
+    };
+}
+
+function saveCurrentState(skipBrowserState = false) {
     if (historyIdx >= 0 && appHistory[historyIdx]) {
-        appHistory[historyIdx].x = targetX;
+        appHistory[historyIdx].x = targetX; 
         appHistory[historyIdx].y = targetY;
         appHistory[historyIdx].scale = targetScale;
+        
         if (currentViewType === 'tree') {
             appHistory[historyIdx].expanded = Array.from(expandedNodes);
+            
+            const locations = {};
+            dom.treeContainer.querySelectorAll('.item-card').forEach(card => {
+                if(card.dataset.id) {
+                    locations[card.dataset.id] = getLocalCenter(card);
+                }
+            });
+            appHistory[historyIdx].itemLocations = locations;
         }
-        history.replaceState({ idx: historyIdx }, "", window.location.search);
+        
+        if (!skipBrowserState) {
+            safeReplaceState({ idx: historyIdx, isHome: appHistory[historyIdx].isHome }, window.location.search);
+        }
     }
 }
 
@@ -318,101 +403,222 @@ function updateNavButtons() {
     dom.navForward.disabled = historyIdx >= appHistory.length - 1;
 }
 
-dom.navBack.onclick = () => { saveCurrentState(); history.back(); };
-dom.navForward.onclick = () => { saveCurrentState(); history.forward(); };
+dom.navBack.onclick = () => { history.back(); };
+dom.navForward.onclick = () => { history.forward(); };
+
+let transitionTimeout = null;
+let pendingDOMSwap = null; 
+
+function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign) {
+    if (pendingDOMSwap) {
+        clearTimeout(transitionTimeout);
+        pendingDOMSwap(); 
+    }
+    
+    const existingGhost = document.getElementById('ghostContainer');
+    if (existingGhost) existingGhost.remove();
+
+    const hasMovement = preAnimationSetup(); 
+    if (hasMovement) triggerAnimation();
+
+    const waitTime = hasMovement ? 400 : 0;
+
+    pendingDOMSwap = () => {
+        pendingDOMSwap = null; 
+        const hasContent = dom.treeContainer.innerHTML.trim() !== '';
+        let ghost = null;
+        
+        if (hasMovement) {
+            currentX = targetX;
+            currentY = targetY;
+            currentScale = targetScale;
+            dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+        }
+        
+        if (hasContent) {
+            ghost = dom.treeContainer.cloneNode(true);
+            ghost.id = 'ghostContainer'; 
+            ghost.style.pointerEvents = 'none';
+            ghost.style.zIndex = '5';
+            dom.treeContainer.parentNode.insertBefore(ghost, dom.treeContainer);
+        }
+
+        dom.treeContainer.style.transition = 'none';
+        if (ghost) {
+            ghost.style.transition = 'none';
+            ghost.style.opacity = '1';
+        }
+        dom.treeContainer.innerHTML = '';
+        dom.treeContainer.classList.remove('fade-unfocused');
+        dom.treeContainer.style.opacity = '0';
+        
+        buildDOM();
+        postDOMAlign(); 
+        
+        dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+        void dom.treeContainer.offsetWidth; 
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                dom.treeContainer.style.transition = 'opacity 0.4s ease';
+                if (ghost) {
+                    ghost.style.transition = 'opacity 0.4s ease';
+                    ghost.style.opacity = '0';
+                }
+                dom.treeContainer.style.opacity = '1';
+
+                setTimeout(() => {
+                    if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+                    dom.treeContainer.style.transition = '';
+                }, 450);
+            });
+        });
+    };
+
+    transitionTimeout = setTimeout(() => {
+        if (pendingDOMSwap) pendingDOMSwap();
+    }, waitTime);
+}
+
+function calculateResetView() {
+    void dom.vizArea.offsetWidth; 
+    const vizRect = dom.vizArea.getBoundingClientRect();
+    
+    let vWidth = vizRect.width || window.innerWidth;
+    let vHeight = vizRect.height || window.innerHeight;
+
+    const treeWidth = dom.treeContainer.scrollWidth;
+    const treeHeight = dom.treeContainer.scrollHeight;
+    
+    const paddingX = 80; const paddingY = 80;
+    const scaleX = (vWidth - paddingX) / (treeWidth || 1);
+    const scaleY = (vHeight - paddingY) / (treeHeight || 1);
+    
+    targetScale = Math.max(getMinScale(), Math.min(scaleX, scaleY, 1.1));
+    targetX = (vWidth - ((treeWidth || 0) * targetScale)) / 2;
+    targetY = Math.max(40, (vHeight - ((treeHeight || 0) * targetScale)) / 2);
+}
+
+function resetView() { 
+    calculateResetView();
+    triggerAnimation();
+    saveCurrentState();
+}
 
 window.addEventListener('popstate', (e) => {
     if (e.state && e.state.idx !== undefined) {
-        const isBackward = e.state.idx < historyIdx;
-        historyIdx = e.state.idx;
-        const state = appHistory[historyIdx];
         
-        if (state) {
+        if (historyIdx >= 0 && appHistory[historyIdx]) {
+            saveCurrentState(true); 
+        }
+        
+        const isBackward = e.state.idx < historyIdx;
+        const pastState = appHistory[historyIdx]; 
+        historyIdx = e.state.idx;
+        const state = appHistory[historyIdx]; 
+
+        if (e.state.isHome || (state && state.isHome)) {
+            toggleHomeMode(true, true);
+            return;
+        }
+
+        if (!state) {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const cat = params.get('category');
+            
+            appHistory = [];
+            appHistory[historyIdx] = { viewType: id ? 'tree' : 'category', id: id, category: cat, mode: treeMode, expanded: [] };
+            
             removeHomeMode();
-            
-            const oldTargetId = currentTreeItemId;
-            let cameraWaitTime = 0;
-            
-            // Feature: Seamless History Crossfade Math
+            if (id) loadTree(id, false, false, 'search');
+            else if (cat) loadCategory(cat, false, true);
+            updateNavButtons();
+            return;
+        }
+
+        removeHomeMode();
+
+        if (state.viewType === 'category') {
+            loadCategory(state.category, true, true);
+        } else {
+            treeMode = state.mode;
+            document.querySelector(`input[name="treeMode"][value="${state.mode}"]`).checked = true;
+            expandedNodes = new Set(state.expanded || []);
+
             if (currentViewType === 'tree' && state.viewType === 'tree') {
-                const rootCard = dom.treeContainer.querySelector('.is-root > .item-card');
-                if (rootCard) {
-                    rootCard.classList.add('hero-active');
-                    dom.treeContainer.classList.add('fade-unfocused');
-                    
-                    const rect = rootCard.getBoundingClientRect();
-                    const vizRect = dom.vizArea.getBoundingClientRect();
-                    const cardCenterX = rect.left + rect.width / 2 - vizRect.left;
-                    const cardCenterY = rect.top + rect.height / 2 - vizRect.top;
-                    const targetCenterX = vizRect.width / 2;
-                    const targetCenterY = vizRect.height / 2;
-                    
-                    targetX += (targetCenterX - cardCenterX);
-                    targetY += (targetCenterY - cardCenterY);
-                    targetScale = 1.1; 
-                    triggerAnimation();
-                    cameraWaitTime = 350;
+                if (isBackward) {
+                    const bridgeId = currentTreeItemId;
+                    loadTree(state.id, true, true, 'backward', {
+                        bridgeId: bridgeId,
+                        targetState: state
+                    });
+                } else {
+                    const bridgeId = pastState.bridgeId; 
+                    const childCard = Array.from(dom.treeContainer.querySelectorAll('.item-card')).find(c => c.dataset.id === String(state.id)); 
+
+                    if (childCard) {
+                        // FIX: Add visual destination highlight for Forward Navigations 
+                        childCard.classList.add('hero-active');
+                        dom.treeContainer.classList.add('fade-unfocused');
+
+                        const startLocal = getLocalCenter(childCard);
+                        loadTree(state.id, true, true, 'forward', {
+                            startLocal: startLocal,
+                            targetState: state
+                        });
+                    } else {
+                        loadTree(state.id, true, true, 'search', { targetState: state });
+                    }
                 }
             } else {
-                dom.treeContainer.classList.add('fade-unfocused');
-                cameraWaitTime = 200;
+                loadTree(state.id, true, true, 'search', { targetState: state });
             }
-            
-            setTimeout(() => {
-                if (state.viewType === 'category') {
-                    loadCategory(state.category, true, true);
-                } else {
-                    treeMode = state.mode;
-                    document.querySelector(`input[name="treeMode"][value="${state.mode}"]`).checked = true;
-                    if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
-                    else dom.treeContainer.classList.remove('mode-usage');
-                    
-                    expandedNodes = new Set(state.expanded || []);
-                    const transitionType = isBackward ? 'backward' : 'forward';
-                    loadTree(state.id, true, true, transitionType, oldTargetId, state); 
-                }
-                
-                updateNavButtons();
-            }, cameraWaitTime);
         }
+        updateNavButtons();
     }
 });
 
 function transitionToNewItem(cardEl, targetId) {
     removeHomeMode();
+    const startLocal = getLocalCenter(cardEl);
     
-    // Setup Hero Element Fade
     cardEl.classList.add('hero-active');
     dom.treeContainer.classList.add('fade-unfocused');
     
-    // Pan Camera to item
-    const rect = cardEl.getBoundingClientRect();
-    const vizRect = dom.vizArea.getBoundingClientRect();
-    const cardCenterX = rect.left + rect.width / 2 - vizRect.left;
-    const cardCenterY = rect.top + rect.height / 2 - vizRect.top;
+    if (historyIdx >= 0 && appHistory[historyIdx]) {
+        appHistory[historyIdx].bridgeId = targetId; 
+    }
+    saveCurrentState();
     
-    targetX += (vizRect.width / 2 - cardCenterX);
-    targetY += (vizRect.height / 2 - cardCenterY);
-    targetScale = 1.1; 
-    triggerAnimation();
+    appHistory = appHistory.slice(0, historyIdx + 1);
+    appHistory.push({ viewType: 'tree', id: targetId, mode: treeMode, expanded: [] });
     
-    setTimeout(() => {
-        viewItem(targetId, true);
-    }, 400); 
+    historyIdx++;
+    safePushState({ idx: historyIdx }, `?id=${targetId}`);
+    updateNavButtons();
+    
+    loadTree(targetId, false, false, 'forward', {
+        startLocal: startLocal,
+        targetState: null 
+    });
 }
 
-function viewItem(id, isTransitioning = false) {
+function viewItem(id, isFromSearch = false, isTransitioning = false) {
     removeHomeMode();
     saveCurrentState(); 
     appHistory = appHistory.slice(0, historyIdx + 1);
     appHistory.push({ viewType: 'tree', id: id, mode: treeMode, expanded: [] });
     
-    if (appHistory.length > MAX_HISTORY) appHistory.shift();
-    else historyIdx++;
-    
-    history.pushState({ idx: historyIdx }, "", `?id=${id}`);
+    historyIdx++;
+    safePushState({ idx: historyIdx }, `?id=${id}`);
     updateNavButtons();
-    loadTree(id, false, false, isTransitioning ? 'forward' : null);
+    
+    if (isFromSearch) {
+        loadTree(id, false, false, 'search');
+    } else {
+        loadTree(id, false, false, isTransitioning ? 'forward' : null);
+    }
 }
 
 function viewCategory(typeStr) {
@@ -422,10 +628,8 @@ function viewCategory(typeStr) {
     appHistory = appHistory.slice(0, historyIdx + 1);
     appHistory.push({ viewType: 'category', category: typeStr });
     
-    if (appHistory.length > MAX_HISTORY) appHistory.shift();
-    else historyIdx++;
-    
-    history.pushState({ idx: historyIdx }, "", `?category=${encodeURIComponent(typeStr)}`);
+    historyIdx++;
+    safePushState({ idx: historyIdx }, `?category=${encodeURIComponent(typeStr)}`);
     updateNavButtons();
     loadCategory(typeStr, false);
 }
@@ -542,7 +746,7 @@ dom.searchInput.addEventListener('input', (e) => {
         return a.item.name.localeCompare(b.item.name);
     }).slice(0, 15);
     
-    dom.searchResults.innerHTML = '';
+    dom.searchResults.innerHTML = ''; 
     
     if (matches.length > 0) {
         dom.searchResults.classList.remove('hidden');
@@ -574,14 +778,7 @@ dom.searchInput.addEventListener('input', (e) => {
             d.onclick = () => {
                 dom.searchResults.classList.add('hidden');
                 dom.searchInput.value = '';
-                
-                // If it's a completely new action on the Home Mode, trigger standard view layout
-                if (document.body.classList.contains('home-mode')) {
-                    removeHomeMode();
-                    viewItem(m.item.id); 
-                } else {
-                    viewItem(m.item.id, true); 
-                }
+                viewItem(m.item.id, true); 
             };
             
             dom.searchResults.appendChild(d);
@@ -591,7 +788,7 @@ dom.searchInput.addEventListener('input', (e) => {
     }
 });
 
-dom.resetViewBtn.onclick = () => resetView(false);
+dom.resetViewBtn.onclick = () => resetView();
 
 let wheelTimeout;
 dom.vizArea.addEventListener('wheel', e => { 
@@ -612,7 +809,6 @@ dom.vizArea.addEventListener('wheel', e => {
     wheelTimeout = setTimeout(saveCurrentState, 300);
 });
 
-// Panning & Touch Tracking (Includes Distance Threshold for anti-click logic)
 dom.vizArea.addEventListener('mousedown', e => { 
     isPanning = true; 
     isDraggingThresholdMet = false;
@@ -712,32 +908,10 @@ dom.vizArea.addEventListener('touchend', e => {
 
 
 // --- Base Rendering Tools ---
-function resetView(isInitialLoad = false) { 
-    const vizRect = dom.vizArea.getBoundingClientRect();
-    const treeWidth = dom.treeContainer.scrollWidth;
-    const treeHeight = dom.treeContainer.scrollHeight;
-    const paddingX = 80; const paddingY = 80;
-    const scaleX = (vizRect.width - paddingX) / treeWidth;
-    const scaleY = (vizRect.height - paddingY) / treeHeight;
-    
-    targetScale = Math.max(getMinScale(), Math.min(scaleX, scaleY, 1.1));
-    targetX = (vizRect.width - (treeWidth * targetScale)) / 2;
-    targetY = Math.max(40, (vizRect.height - (treeHeight * targetScale)) / 2);
-    
-    if (isInitialLoad) {
-        currentX = targetX; currentY = targetY; currentScale = targetScale;
-        dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
-    } else {
-        triggerAnimation();
-    }
-    saveCurrentState();
-}
-
-// A reusable item card generator
 function createItemCardElement(data, sizeClasses, contextRecipe = null) {
     const card = document.createElement('div');
     card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${sizeClasses}`;
-    card.dataset.id = data.id; // Added for reverse-lookup during backward transitions
+    card.dataset.id = data.id; 
     
     const img = document.createElement('img');
     img.src = createDirectImageUrl(data.name);
@@ -787,11 +961,10 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null) {
             return;
         } 
         
-        // Trigger seamless camera transition instead of instant load
         if (currentViewType === 'tree') {
             transitionToNewItem(card, data.id);
         } else {
-            viewItem(data.id);
+            viewItem(data.id, true);
         }
     };
     
@@ -823,50 +996,50 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
     dom.toolMode.classList.add('hidden');
     dom.toolFilters.classList.add('hidden');
     dom.expandAllBtn.classList.add('hidden');
-    
-    dom.treeContainer.innerHTML = '';
-    dom.treeContainer.classList.remove('mode-usage', 'fade-unfocused', 'fade-in-rapid');
-    dom.treeContainer.style.opacity = '1';
-    
-    const items = Object.values(itemsDatabase).filter(i => i.specific_type === typeStr);
-    
-    items.sort((a, b) => {
-        const dmgA = a.stats?.damage ?? -1;
-        const dmgB = b.stats?.damage ?? -1;
-        if (dmgA !== dmgB) {
-            return dmgB - dmgA; 
-        }
-        return a.name.localeCompare(b.name);
-    });
 
-    const box = document.createElement('div');
-    box.className = 'category-box';
-    
-    const header = document.createElement('h2');
-    header.className = 'category-header';
-    header.textContent = `${typeStr} (${items.length})`;
-    box.appendChild(header);
-    
-    const grid = document.createElement('div');
-    grid.className = 'category-grid';
-    
-    items.forEach(data => {
-        const card = createItemCardElement(data, 'w-24 h-24');
-        grid.appendChild(card);
-    });
-    
-    box.appendChild(grid);
-    dom.treeContainer.appendChild(box);
-    
-    if (!preserveState && !isHistoryPop) {
-        setTimeout(() => resetView(true), 50);
-    } else if (!isHistoryPop) {
-        triggerAnimation();
-    }
+    performIKTransition(
+        () => false, 
+        () => {
+            dom.treeContainer.classList.remove('mode-usage');
+            const items = Object.values(itemsDatabase).filter(i => i.specific_type === typeStr);
+            
+            items.sort((a, b) => {
+                const dmgA = a.stats?.damage ?? -1;
+                const dmgB = b.stats?.damage ?? -1;
+                if (dmgA !== dmgB) {
+                    return dmgB - dmgA; 
+                }
+                return a.name.localeCompare(b.name);
+            });
+
+            const box = document.createElement('div');
+            box.className = 'category-box';
+            
+            const header = document.createElement('h2');
+            header.className = 'category-header';
+            header.textContent = `${typeStr} (${items.length})`;
+            box.appendChild(header);
+            
+            const grid = document.createElement('div');
+            grid.className = 'category-grid';
+            
+            items.forEach(data => {
+                const card = createItemCardElement(data, 'w-24 h-24');
+                grid.appendChild(card);
+            });
+            
+            box.appendChild(grid);
+            dom.treeContainer.appendChild(box);
+        },
+        () => {
+            calculateResetView();
+            currentX = targetX; currentY = targetY; currentScale = targetScale;
+        }
+    );
 }
 
 // --- Tree Engine ---
-function loadTree(id, preserveState = false, isHistoryPop = false, transitionType = null, oldTargetId = null, savedState = null) {
+function loadTree(id, preserveState = false, isHistoryPop = false, transitionType = null, bridgeParams = null) {
     currentViewType = 'tree';
     currentTreeItemId = id;
     
@@ -877,74 +1050,113 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     dom.toolMode.classList.remove('hidden');
     dom.toolFilters.classList.remove('hidden');
     dom.expandAllBtn.classList.remove('hidden');
-    
-    dom.treeContainer.innerHTML = '';
-    if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
-    
-    let isFirstLoad = false;
-    if (!preserveState) {
+
+    let isFirstLoad = !preserveState;
+    if (isFirstLoad) {
         expandedNodes.clear();
         isExpandedAll = false;
-        isFirstLoad = true;
     }
-    
-    dom.treeContainer.appendChild(createTreeNode(id, true));
-    syncExpandAllButton();
-    
-    // Feature: Seamless "Camera Sync" DOM Swap
-    if (transitionType) {
-        dom.treeContainer.style.opacity = '0';
-        dom.treeContainer.classList.remove('fade-unfocused');
-        
-        requestAnimationFrame(() => {
-            let focusCard = dom.treeContainer.querySelector('.is-root > .item-card');
-            
-            // If going backwards, attempt to align the camera with the old target we just came from
-            if (transitionType === 'backward' && oldTargetId) {
-                const targetCards = Array.from(dom.treeContainer.querySelectorAll('.item-card')).filter(c => c.dataset.id === oldTargetId.toString());
-                if (targetCards.length > 0) focusCard = targetCards[0];
+
+    let preSetup = () => false;
+    let postAlign = () => {};
+
+    const vizRect = dom.vizArea.getBoundingClientRect();
+    const currentRootCard = dom.treeContainer.querySelector('.is-root > .item-card');
+
+    if (transitionType === 'forward' && bridgeParams && bridgeParams.startLocal) {
+        preSetup = () => {
+            let futureScale = 1.1;
+            let futureBaseWidth = 128; 
+            let futureScreenX = vizRect.width / 2;
+            let futureScreenY = vizRect.height / 2;
+
+            if (bridgeParams.targetState && bridgeParams.targetState.itemLocations && bridgeParams.targetState.itemLocations[bridgeParams.targetState.id]) {
+                const futureRootLocal = bridgeParams.targetState.itemLocations[bridgeParams.targetState.id];
+                futureScale = bridgeParams.targetState.scale;
+                futureBaseWidth = futureRootLocal.w || 128;
+                futureScreenX = bridgeParams.targetState.x + futureRootLocal.x * futureScale;
+                futureScreenY = bridgeParams.targetState.y + futureRootLocal.y * futureScale;
             }
             
-            focusCard.classList.add('hero-active');
+            const startBaseWidth = bridgeParams.startLocal.w || 96;
+
+            targetScale = futureScale * (futureBaseWidth / startBaseWidth);
             
-            const tr = dom.treeContainer.getBoundingClientRect();
-            const rr = focusCard.getBoundingClientRect();
+            targetX = futureScreenX - bridgeParams.startLocal.x * targetScale;
+            targetY = futureScreenY - bridgeParams.startLocal.y * targetScale;
+
+            return true;
+        };
+        postAlign = () => {
+            const newRootCard = dom.treeContainer.querySelector('.is-root > .item-card');
+            const newLocal = getLocalCenter(newRootCard);
             
-            const localCenterX = (rr.left - tr.left) / currentScale + (rr.width / currentScale) / 2;
-            const localCenterY = (rr.top - tr.top) / currentScale + (rr.height / currentScale) / 2;
-            const vizRect = dom.vizArea.getBoundingClientRect();
-            
-            // Force Camera coordinates to perfectly overlay the hero card
-            currentScale = 1.1;
-            currentX = (vizRect.width / 2) - localCenterX * currentScale;
-            currentY = (vizRect.height / 2) - localCenterY * currentScale;
-            
-            dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
-            dom.treeContainer.style.opacity = '1';
-            dom.treeContainer.classList.add('fade-in-rapid');
-            
-            // Animate away to the desired layout state
-            if (transitionType === 'backward' && savedState) {
-                targetX = savedState.x;
-                targetY = savedState.y;
-                targetScale = savedState.scale;
+            if (bridgeParams.targetState && bridgeParams.targetState.x !== undefined) {
+                currentScale = bridgeParams.targetState.scale;
+                currentX = bridgeParams.targetState.x;
+                currentY = bridgeParams.targetState.y;
             } else {
-                resetView(false); 
+                currentScale = 1.1; 
+                currentX = (vizRect.width / 2) - newLocal.x * currentScale;
+                currentY = (vizRect.height / 2) - newLocal.y * currentScale;
             }
-            triggerAnimation();
-            
-            setTimeout(() => {
-                dom.treeContainer.classList.remove('fade-in-rapid');
-                focusCard.classList.remove('hero-active');
-            }, 600);
-        });
-    } else if (!preserveState && !isHistoryPop) {
-        setTimeout(() => resetView(isFirstLoad), 50);
-    } else if (!isHistoryPop) {
-        dom.treeContainer.style.opacity = '1';
-        dom.treeContainer.classList.remove('fade-unfocused');
-        triggerAnimation();
+            targetScale = currentScale; targetX = currentX; targetY = currentY;
+        };
+    } 
+    else if (transitionType === 'backward' && bridgeParams) {
+        if (currentRootCard && bridgeParams.targetState && bridgeParams.targetState.itemLocations) {
+            const pastLoc = bridgeParams.targetState.itemLocations[bridgeParams.bridgeId];
+            if (pastLoc) {
+                preSetup = () => {
+                    currentRootCard.classList.add('hero-active');
+                    dom.treeContainer.classList.add('fade-unfocused');
+
+                    const pastScale = bridgeParams.targetState.scale || 1;
+                    const pastBaseWidth = pastLoc.w || 96;
+                    
+                    const startLocal = getLocalCenter(currentRootCard);
+                    const startBaseWidth = startLocal.w || 128;
+                    
+                    targetScale = pastScale * (pastBaseWidth / startBaseWidth);
+                    
+                    const pastScreenX = bridgeParams.targetState.x + pastLoc.x * pastScale;
+                    const pastScreenY = bridgeParams.targetState.y + pastLoc.y * pastScale;
+                    
+                    targetX = pastScreenX - startLocal.x * targetScale;
+                    targetY = pastScreenY - startLocal.y * targetScale;
+                    return true;
+                };
+                postAlign = () => {
+                    currentScale = bridgeParams.targetState.scale;
+                    currentX = bridgeParams.targetState.x;
+                    currentY = bridgeParams.targetState.y;
+                    targetScale = currentScale; targetX = currentX; targetY = currentY;
+                };
+            }
+        }
     }
+
+    if (!preSetup()) {
+        preSetup = () => false;
+        postAlign = () => {
+            if (preserveState && bridgeParams && bridgeParams.targetState && bridgeParams.targetState.x !== undefined) {
+                currentScale = bridgeParams.targetState.scale;
+                currentX = bridgeParams.targetState.x;
+                currentY = bridgeParams.targetState.y;
+            } else {
+                calculateResetView();
+                currentX = targetX; currentY = targetY; currentScale = targetScale;
+            }
+            targetScale = currentScale; targetX = currentX; targetY = currentY;
+        };
+    }
+
+    performIKTransition(preSetup, () => {
+        if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
+        else dom.treeContainer.classList.remove('mode-usage');
+        dom.treeContainer.appendChild(createTreeNode(id, true));
+        syncExpandAllButton();
+    }, postAlign);
 }
 
 function syncExpandAllButton() {
@@ -1349,7 +1561,7 @@ dom.expandAllBtn.onclick = async () => {
     }
     
     syncExpandAllButton();
-    setTimeout(() => resetView(false), 100);
+    setTimeout(() => resetView(), 100);
 };
 
 function showTooltip(e, data, extraRecipe = null) {

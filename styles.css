@@ -58,44 +58,55 @@ body.home-mode #headerContent {
 }
 body.home-mode #logoText { display: block !important; font-size: 3rem; }
 body.home-mode #logoIcon { font-size: 3.5rem; }
-body.home-mode #searchWrapper { max-width: 700px; transform: scale(1.15); }
-body.home-mode #statusWrapper { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); }
-
+body.home-mode #searchWrapper { max-width: 700px; }
+body.home-mode #statusWrapper { 
+    position: absolute; 
+    bottom: 2rem; 
+    left: 0; 
+    right: 0;
+    display: flex;
+    justify-content: center;
+}
 
 /* --- Seamless Animations & Hero States --- */
-.fade-unfocused .item-card:not(.hero-active),
 .fade-unfocused .tree-line-btn,
 .fade-unfocused .line-h,
 .fade-unfocused .line-v,
 .fade-unfocused .expand-btn,
+.fade-unfocused .category-header,
 .fade-unfocused .tree-children::before {
     opacity: 0 !important;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
+}
+
+.fade-unfocused .item-card:not(.hero-active) {
+    opacity: 0.3 !important;
+    filter: blur(1px);
+    transition: all 0.3s ease;
 }
 
 .item-card.hero-active {
-    transform: scale(1.25);
+    transform: scale(1.1);
     z-index: 9999;
     box-shadow: 0 0 50px rgba(245, 158, 11, 0.6);
     border-color: var(--line-hover);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.fade-in-rapid {
-    animation: fadeInRapid 0.6s ease forwards;
+.tree-fade-in {
+    animation: treeFadeIn 0.5s ease forwards;
 }
-@keyframes fadeInRapid {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+@keyframes treeFadeIn {
+    0% { opacity: 0; filter: blur(4px); }
+    100% { opacity: 1; filter: blur(0); }
 }
-
 
 /* --- In-Game Rarity Styling --- */
 .terraria-text {
     text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 2px 2px 3px rgba(0,0,0,0.6);
 }
 
-.rarity--1 { color: #828282 !important; }
+.rarity--1 { color: #828282 !important; } 
 .rarity-0 { color: #ffffff !important; }  
 .rarity-1 { color: #9696ff !important; }  
 .rarity-2 { color: #96ff96 !important; }  
@@ -194,19 +205,27 @@ body.home-mode #statusWrapper { position: absolute; bottom: 2rem; left: 50%; tra
     height: 6px; top: 12px;
 }
 
-#treeContainer.mode-usage .tree-node {
+/* FIX: Both treeContainer and ghostContainer explicitly targeted to prevent layout flashing */
+#treeContainer.mode-usage .tree-node,
+#ghostContainer.mode-usage .tree-node {
     flex-direction: column-reverse;
     padding: 0 8px 24px 8px;
 }
-#treeContainer.mode-usage .tree-children {
+#treeContainer.mode-usage .tree-children,
+#ghostContainer.mode-usage .tree-children {
     padding-top: 0;
     padding-bottom: 24px;
 }
-#treeContainer.mode-usage .tree-line-btn { top: auto; bottom: 0; }
-#treeContainer.mode-usage .tree-line-btn::after { top: auto; bottom: 0; }
-#treeContainer.mode-usage .line-h { top: auto; bottom: -15px; }
-#treeContainer.mode-usage .line-v { top: auto; bottom: 0; }
-#treeContainer.mode-usage > .tree-node { padding-bottom: 0; }
+#treeContainer.mode-usage .tree-line-btn,
+#ghostContainer.mode-usage .tree-line-btn { top: auto; bottom: 0; }
+#treeContainer.mode-usage .tree-line-btn::after,
+#ghostContainer.mode-usage .tree-line-btn::after { top: auto; bottom: 0; }
+#treeContainer.mode-usage .line-h,
+#ghostContainer.mode-usage .line-h { top: auto; bottom: -15px; }
+#treeContainer.mode-usage .line-v,
+#ghostContainer.mode-usage .line-v { top: auto; bottom: 0; }
+#treeContainer.mode-usage > .tree-node,
+#ghostContainer.mode-usage > .tree-node { padding-bottom: 0; }
 
 .item-card { 
     transition: all 0.2s ease; cursor: pointer; user-select: none; z-index: 10;
@@ -266,6 +285,15 @@ body.home-mode #statusWrapper { position: absolute; bottom: 2rem; left: 50%; tra
     background-image: radial-gradient(var(--grid-dots) 1px, transparent 1px); background-size: 20px 20px; touch-action: none; 
 }
 #visualizationArea.grabbing { cursor: grabbing; }
-#treeContainer { 
-    transform-origin: top left; position: absolute; top: 0; left: 0; display: inline-flex; justify-content: center; min-width: 100%; padding: 60px; will-change: transform; 
+
+#treeContainer, #ghostContainer { 
+    transform-origin: top left; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    display: inline-flex; 
+    justify-content: center; 
+    min-width: 100%; 
+    padding: 60px; 
+    will-change: transform; 
 }
