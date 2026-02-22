@@ -139,8 +139,6 @@ function toggleHomeMode(isGoingHome, isHistoryPop = false) {
         currentViewType = 'home';
         currentTreeItemId = null;
         
-        // FIX: Only construct a new history entry if we explicitly clicked the logo.
-        // If we arrived here via the "Back" button, keep the future history perfectly intact!
         if (!isHistoryPop) {
             saveCurrentState();
             appHistory = appHistory.slice(0, historyIdx + 1);
@@ -558,7 +556,6 @@ window.addEventListener('popstate', (e) => {
                     const childCard = Array.from(dom.treeContainer.querySelectorAll('.item-card')).find(c => c.dataset.id === String(state.id)); 
 
                     if (childCard) {
-                        // FIX: Add visual destination highlight for Forward Navigations 
                         childCard.classList.add('hero-active');
                         dom.treeContainer.classList.add('fade-unfocused');
 
@@ -639,6 +636,18 @@ function viewCategory(typeStr) {
 dom.mobileMenuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     dom.toolbarTools.classList.toggle('hidden');
+});
+
+dom.toolbarTools.addEventListener('click', (e) => {
+    // Only auto-hide if on Mobile (where the mobile menu button is visible)
+    if (window.getComputedStyle(dom.mobileMenuBtn.parentElement).display !== 'none') {
+        if (e.target === dom.toolbarTools) return;
+        
+        // Exception: Don't hide menu if clicking anywhere on the transmutation checkbox/label
+        if (e.target.closest('#toolFilters') || e.target.id === 'showTransmutations') return;
+        
+        setTimeout(() => { dom.toolbarTools.classList.add('hidden'); }, 150);
+    }
 });
 
 dom.transmuteCheck.addEventListener('change', (e) => {
@@ -1274,6 +1283,33 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
     
     const rootBorder = treeMode === 'recipe' ? 'border-blue-500 ring-blue-500/20' : 'border-purple-500 ring-purple-500/20';
     const card = createItemCardElement(data, isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24', parentContextRecipe);
+    
+    if (isRoot) {
+        const toggleModeBtn = document.createElement('button');
+        toggleModeBtn.className = 'absolute left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-xl border border-slate-300 dark:border-slate-600 text-sm font-bold z-50 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap cursor-pointer';
+        
+        if (treeMode === 'recipe') {
+            toggleModeBtn.style.top = '-48px'; 
+            toggleModeBtn.innerHTML = '<i class="fa-solid fa-code-branch text-purple-500"></i> Used In';
+            toggleModeBtn.onclick = (e) => {
+                e.stopPropagation();
+                const radio = document.querySelector(`input[name="treeMode"][value="usage"]`);
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            };
+        } else {
+            toggleModeBtn.style.bottom = '-48px'; 
+            toggleModeBtn.innerHTML = '<i class="fa-solid fa-hammer text-blue-500"></i> Recipe';
+            toggleModeBtn.onclick = (e) => {
+                e.stopPropagation();
+                const radio = document.querySelector(`input[name="treeMode"][value="recipe"]`);
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            };
+        }
+        card.appendChild(toggleModeBtn);
+    }
+    
     node.appendChild(card);
 
     let hasValidChildren = false;

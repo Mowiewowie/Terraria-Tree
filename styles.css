@@ -205,7 +205,6 @@ body.home-mode #statusWrapper {
     height: 6px; top: 12px;
 }
 
-/* FIX: Both treeContainer and ghostContainer explicitly targeted to prevent layout flashing */
 #treeContainer.mode-usage .tree-node,
 #ghostContainer.mode-usage .tree-node {
     flex-direction: column-reverse;
