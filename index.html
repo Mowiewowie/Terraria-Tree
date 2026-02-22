@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerrariTree</title>
     
-    <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
     
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Application Logic -->
     <script src="app.js" defer></script>
 </head>
 <body class="h-screen flex flex-col transition-colors duration-300">
@@ -30,6 +26,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fa-solid fa-search text-slate-400"></i>
                     </div>
+                    <!-- Added Keyboard accessibility instructions to placeholder -->
                     <input type="text" id="searchInput" disabled
                         class="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-sm transition-colors shadow-inner"
                         placeholder="Loading database..." autocomplete="off">
@@ -101,7 +98,7 @@
                 <div id="toolFilters" class="controls-panel rounded-lg px-4 flex items-center gap-3 shadow-lg shrink-0 h-12">
                     <label class="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
                         <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
-                        Show Transmutations
+                        Transmutations <!-- Reduced Text Size -->
                     </label>
                 </div>
                 
@@ -142,9 +139,9 @@
                         <i class="fa-solid fa-layer-group"></i> Category
                     </button>
                 </div>
-
             </div>
         </div>
+        
         <div id="ttStats" class="grid grid-cols-2 gap-x-4 gap-y-1 mb-3 text-sm font-mono text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 pb-2"></div>
         <div id="ttStation" class="mb-2 text-sm text-yellow-600 dark:text-yellow-500/80 font-semibold hidden"><i class="fa-solid fa-hammer mr-2"></i> <span id="ttStationText"></span></div>
         <div id="ttAcquisition" class="mb-3 text-sm text-emerald-600 dark:text-emerald-400 font-semibold hidden">
@@ -152,6 +149,12 @@
             <ul id="ttAcquisitionList" class="list-disc list-inside space-y-0.5"></ul>
         </div>
         <p id="ttDesc" class="text-sm text-slate-600 dark:text-slate-400 italic leading-snug"></p>
+
+        <!-- New Feature: Extra Ingredients Tooltip Block -->
+        <div id="ttExtraIngredients" class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 hidden">
+            <div class="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold mb-2">Also Requires:</div>
+            <div id="ttExtraIngredientsList" class="flex flex-wrap gap-1.5"></div>
+        </div>
     </div>
 
 </body>

@@ -13,6 +13,9 @@ let showTransmutations = false;
 let isDraggingThresholdMet = false;
 let dragStartX = 0, dragStartY = 0;
 
+// Search Keyboard Nav State
+let searchActiveIndex = -1;
+
 // Unified View State
 let currentViewType = 'tree'; 
 let currentTreeItemId = null;
@@ -84,9 +87,18 @@ const dom = {
         btnWiki: document.getElementById('ttBtnWiki'),
         btnCategory: document.getElementById('ttBtnCategory'),
         acq: document.getElementById('ttAcquisition'),
-        acqList: document.getElementById('ttAcquisitionList')
+        acqList: document.getElementById('ttAcquisitionList'),
+        extraIngContainer: document.getElementById('ttExtraIngredients'),
+        extraIngList: document.getElementById('ttExtraIngredientsList')
     }
 };
+
+// --- System Device Diagnostics ---
+function isMobileUX() {
+    // Specifically targets touch-only devices without a mouse (phones/tablets).
+    // Safely excludes 4K Desktop Monitors and Laptops that have both touch and a mouse pointer.
+    return window.matchMedia("(any-pointer: coarse) and (hover: none)").matches;
+}
 
 // --- Formatters (Terraria Standard Logic) ---
 function getFriendlyKnockback(value) {
@@ -206,12 +218,19 @@ function buildUsageIndex() {
 
 function initializeData(data) {
     itemsDatabase = data;
-    itemIndex = Object.values(itemsDatabase).map(i => ({ id: i.id, name: i.name, fallback_image: i.image_url }));
+    // Embed the specific type directly into the search index for intelligent querying
+    itemIndex = Object.values(itemsDatabase).map(i => ({ 
+        id: i.id, 
+        name: i.name, 
+        type: (i.specific_type || "").toLowerCase(),
+        fallback_image: i.image_url 
+    }));
+    
     buildUsageIndex(); 
 
     dom.uploadSection.classList.add('hidden');
     dom.searchInput.disabled = false;
-    dom.searchInput.placeholder = "Search item...";
+    dom.searchInput.placeholder = "Search items, weapons, types...";
     dom.dbStatus.innerText = `${Object.keys(itemsDatabase).length.toLocaleString()} Items`;
     dom.dbStatus.classList.add('text-green-500');
     dom.dbStatus.classList.remove('text-slate-500');
@@ -303,7 +322,7 @@ function viewCategory(typeStr) {
     loadCategory(typeStr, false);
 }
 
-// --- User Interface Events ---
+// --- Intelligent Search & UI Events ---
 
 dom.mobileMenuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -339,8 +358,7 @@ document.addEventListener('click', (e) => {
     if (!dom.mobileMenuBtn.contains(e.target) && !dom.toolbarTools.contains(e.target)) {
         dom.toolbarTools.classList.add('hidden');
     }
-    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    if (isTouch && activeMobileCard && !activeMobileCard.contains(e.target) && !dom.tooltip.el.contains(e.target)) {
+    if (isMobileUX() && activeMobileCard && !activeMobileCard.contains(e.target) && !dom.tooltip.el.contains(e.target)) {
         activeMobileCard = null;
         dom.tooltip.el.classList.add('hidden');
     }
@@ -352,27 +370,113 @@ dom.searchInput.addEventListener('focus', () => {
     }
 });
 
+function updateSearchHighlight(resultsArray) {
+    resultsArray.forEach((el, idx) => {
+        if (idx === searchActiveIndex) {
+            el.classList.add('bg-blue-100', 'dark:bg-slate-600');
+            el.classList.remove('hover:bg-slate-100', 'dark:hover:bg-slate-700');
+            el.scrollIntoView({ block: 'nearest' });
+        } else {
+            el.classList.remove('bg-blue-100', 'dark:bg-slate-600');
+            el.classList.add('hover:bg-slate-100', 'dark:hover:bg-slate-700');
+        }
+    });
+}
+
+dom.searchInput.addEventListener('keydown', (e) => {
+    const results = Array.from(dom.searchResults.children);
+    if (results.length === 0 || dom.searchResults.classList.contains('hidden')) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        searchActiveIndex = Math.min(results.length - 1, searchActiveIndex + 1);
+        updateSearchHighlight(results);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        searchActiveIndex = Math.max(0, searchActiveIndex - 1);
+        updateSearchHighlight(results);
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const targetIdx = searchActiveIndex >= 0 ? searchActiveIndex : 0;
+        if (results[targetIdx]) results[targetIdx].click();
+    }
+});
+
 dom.searchInput.addEventListener('input', (e) => {
-    const val = e.target.value.toLowerCase();
-    if (val.length < 2) { dom.searchResults.classList.add('hidden'); return; }
-    const matches = itemIndex.filter(i => i.name.toLowerCase().includes(val))
-        .sort((a, b) => {
-            const as = a.name.toLowerCase().startsWith(val);
-            const bs = b.name.toLowerCase().startsWith(val);
-            return as === bs ? 0 : as ? -1 : 1;
-        }).slice(0, 10);
+    const val = e.target.value.toLowerCase().trim();
+    searchActiveIndex = -1; // Reset keyboard selection on new input
+    
+    if (val.length < 2) { 
+        dom.searchResults.classList.add('hidden'); 
+        return; 
+    }
+    
+    const tokens = val.split(' ').filter(t => t.length > 0);
+
+    // Intelligent Multi-Token Search Engine
+    const matches = itemIndex.filter(i => {
+        return tokens.every(token => 
+            i.name.toLowerCase().includes(token) || 
+            i.type.includes(token)
+        );
+    }).map(i => {
+        let score = 0;
+        const nameLower = i.name.toLowerCase();
+        
+        // Priority Scoring
+        if (nameLower === val) score += 100;
+        else if (nameLower.startsWith(val)) score += 50;
+        else if (nameLower.includes(val)) score += 10;
+        
+        if (i.type === val) score += 20;
+
+        return { item: i, score: score };
+    }).sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.item.name.localeCompare(b.item.name);
+    }).slice(0, 15);
     
     dom.searchResults.innerHTML = '';
+    
     if (matches.length > 0) {
         dom.searchResults.classList.remove('hidden');
-        matches.forEach(i => {
+        matches.forEach(m => {
+            // Security: Safe DOM injection to prevent XSS
             const d = document.createElement('div');
-            d.className = 'flex items-center gap-3 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-200 dark:border-slate-700 text-sm';
-            d.innerHTML = `<img src="${createDirectImageUrl(i.name)}" class="w-6 h-6 object-contain"><span class="text-slate-800 dark:text-slate-200 font-medium">${i.name}</span>`;
-            d.onclick = () => viewItem(i.id); 
+            d.className = 'search-result-item flex items-center justify-between p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-200 dark:border-slate-700 text-sm transition-colors';
+            
+            const leftWrap = document.createElement('div');
+            leftWrap.className = 'flex items-center gap-3';
+            
+            const img = document.createElement('img');
+            img.src = createDirectImageUrl(m.item.name);
+            img.className = 'w-6 h-6 object-contain';
+            
+            const txt = document.createElement('span');
+            txt.className = 'text-slate-800 dark:text-slate-200 font-medium';
+            txt.textContent = m.item.name;
+            
+            leftWrap.append(img, txt);
+            d.appendChild(leftWrap);
+            
+            if (m.item.type) {
+                const typeTag = document.createElement('span');
+                typeTag.className = 'text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold';
+                typeTag.textContent = m.item.type;
+                d.appendChild(typeTag);
+            }
+
+            d.onclick = () => {
+                dom.searchResults.classList.add('hidden');
+                dom.searchInput.value = '';
+                viewItem(m.item.id); 
+            };
+            
             dom.searchResults.appendChild(d);
         });
-    } else dom.searchResults.classList.add('hidden');
+    } else {
+        dom.searchResults.classList.add('hidden');
+    }
 });
 
 dom.resetViewBtn.onclick = () => resetView(false);
@@ -518,13 +622,12 @@ function resetView(isInitialLoad = false) {
 }
 
 // A reusable item card generator
-function createItemCardElement(data, sizeClasses) {
+function createItemCardElement(data, sizeClasses, contextRecipe = null) {
     const card = document.createElement('div');
     card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${sizeClasses}`;
     
     const img = document.createElement('img');
     img.src = createDirectImageUrl(data.name);
-    // FIX: Prevents the browser from natively dragging the image element
     img.draggable = false; 
     img.className = sizeClasses.includes('w-32') ? 'w-14 h-14 object-contain mb-2' : 'w-10 h-10 object-contain mb-1';
     img.onerror = () => { if(img.src !== data.image_url) img.src = data.image_url; else img.src = FALLBACK_ICON; };
@@ -546,23 +649,19 @@ function createItemCardElement(data, sizeClasses) {
     card.onclick = (e) => { 
         e.stopPropagation(); 
         
-        // Anti-click guard if the user was just dragging the canvas
         if (isDraggingThresholdMet) {
             isDraggingThresholdMet = false;
             return;
         }
-
-        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         
-        if (isTouch) {
+        if (isMobileUX()) {
             if (activeMobileCard !== card) {
                 activeMobileCard = card;
-                showTooltip(e, data);
-                return; // Tap 1: Show Tooltip
+                showTooltip(e, data, contextRecipe);
+                return; 
             }
         }
         
-        // Tap 2 (Mobile) or Click (Desktop)
         activeMobileCard = null;
         dom.tooltip.el.classList.add('hidden');
         
@@ -576,19 +675,16 @@ function createItemCardElement(data, sizeClasses) {
     };
     
     card.onmouseenter = e => {
-        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        if(!isTouch) {
+        if(!isMobileUX()) {
             clearTimeout(lineTooltipTimeout);
-            showTooltip(e, data);
+            showTooltip(e, data, contextRecipe);
         }
     };
     card.onmouseleave = () => {
-        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        if(!isTouch) dom.tooltip.el.classList.add('hidden');
+        if(!isMobileUX()) dom.tooltip.el.classList.add('hidden');
     };
     card.onmousemove = e => {
-        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        if(!isTouch) moveTooltip(e);
+        if(!isMobileUX()) moveTooltip(e);
     };
     
     return card;
@@ -789,7 +885,7 @@ function getSmartRecipe(recipes, itemName = "") {
     });
 }
 
-function createTreeNode(id, isRoot = false, visited = new Set()) {
+function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null) {
     const data = itemsDatabase[id];
     if (!data) return document.createElement('div');
 
@@ -797,7 +893,8 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
     node.className = 'tree-node';
     
     const rootBorder = treeMode === 'recipe' ? 'border-blue-500 ring-blue-500/20' : 'border-purple-500 ring-purple-500/20';
-    const card = createItemCardElement(data, isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24');
+    // Feature: Pass the recipe context down so the item card knows what spawned it
+    const card = createItemCardElement(data, isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24', parentContextRecipe);
     node.appendChild(card);
 
     let hasValidChildren = false;
@@ -871,7 +968,7 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                         container.classList.add('lines-hovered');
                         lastMouseCoords = { x: e.clientX, y: e.clientY };
                         lineTooltipTimeout = setTimeout(() => {
-                            showTooltip(lastMouseCoords, data); 
+                            showTooltip(lastMouseCoords, data, parentContextRecipe); 
                         }, 300);
                     };
                     el.onmouseleave = () => {
@@ -917,7 +1014,8 @@ function createTreeNode(id, isRoot = false, visited = new Set()) {
                     });
                 } else {
                     childrenData.forEach(usage => {
-                        const childNode = createTreeNode(usage.id, false, newVis);
+                        // Pass usage.recipe down so the child knows what extra items it needs
+                        const childNode = createTreeNode(usage.id, false, newVis, usage.recipe);
                         const b = document.createElement('span');
                         b.className = 'absolute -top-2 -right-2 bg-purple-100 dark:bg-purple-900 border border-purple-300 dark:border-purple-500 text-purple-800 dark:text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
                         b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
@@ -1088,7 +1186,7 @@ dom.expandAllBtn.onclick = async () => {
     setTimeout(() => resetView(false), 100);
 };
 
-function showTooltip(e, data) {
+function showTooltip(e, data, extraRecipe = null) {
     const rarityVal = data.stats?.rarity !== undefined ? data.stats.rarity : 0;
     dom.tooltip.name.className = `terraria-text font-bold text-lg leading-tight rarity-${rarityVal}`;
     dom.tooltip.name.textContent = data.name;
@@ -1103,10 +1201,11 @@ function showTooltip(e, data) {
     dom.tooltip.image.src = createDirectImageUrl(data.name);
     dom.tooltip.image.onerror = () => { if(dom.tooltip.image.src !== data.image_url) dom.tooltip.image.src = data.image_url; else dom.tooltip.image.src = FALLBACK_ICON; };
     
-    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    // Evaluate pure mobile touch UI vs Desktop with/without touch
+    const usingMobileUX = isMobileUX();
 
     if (data.url || data.specific_type) {
-        if (isTouch) {
+        if (usingMobileUX) {
             dom.tooltip.wikiDesktop.classList.add('hidden');
             dom.tooltip.wikiMobile.classList.remove('hidden');
             
@@ -1195,10 +1294,46 @@ function showTooltip(e, data) {
     } else {
         dom.tooltip.acq.classList.add('hidden');
     }
+
+    // Feature: Used In Missing Ingredients UI
+    if (treeMode === 'usage' && extraRecipe && currentTreeItemId) {
+        const rootName = itemsDatabase[currentTreeItemId].name.toLowerCase();
+        
+        // Filter out the base item and equivalent group items (like "Any Wood")
+        const extraIngs = extraRecipe.ingredients.filter(ing => {
+            const ingLower = ing.name.toLowerCase();
+            if (ingLower === rootName) return false;
+            
+            if (ingLower.startsWith('any ')) {
+                const groupKey = Object.keys(RECIPE_GROUPS).find(k => k.toLowerCase() === ingLower);
+                if (groupKey && RECIPE_GROUPS[groupKey].map(x=>x.toLowerCase()).includes(rootName)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        if (extraIngs.length > 0) {
+            dom.tooltip.extraIngContainer.classList.remove('hidden');
+            dom.tooltip.extraIngList.innerHTML = '';
+            
+            extraIngs.forEach(ing => {
+                const img = document.createElement('img');
+                img.src = createDirectImageUrl(ing.name);
+                img.className = 'w-6 h-6 object-contain rounded bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-300 dark:border-slate-600 shadow-sm';
+                img.title = `${ing.name} (x${ing.amount})`;
+                dom.tooltip.extraIngList.appendChild(img);
+            });
+        } else {
+            dom.tooltip.extraIngContainer.classList.add('hidden');
+        }
+    } else {
+        dom.tooltip.extraIngContainer.classList.add('hidden');
+    }
     
     dom.tooltip.el.classList.remove('hidden');
     
-    if (isTouch) {
+    if (usingMobileUX) {
         const touchEvent = e.touches ? e.touches[0] : e;
         moveTooltip({ clientX: touchEvent.clientX, clientY: touchEvent.clientY });
     } else if (e.clientX !== undefined) {
