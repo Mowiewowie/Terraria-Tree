@@ -100,6 +100,17 @@ function isMobileUX() {
     return window.matchMedia("(any-pointer: coarse) and (hover: none)").matches;
 }
 
+function removeHomeMode() {
+    if (document.body.classList.contains('home-mode')) {
+        document.body.classList.remove('home-mode');
+        // Let the CSS transitions finish before showing tree UI
+        setTimeout(() => {
+            dom.vizArea.classList.remove('hidden');
+            dom.mainToolbar.classList.remove('hidden');
+        }, 100);
+    }
+}
+
 // --- Formatters (Terraria Standard Logic) ---
 function getFriendlyKnockback(value) {
     if (value === 0) return "No knockback";
@@ -218,7 +229,7 @@ function buildUsageIndex() {
 
 function initializeData(data) {
     itemsDatabase = data;
-    // Embed the specific type directly into the search index for intelligent querying
+    // Feature 5: Embed specific type directly for intelligent search tokenization
     itemIndex = Object.values(itemsDatabase).map(i => ({ 
         id: i.id, 
         name: i.name, 
@@ -230,7 +241,7 @@ function initializeData(data) {
 
     dom.uploadSection.classList.add('hidden');
     dom.searchInput.disabled = false;
-    dom.searchInput.placeholder = "Search items, weapons, types...";
+    dom.searchInput.placeholder = "Search items, weapons, or types (Arrows to navigate)...";
     dom.dbStatus.innerText = `${Object.keys(itemsDatabase).length.toLocaleString()} Items`;
     dom.dbStatus.classList.add('text-green-500');
     dom.dbStatus.classList.remove('text-slate-500');
@@ -241,8 +252,10 @@ function initializeData(data) {
     const cat = params.get('category');
     
     if (id && itemsDatabase[id]) {
+        removeHomeMode();
         viewItem(id);
     } else if (cat) {
+        removeHomeMode();
         viewCategory(cat);
     }
 }
@@ -273,29 +286,63 @@ window.addEventListener('popstate', (e) => {
         historyIdx = e.state.idx;
         const state = appHistory[historyIdx];
         if (state) {
-            if (state.viewType === 'category') {
-                loadCategory(state.category, true, true);
-            } else {
-                treeMode = state.mode;
-                document.querySelector(`input[name="treeMode"][value="${state.mode}"]`).checked = true;
-                if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
-                else dom.treeContainer.classList.remove('mode-usage');
+            removeHomeMode();
+            
+            // Feature: Seamless History Crossfade
+            dom.treeContainer.classList.add('fade-unfocused');
+            
+            setTimeout(() => {
+                if (state.viewType === 'category') {
+                    loadCategory(state.category, true, true);
+                } else {
+                    treeMode = state.mode;
+                    document.querySelector(`input[name="treeMode"][value="${state.mode}"]`).checked = true;
+                    if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
+                    else dom.treeContainer.classList.remove('mode-usage');
+                    
+                    expandedNodes = new Set(state.expanded || []);
+                    loadTree(state.id, true, true, true); // true = isTransitioning crossfade
+                }
                 
-                expandedNodes = new Set(state.expanded || []);
-                loadTree(state.id, true, true); 
-            }
-            
-            updateNavButtons();
-            
-            currentX = state.x; targetX = state.x;
-            currentY = state.y; targetY = state.y;
-            currentScale = state.scale; targetScale = state.scale;
-            dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+                updateNavButtons();
+                
+                currentX = state.x; targetX = state.x;
+                currentY = state.y; targetY = state.y;
+                currentScale = state.scale; targetScale = state.scale;
+                dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+            }, 250);
         }
     }
 });
 
-function viewItem(id) {
+// Feature 2: Seamless Hero Click Animation
+function transitionToNewItem(cardEl, targetId) {
+    removeHomeMode();
+    
+    // 1. Mark target for preservation
+    cardEl.classList.add('hero-active');
+    
+    // 2. Fade out everything else
+    dom.treeContainer.classList.add('fade-unfocused');
+    
+    // 3. Center camera on the clicked card
+    const rect = cardEl.getBoundingClientRect();
+    const localCenterX = (rect.left - currentX) / currentScale + (rect.width / currentScale) / 2;
+    const localCenterY = (rect.top - currentY) / currentScale + (rect.height / currentScale) / 2;
+    
+    targetScale = 1.1; 
+    targetX = window.innerWidth / 2 - localCenterX * targetScale;
+    targetY = window.innerHeight / 2 - localCenterY * targetScale;
+    triggerAnimation();
+    
+    // 4. Swap DOM after camera pan
+    setTimeout(() => {
+        viewItem(targetId, true);
+    }, 350);
+}
+
+function viewItem(id, isTransitioning = false) {
+    removeHomeMode();
     saveCurrentState(); 
     appHistory = appHistory.slice(0, historyIdx + 1);
     appHistory.push({ viewType: 'tree', id: id, mode: treeMode, expanded: [] });
@@ -305,10 +352,11 @@ function viewItem(id) {
     
     history.pushState({ idx: historyIdx }, "", `?id=${id}`);
     updateNavButtons();
-    loadTree(id, false);
+    loadTree(id, false, false, isTransitioning);
 }
 
 function viewCategory(typeStr) {
+    removeHomeMode();
     if (!typeStr) return;
     saveCurrentState();
     appHistory = appHistory.slice(0, historyIdx + 1);
@@ -370,6 +418,7 @@ dom.searchInput.addEventListener('focus', () => {
     }
 });
 
+// Feature 4: Keyboard Navigation Focus
 function updateSearchHighlight(resultsArray) {
     resultsArray.forEach((el, idx) => {
         if (idx === searchActiveIndex) {
@@ -383,6 +432,7 @@ function updateSearchHighlight(resultsArray) {
     });
 }
 
+// Feature 4: Keyboard Navigation Listener
 dom.searchInput.addEventListener('keydown', (e) => {
     const results = Array.from(dom.searchResults.children);
     if (results.length === 0 || dom.searchResults.classList.contains('hidden')) return;
@@ -413,8 +463,9 @@ dom.searchInput.addEventListener('input', (e) => {
     
     const tokens = val.split(' ').filter(t => t.length > 0);
 
-    // Intelligent Multi-Token Search Engine
+    // Feature 5: Intelligent Multi-Token Search Engine
     const matches = itemIndex.filter(i => {
+        // Must match all tokens against name OR specific_type
         return tokens.every(token => 
             i.name.toLowerCase().includes(token) || 
             i.type.includes(token)
@@ -424,11 +475,11 @@ dom.searchInput.addEventListener('input', (e) => {
         const nameLower = i.name.toLowerCase();
         
         // Priority Scoring
-        if (nameLower === val) score += 100;
+        if (nameLower === val) score += 100; // Exact Name
         else if (nameLower.startsWith(val)) score += 50;
         else if (nameLower.includes(val)) score += 10;
         
-        if (i.type === val) score += 20;
+        if (i.type === val) score += 20; // Exact Type
 
         return { item: i, score: score };
     }).sort((a, b) => {
@@ -441,7 +492,7 @@ dom.searchInput.addEventListener('input', (e) => {
     if (matches.length > 0) {
         dom.searchResults.classList.remove('hidden');
         matches.forEach(m => {
-            // Security: Safe DOM injection to prevent XSS
+            // Feature 5 Security: Safe DOM injection to prevent XSS
             const d = document.createElement('div');
             d.className = 'search-result-item flex items-center justify-between p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-200 dark:border-slate-700 text-sm transition-colors';
             
@@ -469,6 +520,7 @@ dom.searchInput.addEventListener('input', (e) => {
             d.onclick = () => {
                 dom.searchResults.classList.add('hidden');
                 dom.searchInput.value = '';
+                removeHomeMode();
                 viewItem(m.item.id); 
             };
             
@@ -653,7 +705,7 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null) {
             isDraggingThresholdMet = false;
             return;
         }
-        
+
         if (isMobileUX()) {
             if (activeMobileCard !== card) {
                 activeMobileCard = card;
@@ -667,8 +719,16 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null) {
         
         if (e.ctrlKey || e.metaKey) {
             if(data.url) window.open(data.url, '_blank'); 
-        } else if (e.shiftKey && data.specific_type) {
+            return;
+        } 
+        if (e.shiftKey && data.specific_type) {
             viewCategory(data.specific_type);
+            return;
+        } 
+        
+        // Feature 2: Trigger seamless camera transition instead of instant load
+        if (currentViewType === 'tree') {
+            transitionToNewItem(card, data.id);
         } else {
             viewItem(data.id);
         }
@@ -698,8 +758,6 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
     dom.searchInput.value = '';
     dom.searchResults.classList.add('hidden');
     dom.tooltip.el.classList.add('hidden'); 
-    dom.vizArea.classList.remove('hidden');
-    dom.mainToolbar.classList.remove('hidden'); 
     
     dom.toolMode.classList.add('hidden');
     dom.toolFilters.classList.add('hidden');
@@ -707,6 +765,7 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
     
     dom.treeContainer.innerHTML = '';
     dom.treeContainer.classList.remove('mode-usage');
+    dom.treeContainer.classList.remove('fade-unfocused', 'fade-in-rapid');
     
     const items = Object.values(itemsDatabase).filter(i => i.specific_type === typeStr);
     
@@ -746,15 +805,13 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
 }
 
 // --- Tree Engine ---
-function loadTree(id, preserveState = false, isHistoryPop = false) {
+function loadTree(id, preserveState = false, isHistoryPop = false, isTransitioning = false) {
     currentViewType = 'tree';
     currentTreeItemId = id;
     
     dom.searchInput.value = '';
     dom.searchResults.classList.add('hidden');
     dom.tooltip.el.classList.add('hidden'); 
-    dom.vizArea.classList.remove('hidden');
-    dom.mainToolbar.classList.remove('hidden'); 
     
     dom.toolMode.classList.remove('hidden');
     dom.toolFilters.classList.remove('hidden');
@@ -773,7 +830,25 @@ function loadTree(id, preserveState = false, isHistoryPop = false) {
     dom.treeContainer.appendChild(createTreeNode(id, true));
     syncExpandAllButton();
     
-    if (!preserveState && !isHistoryPop) {
+    if (isTransitioning) {
+        // Feature 2: Force the new tree root to spawn exactly where the hero item was
+        dom.treeContainer.classList.remove('fade-unfocused');
+        dom.treeContainer.classList.add('fade-in-rapid');
+        
+        const treeWidth = dom.treeContainer.scrollWidth;
+        let localCenterX = treeWidth / 2;
+        let localCenterY = 24 + 64; // Recipe mode root estimation
+        if (treeMode === 'usage') localCenterY = dom.treeContainer.scrollHeight - 56;
+        
+        currentScale = 1.1;
+        currentX = window.innerWidth / 2 - localCenterX * currentScale;
+        currentY = window.innerHeight / 2 - localCenterY * currentScale;
+        dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+        
+        // Glide from center to optimal layout
+        setTimeout(() => resetView(false), 20);
+        setTimeout(() => dom.treeContainer.classList.remove('fade-in-rapid'), 600);
+    } else if (!preserveState && !isHistoryPop) {
         setTimeout(() => resetView(isFirstLoad), 50);
     } else if (!isHistoryPop) {
         triggerAnimation();
@@ -891,9 +966,10 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
 
     const node = document.createElement('div');
     node.className = 'tree-node';
+    if (isRoot) node.classList.add('is-root');
     
     const rootBorder = treeMode === 'recipe' ? 'border-blue-500 ring-blue-500/20' : 'border-purple-500 ring-purple-500/20';
-    // Feature: Pass the recipe context down so the item card knows what spawned it
+    // Feature 3: Pass recipe context so child knows what other items are needed to craft it
     const card = createItemCardElement(data, isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24', parentContextRecipe);
     node.appendChild(card);
 
@@ -1201,7 +1277,6 @@ function showTooltip(e, data, extraRecipe = null) {
     dom.tooltip.image.src = createDirectImageUrl(data.name);
     dom.tooltip.image.onerror = () => { if(dom.tooltip.image.src !== data.image_url) dom.tooltip.image.src = data.image_url; else dom.tooltip.image.src = FALLBACK_ICON; };
     
-    // Evaluate pure mobile touch UI vs Desktop with/without touch
     const usingMobileUX = isMobileUX();
 
     if (data.url || data.specific_type) {
@@ -1295,7 +1370,7 @@ function showTooltip(e, data, extraRecipe = null) {
         dom.tooltip.acq.classList.add('hidden');
     }
 
-    // Feature: Used In Missing Ingredients UI
+    // Feature 3: Used In Missing Ingredients UI
     if (treeMode === 'usage' && extraRecipe && currentTreeItemId) {
         const rootName = itemsDatabase[currentTreeItemId].name.toLowerCase();
         
