@@ -100,15 +100,58 @@ function isMobileUX() {
     return window.matchMedia("(any-pointer: coarse) and (hover: none)").matches;
 }
 
+// --- FLIP Animation for Google-style Home Search ---
 function removeHomeMode() {
-    if (document.body.classList.contains('home-mode')) {
-        document.body.classList.remove('home-mode');
-        // Let the CSS transitions finish before showing tree UI
+    if (!document.body.classList.contains('home-mode')) return;
+    
+    const logo = document.getElementById('logoContainer');
+    const search = document.getElementById('searchWrapper');
+    
+    // First Snapshot
+    const lFirst = logo.getBoundingClientRect();
+    const sFirst = search.getBoundingClientRect();
+    
+    // Trigger State Change
+    document.body.classList.remove('home-mode');
+    
+    // Last Snapshot
+    const lLast = logo.getBoundingClientRect();
+    const sLast = search.getBoundingClientRect();
+    
+    // Invert calculations
+    const lInvertX = lFirst.left - lLast.left;
+    const lInvertY = lFirst.top - lLast.top;
+    const lInvertScale = lFirst.width / lLast.width;
+    
+    const sInvertX = sFirst.left - sLast.left;
+    const sInvertY = sFirst.top - sLast.top;
+    const sInvertScale = sFirst.width / sLast.width;
+    
+    // Invert Apply
+    logo.style.transform = `translate(${lInvertX}px, ${lInvertY}px) scale(${lInvertScale})`;
+    search.style.transform = `translate(${sInvertX}px, ${sInvertY}px) scale(${sInvertScale})`;
+    logo.style.transition = 'none';
+    search.style.transition = 'none';
+    
+    // Play Animation
+    requestAnimationFrame(() => {
+        logo.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        search.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        logo.style.transform = '';
+        search.style.transform = '';
+        
         setTimeout(() => {
+            logo.style.transition = '';
+            search.style.transition = '';
             dom.vizArea.classList.remove('hidden');
-            dom.mainToolbar.classList.remove('hidden');
-        }, 100);
-    }
+            // Fade in content
+            requestAnimationFrame(() => {
+                dom.vizArea.style.opacity = '1';
+                dom.mainToolbar.classList.remove('hidden');
+                setTimeout(()=> dom.mainToolbar.style.opacity = '1', 50);
+            });
+        }, 600);
+    });
 }
 
 // --- Formatters (Terraria Standard Logic) ---
@@ -229,7 +272,6 @@ function buildUsageIndex() {
 
 function initializeData(data) {
     itemsDatabase = data;
-    // Feature 5: Embed specific type directly for intelligent search tokenization
     itemIndex = Object.values(itemsDatabase).map(i => ({ 
         id: i.id, 
         name: i.name, 
@@ -252,15 +294,13 @@ function initializeData(data) {
     const cat = params.get('category');
     
     if (id && itemsDatabase[id]) {
-        removeHomeMode();
         viewItem(id);
     } else if (cat) {
-        removeHomeMode();
         viewCategory(cat);
     }
 }
 
-// --- History API & Navigation Controllers ---
+// --- History API & Seamless Transition Controllers ---
 function saveCurrentState() {
     if (historyIdx >= 0 && appHistory[historyIdx]) {
         appHistory[historyIdx].x = targetX;
@@ -283,13 +323,40 @@ dom.navForward.onclick = () => { saveCurrentState(); history.forward(); };
 
 window.addEventListener('popstate', (e) => {
     if (e.state && e.state.idx !== undefined) {
+        const isBackward = e.state.idx < historyIdx;
         historyIdx = e.state.idx;
         const state = appHistory[historyIdx];
+        
         if (state) {
             removeHomeMode();
             
-            // Feature: Seamless History Crossfade
-            dom.treeContainer.classList.add('fade-unfocused');
+            const oldTargetId = currentTreeItemId;
+            let cameraWaitTime = 0;
+            
+            // Feature: Seamless History Crossfade Math
+            if (currentViewType === 'tree' && state.viewType === 'tree') {
+                const rootCard = dom.treeContainer.querySelector('.is-root > .item-card');
+                if (rootCard) {
+                    rootCard.classList.add('hero-active');
+                    dom.treeContainer.classList.add('fade-unfocused');
+                    
+                    const rect = rootCard.getBoundingClientRect();
+                    const vizRect = dom.vizArea.getBoundingClientRect();
+                    const cardCenterX = rect.left + rect.width / 2 - vizRect.left;
+                    const cardCenterY = rect.top + rect.height / 2 - vizRect.top;
+                    const targetCenterX = vizRect.width / 2;
+                    const targetCenterY = vizRect.height / 2;
+                    
+                    targetX += (targetCenterX - cardCenterX);
+                    targetY += (targetCenterY - cardCenterY);
+                    targetScale = 1.1; 
+                    triggerAnimation();
+                    cameraWaitTime = 350;
+                }
+            } else {
+                dom.treeContainer.classList.add('fade-unfocused');
+                cameraWaitTime = 200;
+            }
             
             setTimeout(() => {
                 if (state.viewType === 'category') {
@@ -301,44 +368,37 @@ window.addEventListener('popstate', (e) => {
                     else dom.treeContainer.classList.remove('mode-usage');
                     
                     expandedNodes = new Set(state.expanded || []);
-                    loadTree(state.id, true, true, true); // true = isTransitioning crossfade
+                    const transitionType = isBackward ? 'backward' : 'forward';
+                    loadTree(state.id, true, true, transitionType, oldTargetId, state); 
                 }
                 
                 updateNavButtons();
-                
-                currentX = state.x; targetX = state.x;
-                currentY = state.y; targetY = state.y;
-                currentScale = state.scale; targetScale = state.scale;
-                dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
-            }, 250);
+            }, cameraWaitTime);
         }
     }
 });
 
-// Feature 2: Seamless Hero Click Animation
 function transitionToNewItem(cardEl, targetId) {
     removeHomeMode();
     
-    // 1. Mark target for preservation
+    // Setup Hero Element Fade
     cardEl.classList.add('hero-active');
-    
-    // 2. Fade out everything else
     dom.treeContainer.classList.add('fade-unfocused');
     
-    // 3. Center camera on the clicked card
+    // Pan Camera to item
     const rect = cardEl.getBoundingClientRect();
-    const localCenterX = (rect.left - currentX) / currentScale + (rect.width / currentScale) / 2;
-    const localCenterY = (rect.top - currentY) / currentScale + (rect.height / currentScale) / 2;
+    const vizRect = dom.vizArea.getBoundingClientRect();
+    const cardCenterX = rect.left + rect.width / 2 - vizRect.left;
+    const cardCenterY = rect.top + rect.height / 2 - vizRect.top;
     
+    targetX += (vizRect.width / 2 - cardCenterX);
+    targetY += (vizRect.height / 2 - cardCenterY);
     targetScale = 1.1; 
-    targetX = window.innerWidth / 2 - localCenterX * targetScale;
-    targetY = window.innerHeight / 2 - localCenterY * targetScale;
     triggerAnimation();
     
-    // 4. Swap DOM after camera pan
     setTimeout(() => {
         viewItem(targetId, true);
-    }, 350);
+    }, 400); 
 }
 
 function viewItem(id, isTransitioning = false) {
@@ -352,7 +412,7 @@ function viewItem(id, isTransitioning = false) {
     
     history.pushState({ idx: historyIdx }, "", `?id=${id}`);
     updateNavButtons();
-    loadTree(id, false, false, isTransitioning);
+    loadTree(id, false, false, isTransitioning ? 'forward' : null);
 }
 
 function viewCategory(typeStr) {
@@ -418,7 +478,6 @@ dom.searchInput.addEventListener('focus', () => {
     }
 });
 
-// Feature 4: Keyboard Navigation Focus
 function updateSearchHighlight(resultsArray) {
     resultsArray.forEach((el, idx) => {
         if (idx === searchActiveIndex) {
@@ -432,7 +491,6 @@ function updateSearchHighlight(resultsArray) {
     });
 }
 
-// Feature 4: Keyboard Navigation Listener
 dom.searchInput.addEventListener('keydown', (e) => {
     const results = Array.from(dom.searchResults.children);
     if (results.length === 0 || dom.searchResults.classList.contains('hidden')) return;
@@ -454,7 +512,7 @@ dom.searchInput.addEventListener('keydown', (e) => {
 
 dom.searchInput.addEventListener('input', (e) => {
     const val = e.target.value.toLowerCase().trim();
-    searchActiveIndex = -1; // Reset keyboard selection on new input
+    searchActiveIndex = -1;
     
     if (val.length < 2) { 
         dom.searchResults.classList.add('hidden'); 
@@ -463,9 +521,7 @@ dom.searchInput.addEventListener('input', (e) => {
     
     const tokens = val.split(' ').filter(t => t.length > 0);
 
-    // Feature 5: Intelligent Multi-Token Search Engine
     const matches = itemIndex.filter(i => {
-        // Must match all tokens against name OR specific_type
         return tokens.every(token => 
             i.name.toLowerCase().includes(token) || 
             i.type.includes(token)
@@ -474,12 +530,11 @@ dom.searchInput.addEventListener('input', (e) => {
         let score = 0;
         const nameLower = i.name.toLowerCase();
         
-        // Priority Scoring
-        if (nameLower === val) score += 100; // Exact Name
+        if (nameLower === val) score += 100;
         else if (nameLower.startsWith(val)) score += 50;
         else if (nameLower.includes(val)) score += 10;
         
-        if (i.type === val) score += 20; // Exact Type
+        if (i.type === val) score += 20;
 
         return { item: i, score: score };
     }).sort((a, b) => {
@@ -492,7 +547,6 @@ dom.searchInput.addEventListener('input', (e) => {
     if (matches.length > 0) {
         dom.searchResults.classList.remove('hidden');
         matches.forEach(m => {
-            // Feature 5 Security: Safe DOM injection to prevent XSS
             const d = document.createElement('div');
             d.className = 'search-result-item flex items-center justify-between p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-200 dark:border-slate-700 text-sm transition-colors';
             
@@ -520,8 +574,14 @@ dom.searchInput.addEventListener('input', (e) => {
             d.onclick = () => {
                 dom.searchResults.classList.add('hidden');
                 dom.searchInput.value = '';
-                removeHomeMode();
-                viewItem(m.item.id); 
+                
+                // If it's a completely new action on the Home Mode, trigger standard view layout
+                if (document.body.classList.contains('home-mode')) {
+                    removeHomeMode();
+                    viewItem(m.item.id); 
+                } else {
+                    viewItem(m.item.id, true); 
+                }
             };
             
             dom.searchResults.appendChild(d);
@@ -677,6 +737,7 @@ function resetView(isInitialLoad = false) {
 function createItemCardElement(data, sizeClasses, contextRecipe = null) {
     const card = document.createElement('div');
     card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${sizeClasses}`;
+    card.dataset.id = data.id; // Added for reverse-lookup during backward transitions
     
     const img = document.createElement('img');
     img.src = createDirectImageUrl(data.name);
@@ -726,7 +787,7 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null) {
             return;
         } 
         
-        // Feature 2: Trigger seamless camera transition instead of instant load
+        // Trigger seamless camera transition instead of instant load
         if (currentViewType === 'tree') {
             transitionToNewItem(card, data.id);
         } else {
@@ -764,8 +825,8 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
     dom.expandAllBtn.classList.add('hidden');
     
     dom.treeContainer.innerHTML = '';
-    dom.treeContainer.classList.remove('mode-usage');
-    dom.treeContainer.classList.remove('fade-unfocused', 'fade-in-rapid');
+    dom.treeContainer.classList.remove('mode-usage', 'fade-unfocused', 'fade-in-rapid');
+    dom.treeContainer.style.opacity = '1';
     
     const items = Object.values(itemsDatabase).filter(i => i.specific_type === typeStr);
     
@@ -805,7 +866,7 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
 }
 
 // --- Tree Engine ---
-function loadTree(id, preserveState = false, isHistoryPop = false, isTransitioning = false) {
+function loadTree(id, preserveState = false, isHistoryPop = false, transitionType = null, oldTargetId = null, savedState = null) {
     currentViewType = 'tree';
     currentTreeItemId = id;
     
@@ -830,27 +891,58 @@ function loadTree(id, preserveState = false, isHistoryPop = false, isTransitioni
     dom.treeContainer.appendChild(createTreeNode(id, true));
     syncExpandAllButton();
     
-    if (isTransitioning) {
-        // Feature 2: Force the new tree root to spawn exactly where the hero item was
+    // Feature: Seamless "Camera Sync" DOM Swap
+    if (transitionType) {
+        dom.treeContainer.style.opacity = '0';
         dom.treeContainer.classList.remove('fade-unfocused');
-        dom.treeContainer.classList.add('fade-in-rapid');
         
-        const treeWidth = dom.treeContainer.scrollWidth;
-        let localCenterX = treeWidth / 2;
-        let localCenterY = 24 + 64; // Recipe mode root estimation
-        if (treeMode === 'usage') localCenterY = dom.treeContainer.scrollHeight - 56;
-        
-        currentScale = 1.1;
-        currentX = window.innerWidth / 2 - localCenterX * currentScale;
-        currentY = window.innerHeight / 2 - localCenterY * currentScale;
-        dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
-        
-        // Glide from center to optimal layout
-        setTimeout(() => resetView(false), 20);
-        setTimeout(() => dom.treeContainer.classList.remove('fade-in-rapid'), 600);
+        requestAnimationFrame(() => {
+            let focusCard = dom.treeContainer.querySelector('.is-root > .item-card');
+            
+            // If going backwards, attempt to align the camera with the old target we just came from
+            if (transitionType === 'backward' && oldTargetId) {
+                const targetCards = Array.from(dom.treeContainer.querySelectorAll('.item-card')).filter(c => c.dataset.id === oldTargetId.toString());
+                if (targetCards.length > 0) focusCard = targetCards[0];
+            }
+            
+            focusCard.classList.add('hero-active');
+            
+            const tr = dom.treeContainer.getBoundingClientRect();
+            const rr = focusCard.getBoundingClientRect();
+            
+            const localCenterX = (rr.left - tr.left) / currentScale + (rr.width / currentScale) / 2;
+            const localCenterY = (rr.top - tr.top) / currentScale + (rr.height / currentScale) / 2;
+            const vizRect = dom.vizArea.getBoundingClientRect();
+            
+            // Force Camera coordinates to perfectly overlay the hero card
+            currentScale = 1.1;
+            currentX = (vizRect.width / 2) - localCenterX * currentScale;
+            currentY = (vizRect.height / 2) - localCenterY * currentScale;
+            
+            dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+            dom.treeContainer.style.opacity = '1';
+            dom.treeContainer.classList.add('fade-in-rapid');
+            
+            // Animate away to the desired layout state
+            if (transitionType === 'backward' && savedState) {
+                targetX = savedState.x;
+                targetY = savedState.y;
+                targetScale = savedState.scale;
+            } else {
+                resetView(false); 
+            }
+            triggerAnimation();
+            
+            setTimeout(() => {
+                dom.treeContainer.classList.remove('fade-in-rapid');
+                focusCard.classList.remove('hero-active');
+            }, 600);
+        });
     } else if (!preserveState && !isHistoryPop) {
         setTimeout(() => resetView(isFirstLoad), 50);
     } else if (!isHistoryPop) {
+        dom.treeContainer.style.opacity = '1';
+        dom.treeContainer.classList.remove('fade-unfocused');
         triggerAnimation();
     }
 }
@@ -969,7 +1061,6 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
     if (isRoot) node.classList.add('is-root');
     
     const rootBorder = treeMode === 'recipe' ? 'border-blue-500 ring-blue-500/20' : 'border-purple-500 ring-purple-500/20';
-    // Feature 3: Pass recipe context so child knows what other items are needed to craft it
     const card = createItemCardElement(data, isRoot ? `w-32 h-32 ring-4 ${rootBorder}` : 'w-24 h-24', parentContextRecipe);
     node.appendChild(card);
 
@@ -1090,7 +1181,6 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                     });
                 } else {
                     childrenData.forEach(usage => {
-                        // Pass usage.recipe down so the child knows what extra items it needs
                         const childNode = createTreeNode(usage.id, false, newVis, usage.recipe);
                         const b = document.createElement('span');
                         b.className = 'absolute -top-2 -right-2 bg-purple-100 dark:bg-purple-900 border border-purple-300 dark:border-purple-500 text-purple-800 dark:text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
@@ -1370,11 +1460,9 @@ function showTooltip(e, data, extraRecipe = null) {
         dom.tooltip.acq.classList.add('hidden');
     }
 
-    // Feature 3: Used In Missing Ingredients UI
     if (treeMode === 'usage' && extraRecipe && currentTreeItemId) {
         const rootName = itemsDatabase[currentTreeItemId].name.toLowerCase();
         
-        // Filter out the base item and equivalent group items (like "Any Wood")
         const extraIngs = extraRecipe.ingredients.filter(ing => {
             const ingLower = ing.name.toLowerCase();
             if (ingLower === rootName) return false;

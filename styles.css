@@ -43,40 +43,24 @@ body {
 
 .tree-children.hidden { display: none !important; }
 
-/* --- Home Mode Float Animation --- */
+/* --- Home Mode CSS Override --- */
 body.home-mode #mainHeader {
     height: 100vh;
-    background: transparent !important;
+    background-color: transparent !important;
     border-bottom-color: transparent !important;
     box-shadow: none !important;
 }
-body.home-mode #logoContainer {
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(2);
+body.home-mode #headerContent {
+    height: 100%;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 3rem;
 }
-body.home-mode #logoText {
-    display: block !important;
-}
-body.home-mode #searchWrapper {
-    position: fixed;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(1.2);
-    max-width: 600px;
-}
-body.home-mode #statusWrapper {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-}
-body.home-mode #mainToolbar, 
-body.home-mode #visualizationArea {
-    opacity: 0;
-    pointer-events: none;
-}
+body.home-mode #logoText { display: block !important; font-size: 3rem; }
+body.home-mode #logoIcon { font-size: 3.5rem; }
+body.home-mode #searchWrapper { max-width: 700px; transform: scale(1.15); }
+body.home-mode #statusWrapper { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); }
+
 
 /* --- Seamless Animations & Hero States --- */
 .fade-unfocused .item-card:not(.hero-active),
@@ -90,14 +74,15 @@ body.home-mode #visualizationArea {
 }
 
 .item-card.hero-active {
-    transform: scale(1.2);
+    transform: scale(1.25);
     z-index: 9999;
-    box-shadow: 0 0 40px rgba(245, 158, 11, 0.5);
+    box-shadow: 0 0 50px rgba(245, 158, 11, 0.6);
     border-color: var(--line-hover);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fade-in-rapid {
-    animation: fadeInRapid 0.5s ease forwards;
+    animation: fadeInRapid 0.6s ease forwards;
 }
 @keyframes fadeInRapid {
     0% { opacity: 0; }
@@ -110,23 +95,23 @@ body.home-mode #visualizationArea {
     text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 2px 2px 3px rgba(0,0,0,0.6);
 }
 
-.rarity--1 { color: #828282 !important; } /* Gray */
-.rarity-0 { color: #ffffff !important; }  /* White */
-.rarity-1 { color: #9696ff !important; }  /* Blue */
-.rarity-2 { color: #96ff96 !important; }  /* Green */
-.rarity-3 { color: #ffc896 !important; }  /* Orange */
-.rarity-4 { color: #ff9696 !important; }  /* Light Red */
-.rarity-5 { color: #ff96ff !important; }  /* Pink */
-.rarity-6 { color: #d2a0ff !important; }  /* Light Purple */
-.rarity-7 { color: #96ff00 !important; }  /* Lime */
-.rarity-8 { color: #ffff00 !important; }  /* Yellow */
-.rarity-9 { color: #05c8ff !important; }  /* Cyan */
-.rarity-10 { color: #ff2864 !important; } /* Red */
-.rarity-11 { color: #b428ff !important; } /* Purple */
-.rarity--11 { color: #ff9600 !important; }/* Amber / Quest */
+.rarity--1 { color: #828282 !important; }
+.rarity-0 { color: #ffffff !important; }  
+.rarity-1 { color: #9696ff !important; }  
+.rarity-2 { color: #96ff96 !important; }  
+.rarity-3 { color: #ffc896 !important; }  
+.rarity-4 { color: #ff9696 !important; }  
+.rarity-5 { color: #ff96ff !important; }  
+.rarity-6 { color: #d2a0ff !important; }  
+.rarity-7 { color: #96ff00 !important; }  
+.rarity-8 { color: #ffff00 !important; }  
+.rarity-9 { color: #05c8ff !important; }  
+.rarity-10 { color: #ff2864 !important; } 
+.rarity-11 { color: #b428ff !important; } 
+.rarity--11 { color: #ff9600 !important; }
 
-.rarity--12 { animation: rarityRainbow 2s linear infinite !important; } /* Expert */
-.rarity--13 { animation: rarityFiery 0.2s alternate infinite !important; } /* Master - Flashes rapidly */
+.rarity--12 { animation: rarityRainbow 2s linear infinite !important; } 
+.rarity--13 { animation: rarityFiery 0.2s alternate infinite !important; } 
 
 @keyframes rarityRainbow {
     0% { color: #FF4000; }
@@ -228,18 +213,12 @@ body.home-mode #visualizationArea {
     background: var(--card-bg); border: 2px solid var(--card-border);
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1); 
 }
-.item-card:hover { 
+.item-card:hover:not(.hero-active) { 
     transform: translateY(-4px); border-color: var(--card-border-hover); 
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); z-index: 15; 
 }
-
-/* Fix: Disable native image dragging to prevent click/drag conflicts */
 .item-card img {
-    -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
-    user-drag: none;
+    -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;
 }
 
 /* Lateral Category Box */
@@ -283,15 +262,10 @@ body.home-mode #visualizationArea {
 }
 
 #visualizationArea { 
-    cursor: grab; 
-    overflow: hidden; 
-    position: relative; 
-    background-image: radial-gradient(var(--grid-dots) 1px, transparent 1px); 
-    background-size: 20px 20px; 
-    touch-action: none; 
+    cursor: grab; overflow: hidden; position: relative; 
+    background-image: radial-gradient(var(--grid-dots) 1px, transparent 1px); background-size: 20px 20px; touch-action: none; 
 }
 #visualizationArea.grabbing { cursor: grabbing; }
-
 #treeContainer { 
     transform-origin: top left; position: absolute; top: 0; left: 0; display: inline-flex; justify-content: center; min-width: 100%; padding: 60px; will-change: transform; 
 }
