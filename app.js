@@ -1,4 +1,4 @@
-// --- Mobile iOS/Android PNG Icon Generator (Fixes lack of SVG support) ---
+// --- Mobile iOS/Android PNG Icon Generator ---
 (function generateMobileIcon() {
     const canvas = document.createElement('canvas');
     canvas.width = 180; canvas.height = 180;
@@ -9,13 +9,15 @@
     
     const img = new Image();
     img.onload = () => {
-        ctx.drawImage(img, 20, 20, 140, 140);
+        // Perfect math for a 384x512 image on a 180x180 canvas
+        ctx.drawImage(img, 45, 30, 90, 120);
         const link = document.createElement('link');
         link.rel = 'apple-touch-icon';
         link.href = canvas.toDataURL('image/png');
         document.head.appendChild(link);
     };
-    img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2322c55e' d='M395 241.6c15.6-13 22-34.5 15.3-53.7s-22.1-32.3-42.3-32.3h-44.4L270.6 54.7c-9-15.5-25.7-25.1-43.6-25.1s-34.6 9.6-43.6 25.1L129.4 155.6H85c-20.2 0-35.6 13.1-42.3 32.3s-.3 40.7 15.3 53.7L97.6 274.3H72c-23.4 0-41.5 21-37 43.9l19.5 97.5C59.9 443.3 82.6 466.4 110.2 466.4h85.8V496c0 17.7 14.3 32 32 32h56c17.7 0 32-14.3 32-32v-29.6h85.8c27.6 0 50.3-23.1 55.8-50.7l19.5-97.5c4.5-22.9-13.6-43.9-37-43.9h-25.6l39.6-32.7z' transform='translate(0, -10)'/%3E%3C/svg%3E";
+    // Explicit width and height added to prevent browser canvas parsing distortion
+    img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512' width='384' height='512'%3E%3Cpath fill='%2322c55e' d='M377.6 250.3l-105-131.2H314c9.1 0 17.2-5.4 21-13.8s2.3-18.4-4-24.8L183.1 3.5c-4.4-4.7-10.7-7.5-17.1-7.5s-12.7 2.8-17.1 7.5L.9 80.5C-5.3 87-6.8 96-3 104.4s11.9 13.8 21 13.8h41.4L-1.6 250.3C-8 258.3-8.6 269.4-3.5 278S10 292 20 292h74l-64.8 97.2c-5.8 8.8-5.3 20.3 1.4 28.5S45.6 432 56 432h104v48c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32v-48h104c10.4 0 20.3-4.8 25.4-13.3s7.2-19.7 1.4-28.5L348 292h74c10 0 18.4-5.6 23.5-14s4.5-19.7-1.9-27.7z'/%3E%3C/svg%3E";
 })();
 
 // --- State Variables & Dependencies ---
