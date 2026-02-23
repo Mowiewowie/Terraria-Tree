@@ -734,6 +734,7 @@ dom.transmuteCheck.addEventListener('change', (e) => {
 
 document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
+        // FIXED: Route to the Inverse Kinematics engine instead of mutating the layout instantly
         if (treeMode !== e.target.value) {
             switchModeKinematic(e.target.value);
         }
