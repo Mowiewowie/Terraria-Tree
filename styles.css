@@ -79,13 +79,15 @@ body.home-mode #statusWrapper {
     transition: opacity 0.2s ease;
 }
 
-.fade-unfocused .item-card:not(.hero-active) {
+.fade-unfocused .item-card:not(.hero-active),
+.fade-unfocused .discover-box-container:not(.hero-active) {
     opacity: 0.3 !important;
     filter: blur(1px);
     transition: all 0.3s ease;
 }
 
-.item-card.hero-active {
+.item-card.hero-active,
+.discover-box-container.hero-active {
     transform: scale(1.1);
     z-index: 9999;
     box-shadow: 0 0 50px rgba(245, 158, 11, 0.6);
@@ -295,4 +297,21 @@ body.home-mode #statusWrapper {
     min-width: 100%; 
     padding: 60px; 
     will-change: transform; 
+}
+
+/* Prevent pan interactions from colliding with inline elements */
+.no-pan {
+    pointer-events: auto !important;
+}
+input.no-pan {
+    cursor: text !important;
+}
+button.no-pan {
+    cursor: pointer !important;
+}
+
+/* Secure Mobile Hover States */
+.mobile-active + button { 
+    opacity: 1 !important; 
+    pointer-events: auto !important; 
 }

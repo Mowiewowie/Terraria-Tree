@@ -21,6 +21,8 @@ let treeMode = 'recipe';
 let expandedNodes = new Set(); 
 let isExpandedAll = false;
 
+let discoverBoxItems = []; 
+
 let lineTooltipTimeout = null;
 let lastMouseCoords = { x: 0, y: 0 };
 
@@ -376,7 +378,7 @@ function initializeData(data) {
     
     if (id && itemsDatabase[id]) {
         historyIdx = 0;
-        appHistory[historyIdx] = { viewType: 'tree', id: id, mode: treeMode, expanded: [] };
+        appHistory[historyIdx] = { viewType: 'tree', id: id, mode: treeMode, expanded: [], discoverItems: [] };
         safeReplaceState({ idx: historyIdx }, window.location.search);
         removeHomeMode();
         viewItem(id, true); 
@@ -401,7 +403,7 @@ function getLocalCenter(element) {
     return {
         x: (er.left - tr.left) / currentScale + (er.width / currentScale) / 2,
         y: (er.top - tr.top) / currentScale + (er.height / currentScale) / 2,
-        w: er.width / currentScale // Physical width scaling
+        w: er.width / currentScale 
     };
 }
 
@@ -413,6 +415,7 @@ function saveCurrentState(skipBrowserState = false) {
         
         if (currentViewType === 'tree') {
             appHistory[historyIdx].expanded = Array.from(expandedNodes);
+            appHistory[historyIdx].discoverItems = [...discoverBoxItems];
             
             const locations = {};
             dom.treeContainer.querySelectorAll('.item-card').forEach(card => {
@@ -559,7 +562,7 @@ window.addEventListener('popstate', (e) => {
             const cat = params.get('category');
             
             appHistory = [];
-            appHistory[historyIdx] = { viewType: id ? 'tree' : 'category', id: id, category: cat, mode: treeMode, expanded: [] };
+            appHistory[historyIdx] = { viewType: id ? 'tree' : 'category', id: id, category: cat, mode: treeMode, expanded: [], discoverItems: [] };
             
             removeHomeMode();
             if (id) loadTree(id, false, false, 'search');
@@ -576,6 +579,7 @@ window.addEventListener('popstate', (e) => {
             treeMode = state.mode;
             document.querySelector(`input[name="treeMode"][value="${state.mode}"]`).checked = true;
             expandedNodes = new Set(state.expanded || []);
+            discoverBoxItems = state.discoverItems ? [...state.discoverItems] : [];
 
             if (currentViewType === 'tree' && state.viewType === 'tree') {
                 if (isBackward) {
@@ -616,18 +620,32 @@ function switchModeKinematic(newMode) {
     const radio = document.querySelector(`input[name="treeMode"][value="${newMode}"]`);
     if (radio) radio.checked = true;
 
-    if (currentViewType !== 'tree' || !currentTreeItemId) {
+    if (currentViewType !== 'tree') {
         treeMode = newMode;
         return;
     }
 
-    const rootCard = dom.treeContainer.querySelector('.is-root > .item-card');
+    if (newMode === 'discover') {
+        if (currentTreeItemId && !discoverBoxItems.includes(currentTreeItemId)) {
+            discoverBoxItems = [currentTreeItemId];
+        }
+    } else if (treeMode === 'discover') {
+        if (discoverBoxItems.length > 0) {
+            currentTreeItemId = discoverBoxItems[discoverBoxItems.length - 1];
+        } else {
+            toggleHomeMode(true);
+            return;
+        }
+    }
+
+    let anchorCard = dom.treeContainer.querySelector(`.is-root .item-card[data-id="${currentTreeItemId}"]`);
+    if (!anchorCard) anchorCard = dom.treeContainer.querySelector('.is-root > .item-card, .is-root > .discover-box-container');
     
-    if (rootCard) {
+    if (anchorCard) {
         removeHomeMode();
-        const startLocal = getLocalCenter(rootCard);
+        const startLocal = getLocalCenter(anchorCard);
         
-        rootCard.classList.add('hero-active');
+        anchorCard.classList.add('hero-active');
         dom.treeContainer.classList.add('fade-unfocused');
         
         if (historyIdx >= 0 && appHistory[historyIdx]) {
@@ -638,7 +656,7 @@ function switchModeKinematic(newMode) {
         treeMode = newMode; 
         
         appHistory = appHistory.slice(0, historyIdx + 1);
-        appHistory.push({ viewType: 'tree', id: currentTreeItemId, mode: treeMode, expanded: [] });
+        appHistory.push({ viewType: 'tree', id: currentTreeItemId, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems] });
         
         historyIdx++;
         safePushState({ idx: historyIdx }, `?id=${currentTreeItemId}`);
@@ -667,7 +685,7 @@ function transitionToNewItem(cardEl, targetId) {
     saveCurrentState();
     
     appHistory = appHistory.slice(0, historyIdx + 1);
-    appHistory.push({ viewType: 'tree', id: targetId, mode: treeMode, expanded: [] });
+    appHistory.push({ viewType: 'tree', id: targetId, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems] });
     
     historyIdx++;
     safePushState({ idx: historyIdx }, `?id=${targetId}`);
@@ -683,7 +701,7 @@ function viewItem(id, isFromSearch = false, isTransitioning = false) {
     removeHomeMode();
     saveCurrentState(); 
     appHistory = appHistory.slice(0, historyIdx + 1);
-    appHistory.push({ viewType: 'tree', id: id, mode: treeMode, expanded: [] });
+    appHistory.push({ viewType: 'tree', id: id, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems] });
     
     historyIdx++;
     safePushState({ idx: historyIdx }, `?id=${id}`);
@@ -726,7 +744,7 @@ dom.toolbarTools.addEventListener('click', (e) => {
 
 dom.transmuteCheck.addEventListener('change', (e) => {
     showTransmutations = e.target.checked;
-    if (currentViewType === 'tree' && currentTreeItemId) {
+    if (currentViewType === 'tree') {
         saveCurrentState();
         loadTree(currentTreeItemId, true); 
     }
@@ -734,7 +752,6 @@ dom.transmuteCheck.addEventListener('change', (e) => {
 
 document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
-        // FIXED: Route to the Inverse Kinematics engine instead of mutating the layout instantly
         if (treeMode !== e.target.value) {
             switchModeKinematic(e.target.value);
         }
@@ -749,8 +766,15 @@ document.addEventListener('click', (e) => {
         dom.toolbarTools.classList.add('hidden');
     }
     if (isMobileUX() && activeMobileCard && !activeMobileCard.contains(e.target) && !dom.tooltip.el.contains(e.target)) {
+        activeMobileCard.classList.remove('mobile-active');
         activeMobileCard = null;
         dom.tooltip.el.classList.add('hidden');
+    }
+    
+    const discoverResults = document.getElementById('discoverSearchResults');
+    const discoverInput = document.getElementById('discoverSearchInput');
+    if (discoverResults && discoverInput && !discoverResults.contains(e.target) && !discoverInput.contains(e.target)) {
+        discoverResults.classList.add('hidden');
     }
 });
 
@@ -760,9 +784,9 @@ dom.searchInput.addEventListener('focus', () => {
     }
 });
 
-function updateSearchHighlight(resultsArray) {
+function updateSearchHighlight(resultsArray, index) {
     resultsArray.forEach((el, idx) => {
-        if (idx === searchActiveIndex) {
+        if (idx === index) {
             el.classList.add('bg-blue-100', 'dark:bg-slate-600');
             el.classList.remove('hover:bg-slate-100', 'dark:hover:bg-slate-700');
             el.scrollIntoView({ block: 'nearest' });
@@ -773,97 +797,102 @@ function updateSearchHighlight(resultsArray) {
     });
 }
 
-dom.searchInput.addEventListener('keydown', (e) => {
-    const results = Array.from(dom.searchResults.children);
-    if (results.length === 0 || dom.searchResults.classList.contains('hidden')) return;
-
-    if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        searchActiveIndex = Math.min(results.length - 1, searchActiveIndex + 1);
-        updateSearchHighlight(results);
-    } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        searchActiveIndex = Math.max(0, searchActiveIndex - 1);
-        updateSearchHighlight(results);
-    } else if (e.key === 'Enter') {
-        e.preventDefault();
-        const targetIdx = searchActiveIndex >= 0 ? searchActiveIndex : 0;
-        if (results[targetIdx]) results[targetIdx].click();
-    }
-});
-
-dom.searchInput.addEventListener('input', (e) => {
-    const val = e.target.value.toLowerCase().trim();
-    searchActiveIndex = -1;
+function attachSearchLogic(inputEl, resultsEl, onSelectCallback) {
+    let localActiveIndex = -1;
     
-    if (val.length < 2) { 
-        dom.searchResults.classList.add('hidden'); 
-        return; 
-    }
-    
-    const tokens = val.split(' ').filter(t => t.length > 0);
+    inputEl.addEventListener('keydown', (e) => {
+        const results = Array.from(resultsEl.children);
+        if (results.length === 0 || resultsEl.classList.contains('hidden')) return;
 
-    const matches = itemIndex.filter(i => {
-        return tokens.every(token => 
-            i.name.toLowerCase().includes(token) || 
-            i.type.includes(token)
-        );
-    }).map(i => {
-        let score = 0;
-        const nameLower = i.name.toLowerCase();
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            localActiveIndex = Math.min(results.length - 1, localActiveIndex + 1);
+            updateSearchHighlight(results, localActiveIndex);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            localActiveIndex = Math.max(0, localActiveIndex - 1);
+            updateSearchHighlight(results, localActiveIndex);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const targetIdx = localActiveIndex >= 0 ? localActiveIndex : 0;
+            if (results[targetIdx]) results[targetIdx].click();
+        }
+    });
+
+    inputEl.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase().trim();
+        localActiveIndex = -1;
         
-        if (nameLower === val) score += 100;
-        else if (nameLower.startsWith(val)) score += 50;
-        else if (nameLower.includes(val)) score += 10;
+        if (val.length < 2) { 
+            resultsEl.classList.add('hidden'); 
+            return; 
+        }
         
-        if (i.type === val) score += 20;
+        const tokens = val.split(' ').filter(t => t.length > 0);
 
-        return { item: i, score: score };
-    }).sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return a.item.name.localeCompare(b.item.name);
-    }).slice(0, 15);
-    
-    dom.searchResults.innerHTML = ''; 
-    
-    if (matches.length > 0) {
-        dom.searchResults.classList.remove('hidden');
-        matches.forEach(m => {
-            const d = document.createElement('div');
-            d.className = 'search-result-item flex items-center justify-between p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-200 dark:border-slate-700 text-sm transition-colors';
-            
-            const leftWrap = document.createElement('div');
-            leftWrap.className = 'flex items-center gap-3';
-            
-            const img = document.createElement('img');
-            img.src = createDirectImageUrl(m.item.name);
-            img.className = 'w-6 h-6 object-contain';
-            
-            const txt = document.createElement('span');
-            txt.className = 'text-slate-800 dark:text-slate-200 font-medium';
-            txt.textContent = m.item.name;
-            
-            leftWrap.append(img, txt);
-            d.appendChild(leftWrap);
-            
-            if (m.item.type) {
-                const typeTag = document.createElement('span');
-                typeTag.className = 'text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold';
-                typeTag.textContent = m.item.type;
-                d.appendChild(typeTag);
-            }
+        const matches = itemIndex.filter(i => {
+            return tokens.every(token => 
+                i.name.toLowerCase().includes(token) || 
+                i.type.includes(token)
+            );
+        }).map(i => {
+            let score = 0;
+            const nameLower = i.name.toLowerCase();
+            if (nameLower === val) score += 100;
+            else if (nameLower.startsWith(val)) score += 50;
+            else if (nameLower.includes(val)) score += 10;
+            if (i.type === val) score += 20;
+            return { item: i, score: score };
+        }).sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.item.name.localeCompare(b.item.name);
+        }).slice(0, 15);
+        
+        resultsEl.innerHTML = ''; 
+        
+        if (matches.length > 0) {
+            resultsEl.classList.remove('hidden');
+            matches.forEach(m => {
+                const d = document.createElement('div');
+                d.className = 'search-result-item flex items-center justify-between p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-200 dark:border-slate-700 text-sm transition-colors';
+                
+                const leftWrap = document.createElement('div');
+                leftWrap.className = 'flex items-center gap-3';
+                
+                const img = document.createElement('img');
+                img.src = createDirectImageUrl(m.item.name);
+                img.className = 'w-6 h-6 object-contain';
+                
+                const txt = document.createElement('span');
+                txt.className = 'text-slate-800 dark:text-slate-200 font-medium truncate max-w-[150px]';
+                txt.textContent = m.item.name;
+                
+                leftWrap.append(img, txt);
+                d.appendChild(leftWrap);
+                
+                if (m.item.type) {
+                    const typeTag = document.createElement('span');
+                    typeTag.className = 'text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold truncate';
+                    typeTag.textContent = m.item.type;
+                    d.appendChild(typeTag);
+                }
 
-            d.onclick = () => {
-                dom.searchResults.classList.add('hidden');
-                dom.searchInput.value = '';
-                viewItem(m.item.id, true); 
-            };
-            
-            dom.searchResults.appendChild(d);
-        });
-    } else {
-        dom.searchResults.classList.add('hidden');
-    }
+                d.onclick = () => {
+                    resultsEl.classList.add('hidden');
+                    inputEl.value = '';
+                    onSelectCallback(m.item);
+                };
+                
+                resultsEl.appendChild(d);
+            });
+        } else {
+            resultsEl.classList.add('hidden');
+        }
+    });
+}
+
+attachSearchLogic(dom.searchInput, dom.searchResults, (item) => {
+    viewItem(item.id, true);
 });
 
 dom.resetViewBtn.onclick = () => resetView();
@@ -888,6 +917,7 @@ dom.vizArea.addEventListener('wheel', e => {
 });
 
 dom.vizArea.addEventListener('mousedown', e => { 
+    if (e.target.closest('.no-pan')) return; 
     isPanning = true; 
     isDraggingThresholdMet = false;
     dragStartX = e.clientX;
@@ -918,6 +948,7 @@ window.addEventListener('mousemove', e => {
 });
 
 dom.vizArea.addEventListener('touchstart', e => {
+    if (e.target.closest('.no-pan')) return;
     if (e.touches.length === 1) {
         isPanning = true;
         isDraggingThresholdMet = false;
@@ -937,6 +968,7 @@ dom.vizArea.addEventListener('touchstart', e => {
 }, { passive: false });
 
 dom.vizArea.addEventListener('touchmove', e => {
+    if (e.target.closest('.no-pan') && !isPanning && !initialPinchDist) return;
     e.preventDefault(); 
     if (isPanning && e.touches.length === 1) {
         if (Math.hypot(e.touches[0].clientX - dragStartX, e.touches[0].clientY - dragStartY) > 5) {
@@ -986,7 +1018,7 @@ dom.vizArea.addEventListener('touchend', e => {
 
 
 // --- Base Rendering Tools ---
-function createItemCardElement(data, sizeClasses, contextRecipe = null) {
+function createItemCardElement(data, sizeClasses, contextRecipe = null, customClickHandler = null) {
     const card = document.createElement('div');
     card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${sizeClasses}`;
     card.dataset.id = data.id; 
@@ -999,7 +1031,7 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null) {
     
     const name = document.createElement('span');
     name.textContent = data.name;
-    name.className = `text-center font-semibold leading-tight px-2 line-clamp-2 text-slate-800 dark:text-slate-200 ${sizeClasses.includes('w-32') ? 'text-sm' : 'text-[10px]'}`;
+    name.className = `text-center font-semibold leading-tight px-1 line-clamp-2 text-slate-800 dark:text-slate-200 ${sizeClasses.includes('w-32') ? 'text-sm' : 'text-[10px]'}`;
     
     if (data.hardmode) {
         const hmBadge = document.createElement('div');
@@ -1021,15 +1053,23 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null) {
 
         if (isMobileUX()) {
             if (activeMobileCard !== card) {
+                if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
                 activeMobileCard = card;
+                card.classList.add('mobile-active');
                 showTooltip(e, data, contextRecipe);
                 return; 
             }
         }
         
+        if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
         activeMobileCard = null;
         dom.tooltip.el.classList.add('hidden');
         
+        if (customClickHandler) {
+            customClickHandler(e);
+            return;
+        }
+
         if (e.ctrlKey || e.metaKey) {
             if(data.url) window.open(data.url, '_blank'); 
             return;
@@ -1040,6 +1080,11 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null) {
         } 
         
         if (currentViewType === 'tree') {
+            if (treeMode === 'discover') {
+                treeMode = 'recipe';
+                const radio = document.querySelector(`input[name="treeMode"][value="recipe"]`);
+                if (radio) radio.checked = true;
+            }
             transitionToNewItem(card, data.id);
         } else {
             viewItem(data.id, true);
@@ -1127,7 +1172,12 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     
     dom.toolMode.classList.remove('hidden');
     dom.toolFilters.classList.remove('hidden');
-    dom.expandAllBtn.classList.remove('hidden');
+    
+    if (treeMode === 'discover') {
+        dom.expandAllBtn.classList.add('hidden');
+    } else {
+        dom.expandAllBtn.classList.remove('hidden');
+    }
 
     let isFirstLoad = !preserveState;
     if (isFirstLoad) {
@@ -1139,49 +1189,52 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     let postAlign = () => {};
 
     const vizRect = dom.vizArea.getBoundingClientRect();
-    const currentRootCard = dom.treeContainer.querySelector('.is-root > .item-card');
 
     if (transitionType === 'forward' && bridgeParams && bridgeParams.startLocal) {
         preSetup = () => {
             let futureScale = 1.1;
-            let futureBaseWidth = 128; 
+            let futureBaseWidth = treeMode === 'discover' ? 80 : 128; 
             let futureScreenX = vizRect.width / 2;
             let futureScreenY = vizRect.height / 2;
 
             if (bridgeParams.targetState && bridgeParams.targetState.itemLocations && bridgeParams.targetState.itemLocations[bridgeParams.targetState.id]) {
                 const futureRootLocal = bridgeParams.targetState.itemLocations[bridgeParams.targetState.id];
                 futureScale = bridgeParams.targetState.scale;
-                futureBaseWidth = futureRootLocal.w || 128;
+                futureBaseWidth = futureRootLocal.w || futureBaseWidth;
                 futureScreenX = bridgeParams.targetState.x + futureRootLocal.x * futureScale;
                 futureScreenY = bridgeParams.targetState.y + futureRootLocal.y * futureScale;
             }
             
             const startBaseWidth = bridgeParams.startLocal.w || 96;
-
             targetScale = futureScale * (futureBaseWidth / startBaseWidth);
-            
             targetX = futureScreenX - bridgeParams.startLocal.x * targetScale;
             targetY = futureScreenY - bridgeParams.startLocal.y * targetScale;
 
             return true;
         };
         postAlign = () => {
-            const newRootCard = dom.treeContainer.querySelector('.is-root > .item-card');
-            const newLocal = getLocalCenter(newRootCard);
+            let newAnchor = dom.treeContainer.querySelector(`.is-root .item-card[data-id="${id}"]`);
+            if (!newAnchor) newAnchor = dom.treeContainer.querySelector('.is-root > .item-card, .is-root > .discover-box-container');
             
-            if (bridgeParams.targetState && bridgeParams.targetState.x !== undefined) {
-                currentScale = bridgeParams.targetState.scale;
-                currentX = bridgeParams.targetState.x;
-                currentY = bridgeParams.targetState.y;
-            } else {
-                currentScale = 1.1; 
-                currentX = (vizRect.width / 2) - newLocal.x * currentScale;
-                currentY = (vizRect.height / 2) - newLocal.y * currentScale;
+            if (newAnchor) {
+                const newLocal = getLocalCenter(newAnchor);
+                
+                if (bridgeParams.targetState && bridgeParams.targetState.x !== undefined) {
+                    currentScale = bridgeParams.targetState.scale;
+                    currentX = bridgeParams.targetState.x;
+                    currentY = bridgeParams.targetState.y;
+                } else {
+                    currentScale = 1.1; 
+                    currentX = (vizRect.width / 2) - newLocal.x * currentScale;
+                    currentY = (vizRect.height / 2) - newLocal.y * currentScale;
+                }
+                targetScale = currentScale; targetX = currentX; targetY = currentY;
             }
-            targetScale = currentScale; targetX = currentX; targetY = currentY;
         };
     } 
     else if (transitionType === 'backward' && bridgeParams) {
+        const currentRootCard = dom.treeContainer.querySelector(`.is-root .item-card[data-id="${bridgeParams.bridgeId}"]`) || dom.treeContainer.querySelector('.is-root > .item-card, .is-root > .discover-box-container');
+        
         if (currentRootCard && bridgeParams.targetState && bridgeParams.targetState.itemLocations) {
             const pastLoc = bridgeParams.targetState.itemLocations[bridgeParams.bridgeId];
             if (pastLoc) {
@@ -1230,15 +1283,23 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     }
 
     performIKTransition(preSetup, () => {
-        if (treeMode === 'usage') dom.treeContainer.classList.add('mode-usage');
-        else dom.treeContainer.classList.remove('mode-usage');
-        dom.treeContainer.appendChild(createTreeNode(id, true));
+        if (treeMode === 'usage') {
+            dom.treeContainer.classList.add('mode-usage');
+            dom.treeContainer.classList.remove('mode-discover');
+            dom.treeContainer.appendChild(createTreeNode(id, true));
+        } else if (treeMode === 'discover') {
+            dom.treeContainer.classList.add('mode-usage', 'mode-discover'); 
+            dom.treeContainer.appendChild(createDiscoverRootNode());
+        } else {
+            dom.treeContainer.classList.remove('mode-usage', 'mode-discover');
+            dom.treeContainer.appendChild(createTreeNode(id, true));
+        }
         syncExpandAllButton();
     }, postAlign);
 }
 
 function syncExpandAllButton() {
-    const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn'));
+    const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
     if (expandBtns.length === 0) {
         isExpandedAll = false;
         dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand';
@@ -1256,7 +1317,7 @@ function syncExpandAllButton() {
 
 function focusSubtree(nodeEl, containerEl) {
     const tr = dom.treeContainer.getBoundingClientRect();
-    const nr = nodeEl.querySelector('.item-card').getBoundingClientRect();
+    const nr = nodeEl.children[0].getBoundingClientRect(); 
     const cr = containerEl.getBoundingClientRect();
 
     const localNodeLeft = (nr.left - tr.left) / currentScale;
@@ -1342,7 +1403,220 @@ function getSmartRecipe(recipes, itemName = "") {
     });
 }
 
-function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null) {
+function getDiscoverableItems() {
+    if (discoverBoxItems.length === 0) return [];
+    
+    const boxItemNames = discoverBoxItems.map(id => itemsDatabase[id].name.toLowerCase());
+    const uniqueUsagesMap = new Map();
+
+    for (const itemId in itemsDatabase) {
+        const item = itemsDatabase[itemId];
+        if (!item.crafting || !item.crafting.is_craftable) continue;
+        
+        for (const recipe of item.crafting.recipes) {
+            if (!showTransmutations && recipe.transmutation) continue;
+            
+            let recipeMatchesAll = true;
+            for (const boxName of boxItemNames) {
+                let hasBoxItem = false;
+                for (const ing of recipe.ingredients) {
+                    const ingLower = ing.name.toLowerCase();
+                    if (ingLower === boxName) {
+                        hasBoxItem = true; break;
+                    }
+                    if (ingLower.startsWith("any ")) {
+                        const groupKey = Object.keys(RECIPE_GROUPS).find(k => k.toLowerCase() === ingLower);
+                        if (groupKey && RECIPE_GROUPS[groupKey].map(x=>x.toLowerCase()).includes(boxName)) {
+                            hasBoxItem = true; break;
+                        }
+                    }
+                }
+                if (!hasBoxItem) {
+                    recipeMatchesAll = false; break;
+                }
+            }
+            
+            if (recipeMatchesAll) {
+                if (!uniqueUsagesMap.has(itemId)) {
+                    uniqueUsagesMap.set(itemId, { id: itemId, amount: 1, recipe: recipe });
+                }
+                break; 
+            }
+        }
+    }
+    
+    const uniqueUsages = Array.from(uniqueUsagesMap.values());
+    uniqueUsages.sort((a,b) => itemsDatabase[a.id]?.name.localeCompare(itemsDatabase[b.id]?.name));
+    return uniqueUsages;
+}
+
+function createDiscoverRootNode() {
+    const node = document.createElement('div');
+    node.className = 'tree-node is-root';
+
+    const boxContainer = document.createElement('div');
+    boxContainer.className = 'discover-box-container bg-white dark:bg-slate-800 border-4 border-emerald-500 ring-4 ring-emerald-500/20 rounded-xl p-4 flex flex-col items-center shadow-2xl relative z-10 w-96';
+    boxContainer.dataset.id = 'discover_root';
+
+    const header = document.createElement('div');
+    header.className = 'w-full flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-700 pb-2';
+    
+    const title = document.createElement('h3');
+    title.className = 'text-emerald-600 dark:text-emerald-400 font-bold text-lg flex items-center gap-2';
+    title.innerHTML = '<i class="fa-solid fa-compass"></i> Discover Box';
+    
+    header.appendChild(title);
+    boxContainer.appendChild(header);
+
+    const itemsGrid = document.createElement('div');
+    itemsGrid.className = 'flex flex-wrap justify-center gap-3 w-full mb-4';
+
+    discoverBoxItems.forEach(itemId => {
+        const itemData = itemsDatabase[itemId];
+        if (!itemData) return;
+        
+        const miniCardWrapper = document.createElement('div');
+        miniCardWrapper.className = 'relative group';
+        
+        const card = createItemCardElement(itemData, 'w-20 h-20 bg-slate-50 dark:bg-slate-800/50', null, (e) => { 
+            treeMode = 'recipe';
+            const radio = document.querySelector(`input[name="treeMode"][value="recipe"]`);
+            if (radio) radio.checked = true;
+            transitionToNewItem(e.currentTarget, itemId); 
+        });
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-md hover:bg-red-600 transition-colors z-20 opacity-0 group-hover:opacity-100 no-pan cursor-pointer';
+        removeBtn.innerHTML = '<i class="fa-solid fa-times"></i>';
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
+            discoverBoxItems = discoverBoxItems.filter(id => id !== itemId);
+            saveCurrentState();
+            loadTree(currentTreeItemId, true);
+        };
+        
+        miniCardWrapper.append(card, removeBtn);
+        itemsGrid.appendChild(miniCardWrapper);
+    });
+    boxContainer.appendChild(itemsGrid);
+
+    const searchWrapper = document.createElement('div');
+    searchWrapper.className = 'relative w-full';
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.id = 'discoverSearchInput';
+    searchInput.className = 'no-pan block w-full pl-8 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm shadow-inner';
+    searchInput.placeholder = 'Search to add items...';
+    
+    const searchIcon = document.createElement('i');
+    searchIcon.className = 'fa-solid fa-plus absolute left-3 top-1/2 -translate-y-1/2 text-slate-400';
+    
+    const searchResults = document.createElement('div');
+    searchResults.id = 'discoverSearchResults';
+    searchResults.className = 'hidden absolute mt-1 w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md shadow-2xl max-h-48 overflow-y-auto z-50';
+    
+    attachSearchLogic(searchInput, searchResults, (item) => {
+        if (!discoverBoxItems.includes(item.id)) {
+            discoverBoxItems.push(item.id);
+            saveCurrentState();
+            loadTree(currentTreeItemId, true);
+        }
+    });
+
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value.length >= 2 && searchResults.innerHTML.trim() !== '') {
+            searchResults.classList.remove('hidden');
+        }
+    });
+
+    searchWrapper.append(searchIcon, searchInput, searchResults);
+    boxContainer.appendChild(searchWrapper);
+    node.appendChild(boxContainer);
+
+    const childrenData = getDiscoverableItems();
+    if (childrenData.length > 0) {
+        const btn = document.createElement('button');
+        btn.className = `expand-btn mt-2 mb-2 w-6 h-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs flex items-center justify-center transition-colors shadow-md z-20`;
+        btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+        
+        const container = document.createElement('div');
+        container.className = 'tree-children';
+        
+        const attachLineEvents = (el) => {
+            el.onmousemove = (e) => { 
+                lastMouseCoords = { x: e.clientX, y: e.clientY };
+                if (!dom.tooltip.el.classList.contains('hidden')) moveTooltip(e);
+            };
+            el.onmouseenter = (e) => {
+                container.classList.add('lines-hovered');
+                lastMouseCoords = { x: e.clientX, y: e.clientY };
+            };
+            el.onmouseleave = () => { container.classList.remove('lines-hovered'); };
+            el.onclick = (e) => { e.stopPropagation(); focusSubtree(node, container); };
+        };
+
+        const lineBtn = document.createElement('button');
+        lineBtn.className = 'tree-line-btn';
+        attachLineEvents(lineBtn);
+        container.appendChild(lineBtn);
+
+        childrenData.forEach(usage => {
+            const childNode = createTreeNode(usage.id, false, new Set(), usage.recipe);
+            
+            const hLine = document.createElement('div'); hLine.className = 'line-h'; attachLineEvents(hLine);
+            const vLine = document.createElement('div'); vLine.className = 'line-v'; attachLineEvents(vLine);
+            childNode.appendChild(hLine); childNode.appendChild(vLine);
+
+            container.appendChild(childNode);
+        });
+
+        const cNodes = Array.from(container.children).filter(c => c.classList.contains('tree-node'));
+        if (cNodes.length > 0) {
+            cNodes[0].classList.add('is-first');
+            cNodes[cNodes.length - 1].classList.add('is-last');
+            if (cNodes.length === 1) cNodes[0].classList.add('is-only');
+        }
+
+        btn.toggle = (targetState) => {
+            const isClosed = container.classList.contains('hidden');
+            if (targetState === 'open' && !isClosed) return false;
+            if (targetState === 'close' && isClosed) return false;
+
+            if (!isClosed) {
+                container.classList.add('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                btn.classList.remove('bg-emerald-600');
+            } else {
+                container.classList.remove('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+                btn.classList.add('bg-emerald-600');
+            }
+            return true;
+        };
+        
+        btn.onclick = e => { 
+            e.stopPropagation(); 
+            btn.toggle(); 
+            setTimeout(() => syncExpandAllButton(), 10);
+            saveCurrentState();
+        };
+
+        node.append(btn, container);
+    } else {
+        const noDataMsg = document.createElement('div');
+        noDataMsg.className = 'px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg text-slate-500 dark:text-slate-400 text-sm flex items-center gap-2 z-10 mb-5';
+        noDataMsg.innerHTML = discoverBoxItems.length === 0 
+            ? '<i class="fa-solid fa-info-circle text-slate-400"></i> Add items to the box to discover recipes.'
+            : '<i class="fa-solid fa-leaf text-slate-400"></i> No items can be crafted using ALL of these ingredients.';
+        node.appendChild(noDataMsg);
+    }
+
+    return node;
+}
+
+
+function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null, forceDeepExpand = false) {
     const data = itemsDatabase[id];
     if (!data) return document.createElement('div');
 
@@ -1388,15 +1662,13 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                 childrenData = recipe.ingredients;
             }
         }
-    } else if (treeMode === 'usage') {
+    } else if (treeMode === 'usage' || treeMode === 'discover') {
         const allUsages = usageIndex[data.name.toLowerCase()] || [];
         const validUsages = allUsages.filter(u => showTransmutations || !u.recipe.transmutation);
         
         const uniqueUsagesMap = new Map();
         validUsages.forEach(u => {
-            if (!uniqueUsagesMap.has(u.id)) {
-                uniqueUsagesMap.set(u.id, u);
-            }
+            if (!uniqueUsagesMap.has(u.id)) uniqueUsagesMap.set(u.id, u);
         });
         
         const uniqueUsages = Array.from(uniqueUsagesMap.values());
@@ -1410,39 +1682,54 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
 
     if (hasValidChildren) {
         const btn = document.createElement('button');
+        const isDeepExpandMode = treeMode === 'discover' && !isRoot;
+        
         const btnColor = treeMode === 'recipe' ? 'bg-blue-600' : 'bg-purple-600';
         const btnHover = treeMode === 'recipe' ? 'hover:bg-blue-700' : 'hover:bg-purple-700';
         
-        btn.className = `expand-btn mt-2 mb-2 w-6 h-6 rounded-full bg-slate-400 dark:bg-slate-700 ${btnHover} text-white text-xs flex items-center justify-center transition-colors shadow-md z-20`;
-        btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+        if (isDeepExpandMode) {
+            btn.className = `expand-btn deep-expand-btn mt-2 mb-2 px-3 py-1 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-wide flex items-center justify-center transition-colors shadow-md z-20 whitespace-nowrap`;
+            btn.innerHTML = '<i class="fa-solid fa-code-branch mr-1"></i> Expand Path';
+        } else {
+            btn.className = `expand-btn mt-2 mb-2 w-6 h-6 rounded-full bg-slate-400 dark:bg-slate-700 ${btnHover} text-white text-xs flex items-center justify-center transition-colors shadow-md z-20`;
+            btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+        }
         
         const container = document.createElement('div');
         container.className = 'tree-children hidden';
         
-        btn.toggle = (targetState) => {
+        btn.toggle = (targetState, isDeep = forceDeepExpand) => {
             const isClosed = container.classList.contains('hidden');
-            
             if (targetState === 'open' && !isClosed) return false;
             if (targetState === 'close' && isClosed) return false;
 
             if (!isClosed) {
                 container.classList.add('hidden');
-                btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
-                btn.classList.remove(btnColor);
+                if (isDeepExpandMode) {
+                    btn.innerHTML = '<i class="fa-solid fa-code-branch mr-1"></i> Expand Path';
+                    btn.classList.replace('bg-indigo-700', 'bg-indigo-600');
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                    btn.classList.remove(btnColor);
+                }
                 expandedNodes.delete(id); 
             } else {
                 container.innerHTML = '';
                 container.classList.remove('hidden');
-                btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
-                btn.classList.add(btnColor);
+                
+                if (isDeepExpandMode) {
+                    btn.innerHTML = '<i class="fa-solid fa-compress-alt mr-1"></i> Collapse Path';
+                    btn.classList.replace('bg-indigo-600', 'bg-indigo-700');
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+                    btn.classList.add(btnColor);
+                }
                 expandedNodes.add(id); 
                 
                 const attachLineEvents = (el) => {
                     el.onmousemove = (e) => { 
                         lastMouseCoords = { x: e.clientX, y: e.clientY };
-                        if (!dom.tooltip.el.classList.contains('hidden')) {
-                            moveTooltip(e);
-                        }
+                        if (!dom.tooltip.el.classList.contains('hidden')) moveTooltip(e);
                     };
                     el.onmouseenter = (e) => {
                         container.classList.add('lines-hovered');
@@ -1468,7 +1755,6 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                 container.appendChild(lineBtn);
 
                 const newVis = new Set(visited).add(id);
-                
                 if (treeMode === 'recipe') {
                     childrenData.forEach(ing => {
                         const isGroup = ing.name.toLowerCase().startsWith("any ");
@@ -1494,7 +1780,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                     });
                 } else {
                     childrenData.forEach(usage => {
-                        const childNode = createTreeNode(usage.id, false, newVis, usage.recipe);
+                        const childNode = createTreeNode(usage.id, false, newVis, usage.recipe, isDeep);
                         const b = document.createElement('span');
                         b.className = 'absolute -top-2 -right-2 bg-purple-100 dark:bg-purple-900 border border-purple-300 dark:border-purple-500 text-purple-800 dark:text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
                         b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
@@ -1521,43 +1807,52 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         btn.onclick = e => { 
             e.stopPropagation(); 
             const wasClosed = container.classList.contains('hidden');
-            btn.toggle(); 
+            
+            if (isDeepExpandMode && wasClosed) {
+                btn.toggle('open', true);
+            } else {
+                btn.toggle();
+            }
             setTimeout(() => syncExpandAllButton(), 10);
             
-            if (wasClosed && !isExpandedAll) {
+            if (wasClosed || isDeepExpandMode) {
                 setTimeout(() => {
-                    const vizRect = dom.vizArea.getBoundingClientRect();
-                    const nRect = node.getBoundingClientRect();
-                    const cRect = container.getBoundingClientRect();
-                    
-                    const top = Math.min(nRect.top, cRect.top);
-                    const bottom = Math.max(nRect.bottom, cRect.bottom);
-                    const left = Math.min(nRect.left, cRect.left);
-                    const right = Math.max(nRect.right, cRect.right);
+                    if (isDeepExpandMode) {
+                        focusSubtree(node, container);
+                    } else if (!isExpandedAll) {
+                        const vizRect = dom.vizArea.getBoundingClientRect();
+                        const nRect = node.getBoundingClientRect();
+                        const cRect = container.getBoundingClientRect();
+                        
+                        const top = Math.min(nRect.top, cRect.top);
+                        const bottom = Math.max(nRect.bottom, cRect.bottom);
+                        const left = Math.min(nRect.left, cRect.left);
+                        const right = Math.max(nRect.right, cRect.right);
 
-                    let dx = 0; let dy = 0;
-                    const padding = 60;
+                        let dx = 0; let dy = 0;
+                        const padding = 60;
 
-                    if (left < vizRect.left + padding) dx = (vizRect.left + padding) - left;
-                    else if (right > vizRect.right - padding) dx = (vizRect.right - padding) - right;
+                        if (left < vizRect.left + padding) dx = (vizRect.left + padding) - left;
+                        else if (right > vizRect.right - padding) dx = (vizRect.right - padding) - right;
 
-                    if (top < vizRect.top + padding) dy = (vizRect.top + padding) - top;
-                    else if (bottom > vizRect.bottom - padding) dy = (vizRect.bottom - padding) - bottom;
+                        if (top < vizRect.top + padding) dy = (vizRect.top + padding) - top;
+                        else if (bottom > vizRect.bottom - padding) dy = (vizRect.bottom - padding) - bottom;
 
-                    if (dx !== 0 || dy !== 0) {
-                        targetX += dx;
-                        targetY += dy;
-                        triggerAnimation();
+                        if (dx !== 0 || dy !== 0) {
+                            targetX += dx;
+                            targetY += dy;
+                            triggerAnimation();
+                        }
                     }
                     saveCurrentState();
-                }, 50);
+                }, 100);
             } else {
                 saveCurrentState();
             }
         };
         
         node.append(btn, container);
-        if(isRoot || expandedNodes.has(id)) btn.toggle('open');
+        if(isRoot || expandedNodes.has(id) || forceDeepExpand) btn.toggle('open', forceDeepExpand);
     }
 
     if (isRoot && !hasValidChildren) {
@@ -1567,12 +1862,11 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         if (treeMode === 'recipe') {
             noDataMsg.innerHTML = '<i class="fa-solid fa-hammer text-slate-400 dark:text-slate-500"></i> Not craftable (Base Item)';
             noDataMsg.classList.add('mt-5');
-            node.appendChild(noDataMsg); 
         } else {
             noDataMsg.innerHTML = '<i class="fa-solid fa-leaf text-slate-400 dark:text-slate-500"></i> Not used in any recipes (End Item)';
             noDataMsg.classList.add('mb-5');
-            node.appendChild(noDataMsg); 
         }
+        node.appendChild(noDataMsg); 
     }
 
     return node;
@@ -1653,7 +1947,7 @@ dom.expandAllBtn.onclick = async () => {
     let unstable = true, d = 0;
     while (unstable && d < 20) {
         unstable = false;
-        for (const btn of dom.treeContainer.querySelectorAll('.expand-btn')) {
+        for (const btn of dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)')) {
             const changedState = btn.toggle(targetState);
             if (changedState) unstable = true;
         }
@@ -1692,11 +1986,13 @@ function showTooltip(e, data, extraRecipe = null) {
             
             dom.tooltip.btnWiki.onclick = (ev) => { 
                 ev.stopPropagation(); 
+                if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
                 activeMobileCard = null; dom.tooltip.el.classList.add('hidden'); 
                 window.open(data.url, '_blank'); 
             };
             dom.tooltip.btnCategory.onclick = (ev) => { 
                 ev.stopPropagation(); 
+                if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
                 activeMobileCard = null; dom.tooltip.el.classList.add('hidden'); 
                 viewCategory(data.specific_type); 
             };
@@ -1773,16 +2069,19 @@ function showTooltip(e, data, extraRecipe = null) {
         dom.tooltip.acq.classList.add('hidden');
     }
 
-    if (treeMode === 'usage' && extraRecipe && currentTreeItemId) {
-        const rootName = itemsDatabase[currentTreeItemId].name.toLowerCase();
+    if ((treeMode === 'usage' || treeMode === 'discover') && extraRecipe && (currentTreeItemId || discoverBoxItems.length > 0)) {
+        
+        const contextualRootNames = treeMode === 'discover' 
+            ? discoverBoxItems.map(id => itemsDatabase[id].name.toLowerCase()) 
+            : [itemsDatabase[currentTreeItemId].name.toLowerCase()];
         
         const extraIngs = extraRecipe.ingredients.filter(ing => {
             const ingLower = ing.name.toLowerCase();
-            if (ingLower === rootName) return false;
+            if (contextualRootNames.includes(ingLower)) return false;
             
             if (ingLower.startsWith('any ')) {
                 const groupKey = Object.keys(RECIPE_GROUPS).find(k => k.toLowerCase() === ingLower);
-                if (groupKey && RECIPE_GROUPS[groupKey].map(x=>x.toLowerCase()).includes(rootName)) {
+                if (groupKey && RECIPE_GROUPS[groupKey].some(groupItem => contextualRootNames.includes(groupItem.toLowerCase()))) {
                     return false;
                 }
             }
