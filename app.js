@@ -1,3 +1,23 @@
+// --- Mobile iOS/Android PNG Icon Generator (Fixes lack of SVG support) ---
+(function generateMobileIcon() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 180; canvas.height = 180;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.fillStyle = '#1a264a';
+    ctx.fillRect(0, 0, 180, 180);
+    
+    const img = new Image();
+    img.onload = () => {
+        ctx.drawImage(img, 20, 20, 140, 140);
+        const link = document.createElement('link');
+        link.rel = 'apple-touch-icon';
+        link.href = canvas.toDataURL('image/png');
+        document.head.appendChild(link);
+    };
+    img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2322c55e' d='M395 241.6c15.6-13 22-34.5 15.3-53.7s-22.1-32.3-42.3-32.3h-44.4L270.6 54.7c-9-15.5-25.7-25.1-43.6-25.1s-34.6 9.6-43.6 25.1L129.4 155.6H85c-20.2 0-35.6 13.1-42.3 32.3s-.3 40.7 15.3 53.7L97.6 274.3H72c-23.4 0-41.5 21-37 43.9l19.5 97.5C59.9 443.3 82.6 466.4 110.2 466.4h85.8V496c0 17.7 14.3 32 32 32h56c17.7 0 32-14.3 32-32v-29.6h85.8c27.6 0 50.3-23.1 55.8-50.7l19.5-97.5c4.5-22.9-13.6-43.9-37-43.9h-25.6l39.6-32.7z' transform='translate(0, -10)'/%3E%3C/svg%3E";
+})();
+
 // --- State Variables & Dependencies ---
 let itemsDatabase = {}, itemIndex = [];
 let usageIndex = {}; 
