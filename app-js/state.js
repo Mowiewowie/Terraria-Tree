@@ -20,11 +20,11 @@ let currentViewType = 'home';
 let currentTreeItemId = null;
 let currentCategoryName = null;
 let treeMode = 'recipe'; 
-let expandedNodes = new Set(); 
+let expandedNodes = new Set(JSON.parse(localStorage.getItem('terraria_expandedNodes')) || []); 
 let isExpandedAll = false;
 let selectedRecipeIndices = {}; // Tracks user-selected alternative recipes
 
-let discoverBoxItems = []; 
+let discoverBoxItems = JSON.parse(localStorage.getItem('terraria_discoverBox')) || []; 
 
 let lineTooltipTimeout = null;
 let lastMouseCoords = { x: 0, y: 0 };
