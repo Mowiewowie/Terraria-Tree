@@ -176,12 +176,17 @@
     </div>
 
 <script>
+        // Only register if supported AND we are not running directly from the local hard drive
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(error => {
-                    console.error('ServiceWorker registration failed:', error);
+            if (window.location.protocol === 'file:') {
+                console.info('Service Worker bypassed: Running locally via file:// protocol.');
+            } else {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').catch(error => {
+                        console.error('ServiceWorker registration failed:', error);
+                    });
                 });
-            });
+            }
         }
     </script>
 </body>

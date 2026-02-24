@@ -1,15 +1,38 @@
-// sw.js - Service Worker for Terraria Icon Caching
-const CACHE_NAME = 'terraria-icons-v1';
-const TRACKER_CACHE = 'terraria-icons-tracker-v1';
+// sw.js - Service Worker for Terraria App
+const CACHE_NAME = 'terraria-app-cache-v2';
+const TRACKER_CACHE = 'terraria-icons-tracker-v2';
 const EXPIRY_DAYS = 7;
 const EXPIRY_MS = EXPIRY_DAYS * 24 * 60 * 60 * 1000;
 
-// Install event: Claim the active state immediately
+// Core assets to cache immediately upon installation
+const CORE_ASSETS = [
+    '/',
+    '/index.html',
+    '/styles.css',
+    '/app-js/data.js',
+    '/app-js/engine.js',
+    '/app-js/router.js',
+    '/app-js/state.js',
+    '/app-js/sw.js',
+    '/app-js/tree-core.js',
+    '/app-js/tree-nodes.js',
+    '/app-js/ui.js',
+    '/terraria_items_final.json',
+    // Add any specific CSS files or local fonts here if they aren't inline
+];
+
+// Install event: Pre-cache core assets and claim the active state
 self.addEventListener('install', event => {
     self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => {
+            // We use catch() here so that if one file 404s, it doesn't crash the entire installation
+            return Promise.allSettled(CORE_ASSETS.map(url => cache.add(url)));
+        })
+    );
 });
 
-// Activate event: Clean up old cache versions if we ever update the names
+// Activate event: Clean up old cache versions
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys => {
@@ -24,17 +47,25 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Fetch event: Intercept network requests
+// Fetch event: Route traffic based on domain and strategy
 self.addEventListener('fetch', event => {
     const requestUrl = new URL(event.request.url);
 
-    // Intercept BOTH the direct MD5 /images/ path AND the /wiki/Special:FilePath/ redirects
+    // 1. Terraria Wiki Images -> CACHE-FIRST (7-day expiry)
     if (requestUrl.hostname === 'terraria.wiki.gg' && 
        (requestUrl.pathname.includes('/images/') || requestUrl.pathname.includes('Special:FilePath'))) {
         event.respondWith(handleIconRequest(event.request));
+        return;
+    }
+
+    // 2. Core App Assets -> NETWORK-FIRST (Fallback to cache)
+    // We only intercept GET requests over http/https to prevent extension/file protocol crashes
+    if (event.request.method === 'GET' && requestUrl.protocol.startsWith('http')) {
+        event.respondWith(handleCoreRequest(event.request));
     }
 });
 
+// --- Strategy: Cache-First with 7-Day Expiry ---
 async function handleIconRequest(request) {
     const imageCache = await caches.open(CACHE_NAME);
     const timeCache = await caches.open(TRACKER_CACHE);
@@ -42,44 +73,51 @@ async function handleIconRequest(request) {
     const cachedImage = await imageCache.match(request);
     const cachedTime = await timeCache.match(request);
 
-    // 1. Check if we have the image AND it is younger than 7 days
     if (cachedImage && cachedTime) {
         try {
             const timeData = await cachedTime.json();
-            const age = Date.now() - timeData.timestamp;
-
-            if (age < EXPIRY_MS) {
-                return cachedImage; // Cache Hit: Valid and fresh!
+            if ((Date.now() - timeData.timestamp) < EXPIRY_MS) {
+                return cachedImage; // Fresh Cache Hit
             }
         } catch (e) {
-            // Failsafe: If tracker JSON is corrupted, we will refetch
             console.warn("Tracker data corrupted for", request.url);
         }
     }
 
-    // 2. Cache Miss or Expired: Fetch from the network
     try {
-        // We use the browser's default cors mode for standard <img> tags
         const networkResponse = await fetch(request);
-
-        // Only cache successful responses (Opaque responses have a status of 0, which we must accept)
         if (networkResponse.ok || networkResponse.status === 0) {
-            
-            // Clone the response because a response stream can only be read once
             imageCache.put(request, networkResponse.clone());
-
-            // Create a microscopic synthetic response to act as our database timestamp
-            const timePayload = JSON.stringify({ timestamp: Date.now() });
-            const timeResponse = new Response(timePayload, {
+            timeCache.put(request, new Response(JSON.stringify({ timestamp: Date.now() }), {
                 headers: { 'Content-Type': 'application/json' }
-            });
-            timeCache.put(request, timeResponse);
+            }));
         }
-
         return networkResponse;
     } catch (error) {
-        // 3. Offline Failsafe: If the network drops, serve the expired cache anyway
-        if (cachedImage) return cachedImage;
+        if (cachedImage) return cachedImage; // Offline fallback for expired images
+        throw error;
+    }
+}
+
+// --- Strategy: Network-First ---
+async function handleCoreRequest(request) {
+    try {
+        // Step 1: Attempt to fetch the absolute latest version from the internet
+        const networkResponse = await fetch(request);
+        
+        // Step 2: If successful, silently update our cache in the background
+        if (networkResponse.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, networkResponse.clone());
+        }
+        return networkResponse;
+    } catch (error) {
+        // Step 3: If offline (fetch throws an error), pull the saved version from the cache
+        const cachedResponse = await caches.match(request);
+        if (cachedResponse) {
+            return cachedResponse;
+        }
+        // Step 4: If offline AND not in cache, let it fail normally
         throw error;
     }
 }
