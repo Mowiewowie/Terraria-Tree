@@ -1,0 +1,54 @@
+name: Monthly Terraria Item Update
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every day from the 17th to the 23rd
+    - cron: "0 0 17-23 * *"
+  workflow_dispatch: # Allows manual triggers for testing
+
+jobs:
+  scrape_and_push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push changes back to the repo
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check if Today is Friday
+        run: |
+          if [ "$(date +%u)" != "5" ]; then
+            echo "Awaiting for Friday. Skipping execution."
+            exit 0
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            # Add common scraper libraries if no requirements.txt exists
+            pip install requests beautifulsoup4
+          fi
+
+      - name: Run Scraper
+        run: python terraria-item-scraper.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add terraria_items.json
+          # Only commit if there are actually changes to avoid workflow errors
+          if git diff --staged --quiet; then
+            echo "No changes detected in terraria_items.json"
+          else
+            git commit -m "Automated update: Terraria items list ($(date +'%Y-%m-%d'))"
+            git push origin main
+          fi
