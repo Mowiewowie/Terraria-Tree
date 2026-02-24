@@ -13,12 +13,14 @@ Whether you're playing on PC and have your phone open next to you, or you're pla
 * **Interactive, Nested Trees:** Instead of static tables, you get a fully clickable tree. You can jump between tiers and materials instantly without waiting for a new wiki page to load. 🌿
 * **The "What is this for?" Search:** If you find a weird material, just search for it. The app maps out every possible upgrade path for that item visually, so you know exactly what it's worth. 🔍
 * **The Discovery Engine:** This is my favorite feature. You can input multiple items at once (like whatever is currently sitting in your chest) and the app will tell you exactly what you can craft using that *specific* combination of materials. 🧪
-* **Built for Flow:** High-signal, low-friction. No cluttered ads or walls of text—just the data you need to get back to mining.
+* **Built for Flow:** High-signal, low-friction. No cluttered ads or walls of text, just the data you need to get back to mining.
 
 ---
 
 ### 🎨 Why I built this
-I've always wanted a tool like this. In addition, I wanted to experiment with "vibe coding" to see if I could make a utility tool that actually looked *good*. TerrariTree is the result of that—a project focused on taking the data we already have and making it much easier to explore and interact with. 
+I've always wanted a tool like this, but I couldn't find it anywhere. In addition, I wanted to experiment with vibe-coding to see where this technology is today. I needed a way to make something like this that actually looked *good* and works well, without spending as much time as you normally would coding a tool like this. 
+
+TerrariTree is the result of that. A project focused on taking the data we already have and making it much easier to explore and interact with. 
 
 > *"Because your inventory shouldn't be a mystery, even 200 hours in."* 🍀
 
