@@ -17,25 +17,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify Date (First Friday after 16th)
+        id: date_check
         run: |
-          if [ "$(date +%u)" != "5" ]; then
+          if [ "$(date +%u)" == "5" ]; then
+            echo "is_friday=true" >> $GITHUB_OUTPUT
+          else
             echo "Waiting for Friday. Skipping."
-            exit 0
+            echo "is_friday=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up Python
+        if: steps.date_check.outputs.is_friday == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Install Dependencies
-        run: |
-          pip install requests urllib3
+        if: steps.date_check.outputs.is_friday == 'true'
+        run: pip install requests urllib3
 
       - name: Execute Scraper
+        if: steps.date_check.outputs.is_friday == 'true'
         run: python terraria-item-scraper.py
 
       - name: Commit and Push Changes
+        if: steps.date_check.outputs.is_friday == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
