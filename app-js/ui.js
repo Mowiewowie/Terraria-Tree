@@ -121,6 +121,7 @@ function attachSearchLogic(inputEl, resultsEl, onSelectCallback) {
             updateSearchHighlight(results, localActiveIndex);
         } else if (e.key === 'Enter') {
             e.preventDefault();
+            inputEl.blur(); // Instantly dismiss mobile keyboard
             const targetIdx = localActiveIndex >= 0 ? localActiveIndex : 0;
             if (results[targetIdx]) results[targetIdx].click();
         }
@@ -187,6 +188,7 @@ function attachSearchLogic(inputEl, resultsEl, onSelectCallback) {
                 d.onclick = () => {
                     resultsEl.classList.add('hidden');
                     inputEl.value = '';
+                    inputEl.blur(); // Dismiss mobile keyboard on tap
                     onSelectCallback(m.item);
                 };
                 

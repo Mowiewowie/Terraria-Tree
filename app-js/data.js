@@ -16,24 +16,30 @@ function processFile(file) {
 window.addEventListener('load', loadDefaultData);
 
 async function loadDefaultData() {
-    dom.uploadSection.classList.remove('hidden');
-    
-    const fallbackTimer = setTimeout(() => {
-        if (Object.keys(itemsDatabase).length === 0) {
-            dom.dbStatus.innerHTML = `Loading failed. <button onclick="document.getElementById('fileInput').click()" class="text-blue-500 hover:text-blue-600 underline ml-1 pointer-events-auto">Upload Data</button>`;
-        }
-    }, 5000);
+    const isLocal = window.location.protocol === 'file:';
+
+    if (isLocal) {
+        // Local files cannot fetch without a server, ask for upload immediately
+        dom.uploadSection.classList.remove('hidden');
+        dom.autoLoadStatus.classList.add('hidden');
+        dom.manualUpload.classList.remove('hidden');
+        dom.dbStatus.innerText = "Local Mode";
+        return;
+    }
+
+    // Hosted mode, display loading text in the top bar
+    dom.dbStatus.innerText = "Initializing... Please Wait...";
 
     try {
         const res = await fetch(JSON_FILENAME);
         if (!res.ok) throw new Error("Fetch failed");
-        clearTimeout(fallbackTimer);
         initializeData(await res.json());
     } catch (e) {
-        setTimeout(() => {
-            dom.autoLoadStatus.classList.add('hidden');
-            dom.manualUpload.classList.remove('hidden');
-        }, 800);
+        // Fallback if the network fetch actually fails
+        dom.uploadSection.classList.remove('hidden');
+        dom.autoLoadStatus.classList.add('hidden');
+        dom.manualUpload.classList.remove('hidden');
+        dom.dbStatus.innerHTML = `Loading failed. <button onclick="document.getElementById('fileInput').click()" class="text-blue-500 hover:text-blue-600 underline ml-1 pointer-events-auto">Upload Data</button>`;
     }
 }
 
