@@ -168,6 +168,8 @@ function attachSearchLogic(inputEl, resultsEl, onSelectCallback) {
                 leftWrap.className = 'flex items-center gap-3';
                 
                 const img = document.createElement('img');
+                // Bind the error listener before assigning the source to guarantee execution
+                img.onerror = () => { img.src = FALLBACK_ICON; };
                 img.src = createDirectImageUrl(m.item.name);
                 img.className = 'w-6 h-6 object-contain';
                 
@@ -412,6 +414,7 @@ function showTooltip(e, data, extraRecipe = null) {
             
             extraIngs.forEach(ing => {
                 const img = document.createElement('img');
+                img.onerror = () => { img.src = FALLBACK_ICON; };
                 img.src = createDirectImageUrl(ing.name);
                 img.className = 'w-6 h-6 object-contain rounded bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-300 dark:border-slate-600 shadow-sm';
                 img.title = `${ing.name} (x${ing.amount})`;

@@ -533,11 +533,16 @@ function createFlashingGroupNode(groupName, amount) {
     card.className = 'item-card relative flex flex-col items-center justify-center rounded-lg w-24 h-24 bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 shadow-sm transition-transform hover:scale-105';
     
     const img = document.createElement('img');
-    img.src = createDirectImageUrl(groupItems[0]);
+    // Start explicitly with the safe, offline-ready fallback to prevent native browser flashing
+    img.src = FALLBACK_ICON; 
     img.draggable = false;
     img.ondragstart = (e) => e.preventDefault();
     img.className = 'w-10 h-10 object-contain mb-1 transition-opacity duration-300';
-    img.onerror = () => { img.src = FALLBACK_ICON; };
+    
+    // Asynchronously upgrade to the actual image if it successfully resolves from cache or network
+    const initialPreloader = new Image();
+    initialPreloader.onload = () => { img.src = initialPreloader.src; };
+    initialPreloader.src = createDirectImageUrl(groupItems[0]);
     
     const nameSpan = document.createElement('span');
     nameSpan.textContent = groupItems[0];
@@ -557,14 +562,27 @@ function createFlashingGroupNode(groupName, amount) {
         let idx = 0;
         setInterval(() => {
             idx = (idx + 1) % groupItems.length;
-            img.style.opacity = '0';
-            nameSpan.style.opacity = '0';
-            setTimeout(() => {
-                img.src = createDirectImageUrl(groupItems[idx]);
-                nameSpan.textContent = groupItems[idx];
-                img.style.opacity = '1';
-                nameSpan.style.opacity = '1';
-            }, 150);
+            const nextItem = groupItems[idx];
+            const nextUrl = createDirectImageUrl(nextItem);
+            
+            // Preload the image in memory to mathematically prevent the browser from flashing a broken UI
+            const preloader = new Image();
+            
+            const swapContent = (safeUrl) => {
+                img.style.opacity = '0';
+                nameSpan.style.opacity = '0';
+                setTimeout(() => {
+                    img.src = safeUrl;
+                    nameSpan.textContent = nextItem;
+                    img.style.opacity = '1';
+                    nameSpan.style.opacity = '1';
+                }, 150);
+            };
+
+            preloader.onload = () => swapContent(nextUrl);
+            preloader.onerror = () => swapContent(FALLBACK_ICON);
+            preloader.src = nextUrl;
+            
         }, 1500); 
     }
 
