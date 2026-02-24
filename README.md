@@ -1,6 +1,5 @@
 # TerrariTree 🌳✨
-
-We all know the Terraria Wiki is the GOAT, but sometimes trying to track a complex crafting path—like the Ankh Shield or the Zenith—feels like a boss fight in itself. I got tired of clicking through five different "Used In" links just to see the full tree, so I decided to build a tool that puts it all in one place.
+We all know the Terraria Wiki is legendary, but sometimes finding a complex crafting path feels like a deep-dive expedition. I got tired of clicking through five different wiki links and google searches just to see the crafting details, so I decided to build a tool that puts it all in one place.
 
 **TerrariTree** is a modern, interactive visualizer that makes navigating recipes feel as smooth as the game itself. It’s **vibe-coded with a little help from Gemini**, focusing on a sleek UI that stays out of your way while you're playing.
 
