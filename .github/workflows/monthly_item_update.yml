@@ -38,7 +38,7 @@ jobs:
 
       - name: Execute Scraper
         if: steps.date_check.outputs.is_friday == 'true'
-        run: python terraria-item-scraper.py
+        run: python terraria-db-generator.py
 
       - name: Commit and Push Changes
         if: steps.date_check.outputs.is_friday == 'true'
