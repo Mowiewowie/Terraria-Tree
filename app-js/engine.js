@@ -12,15 +12,22 @@ function renderLoop() {
     dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
 
     const diff = Math.abs(targetX - currentX) + Math.abs(targetY - currentY) + Math.abs(targetScale - currentScale);
+    
+    // Restore pointer events early (when movement is visually negligible) to completely eliminate perceived lag.
+    // Keep them disabled during fast travel or physical dragging to maintain CPU performance.
+    if (isPanning || initialPinchDist || diff > 1.5) {
+        dom.treeContainer.style.pointerEvents = 'none';
+    } else {
+        dom.treeContainer.style.pointerEvents = '';
+    }
+
     if (diff < 0.001 && !isPanning && !initialPinchDist) {
         currentX = targetX;
         currentY = targetY;
         currentScale = targetScale;
         dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
-        dom.treeContainer.style.pointerEvents = ''; // Restore hit-boxes
         isAnimating = false;
     } else {
-        dom.treeContainer.style.pointerEvents = 'none'; // Disable hover math while moving to save CPU
         requestAnimationFrame(renderLoop);
     }
 }
