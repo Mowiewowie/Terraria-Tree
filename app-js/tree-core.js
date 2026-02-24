@@ -10,6 +10,7 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
     const img = document.createElement('img');
     img.src = createDirectImageUrl(data.name);
     img.draggable = false; 
+    img.ondragstart = (e) => e.preventDefault(); // Strict JS block
     img.className = sizeClasses.includes('w-32') ? 'w-14 h-14 object-contain mb-2' : 'w-10 h-10 object-contain mb-1';
     img.onerror = () => { if(img.src !== data.image_url) img.src = data.image_url; else img.src = FALLBACK_ICON; };
     
@@ -249,20 +250,42 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
         }
     }
 
+    let instantAnchorX = null;
+    let instantAnchorY = null;
+
     if (!preSetup()) {
-        preSetup = () => false;
+        preSetup = () => {
+            // Before drawing: Find exactly where the Discover Box is on the physical monitor
+            if (transitionType === 'instant') {
+                const anchorNode = dom.treeContainer.querySelector('.is-root > .item-card, .is-root > .discover-box-container');
+                if (anchorNode) {
+                    const vizRect = dom.vizArea.getBoundingClientRect();
+                    const rect = anchorNode.getBoundingClientRect();
+                    instantAnchorX = (rect.left - vizRect.left) + rect.width / 2;
+                    instantAnchorY = (rect.top - vizRect.top) + rect.height / 2;
+                }
+            }
+            return false;
+        };
         postAlign = () => {
-            if (preserveState && bridgeParams && bridgeParams.targetState && bridgeParams.targetState.x !== undefined) {
-                currentScale = bridgeParams.targetState.scale;
-                currentX = bridgeParams.targetState.x;
-                currentY = bridgeParams.targetState.y;
+            // After drawing: Force the camera to offset whatever structural flexbox changes occurred
+            if (transitionType === 'instant' && instantAnchorX !== null) {
+                const newAnchor = dom.treeContainer.querySelector('.is-root > .item-card, .is-root > .discover-box-container');
+                if (newAnchor) {
+                    const newLocal = getLocalCenter(newAnchor);
+                    currentX = instantAnchorX - (newLocal.x * currentScale);
+                    currentY = instantAnchorY - (newLocal.y * currentScale);
+                }
+            } else if (preserveState) {
+                if (bridgeParams && bridgeParams.targetState && bridgeParams.targetState.x !== undefined) {
+                    currentScale = bridgeParams.targetState.scale;
+                    currentX = bridgeParams.targetState.x;
+                    currentY = bridgeParams.targetState.y;
+                }
             } else {
                 calculateResetView();
                 currentX = targetX; currentY = targetY; currentScale = targetScale;
                 
-                // --- Mobile Keyboard & Layout Settling Fix ---
-                // Queue a secondary recenter after the OS keyboard finishes sliding down (~300ms)
-                // or the DOM flexbox layout finishes its initial paint.
                 if (isFirstLoad) {
                     setTimeout(() => {
                         if (!isPanning && currentViewType === 'tree') {
@@ -277,6 +300,7 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
         };
     }
 
+    const isInstant = transitionType === 'instant';
     performIKTransition(preSetup, () => {
         if (treeMode === 'usage') {
             dom.treeContainer.classList.add('mode-usage');
@@ -290,7 +314,7 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
             dom.treeContainer.appendChild(createTreeNode(id, true));
         }
         syncExpandAllButton();
-    }, postAlign);
+    }, postAlign, isInstant);
 }
 
 function syncExpandAllButton() {

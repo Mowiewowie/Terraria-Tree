@@ -60,6 +60,9 @@ dom.vizArea.addEventListener('wheel', e => {
     wheelTimeout = setTimeout(saveCurrentState, 300);
 });
 
+// Explicitly kill native HTML5 ghost-image dragging
+dom.vizArea.addEventListener('dragstart', e => e.preventDefault());
+
 dom.vizArea.addEventListener('mousedown', e => { 
     if (e.target.closest('.no-pan')) return; 
     isPanning = true; 

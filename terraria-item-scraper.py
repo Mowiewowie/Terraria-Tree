@@ -171,6 +171,37 @@ GENERIC_FALLBACK_MAP = {
     "Seed": "Seed"
 }
 
+# Cache to prevent spamming the Wiki API for the same redirects
+ALIAS_CACHE = {}
+
+def resolve_canonical_name(session, name: str) -> str:
+    """Queries the Wiki API to resolve redirects (e.g., Fiery Greatsword -> Volcano)"""
+    if name in ALIAS_CACHE:
+        return ALIAS_CACHE[name]
+    
+    params = {
+        "action": "query",
+        "titles": name,
+        "redirects": 1,
+        "format": "json"
+    }
+    try:
+        # Polite delay to prevent rate-limiting/DDoS blocking
+        time.sleep(0.05) 
+        resp = session.get("https://terraria.wiki.gg/api.php", params=params, timeout=5).json()
+        redirects = resp.get("query", {}).get("redirects", [])
+        
+        if redirects:
+            canonical = redirects[0]["to"]
+            ALIAS_CACHE[name] = canonical
+            print(f"    [Alias Resolved] {name} -> {canonical}")
+            return canonical
+        
+        ALIAS_CACHE[name] = name
+        return name
+    except:
+        return name
+
 def sanitize_text(text: str) -> str:
     if not text: return ""
     text = re.sub(r'<[^>]+>', ' ', text)
@@ -409,22 +440,18 @@ def fetch_data():
     print(f"  -> Assigned {catchall_count} items via Universal Catch-All.")
 
     # 3. Fetch Recipes 
-    print("\nStep 4/6: Fetching Recipes...")
+    print("\nStep 4/6: Fetching Recipes & Resolving Aliases...")
     offset = 0
     while True:
         params = {
             "action": "cargoquery", "tables": "Recipes",
-            "fields": "resultid,station,ings,args", 
+            "fields": "_pageName,resultid,station,ings,args", 
             "limit": 500, "offset": offset, "format": "json"
         }
         try:
             resp = session.get("https://terraria.wiki.gg/api.php", params=params, timeout=10)
             data_json = resp.json()
-            
-            if "error" in data_json: 
-                print(f"[!] API Error in Recipes: {data_json['error'].get('info')}")
-                break
-            
+            if "error" in data_json: break
             results = data_json.get("cargoquery", [])
             if not results: break
             
@@ -433,44 +460,51 @@ def fetch_data():
                 rid = data.get("resultid", "")
                 
                 if rid in items_db:
+                    page_name = str(data.get("_pageName", "")).lower()
                     station = sanitize_text(data.get("station", "By Hand"))
                     args_lower = str(data.get("args", "")).lower()
                     
-                    bad_flags = [
-                        "removed", "historical", "obsolete", "deprecated", 
-                        "legacy", "old=", "former", "unobtainable",
-                        "desktop=n", "desktop=false", "desktop=0",
-                        "pc=n", "pc=false", "pc=0"
-                    ]
-                    if any(flag in args_lower for flag in bad_flags):
-                        continue 
-                    
-                    if re.search(r'(?:version|patch)[=:\s\'"]+[0-9]+\.[0-9]+', args_lower):
-                        continue
-                    if re.search(r'\b[0-9]+\.[0-9]+(?:\.[0-9]+)?\s*=\s*(?:n|false|0)\b', args_lower):
+                    # NEW: Drop anything from the archived Legacy pages or tagged as old ingredients
+                    if "legacy:" in page_name or "#i:old" in args_lower: 
                         continue
                     
-                    ingredients = parse_ingredients(data.get("ings", ""))
-                    if not ingredients:
-                        continue
+                    bad_flags = ["removed", "historical", "obsolete", "deprecated", "legacy", "old=", "former", "unobtainable", "desktop=n", "desktop=false", "desktop=0", "pc=n", "pc=false", "pc=0"]
+                    if any(flag in args_lower for flag in bad_flags): continue 
+                    if re.search(r'(?:version|patch)[=:\s\'"]+[0-9]+\.[0-9]+', args_lower): continue
+                    if re.search(r'\b[0-9]+\.[0-9]+(?:\.[0-9]+)?\s*=\s*(?:n|false|0)\b', args_lower): continue
                     
-                    is_transmutation = "extractinator" in station.lower() or "shimmer" in station.lower()
+                    # Extract raw ingredients directly (no API aliasing required)
+                    resolved_ings = parse_ingredients(data.get("ings", ""))
+                    if not resolved_ings: continue
                     
-                    version = "Desktop"
-                    if "old-gen" in args_lower or "3ds" in args_lower: version = "Legacy"
-                    elif "console" in args_lower and "desktop" not in args_lower: version = "Console"
+                    # Generate a unique mathematical signature for the recipe to deduplicate identical rows
+                    sig_parts = sorted([f"{i['name']}:{i['amount']}" for i in resolved_ings])
+                    recipe_signature = station + "|" + "|".join(sig_parts)
+                    
+                    # Check if we already have this exact recipe saved
+                    existing_signatures = items_db[rid].setdefault("_recipe_signatures", set())
+                    if recipe_signature not in existing_signatures:
+                        existing_signatures.add(recipe_signature)
+                        
+                        is_transmutation = "extractinator" in station.lower() or "shimmer" in station.lower()
+                        version = "Legacy" if ("old-gen" in args_lower or "3ds" in args_lower) else "Console" if "console" in args_lower else "Desktop"
 
-                    items_db[rid]["crafting"]["recipes"].append({
-                        "station": station,
-                        "ingredients": ingredients,
-                        "version": version,
-                        "transmutation": is_transmutation
-                    })
+                        items_db[rid]["crafting"]["recipes"].append({
+                            "station": station,
+                            "ingredients": resolved_ings,
+                            "version": version,
+                            "transmutation": is_transmutation
+                        })
             offset += 500
-            time.sleep(0.45)
+            print(f"  ... Parsed {offset} recipe entries ...")
+            time.sleep(0.45) # Polite batch delay
         except Exception as e:
             print(f"Error fetching recipes: {e}")
             break
+            
+    # Cleanup temporary signatures
+    for item in items_db.values():
+        item.pop("_recipe_signatures", None)
 
     # 4. Fetch Drops
     print("\nStep 5/6: Fetching Drops...")

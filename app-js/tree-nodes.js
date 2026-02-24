@@ -2,43 +2,6 @@
 
 // --- Sub-Tree & Specific Node Generation Logic ---
 
-function getSmartRecipe(recipes, itemName = "") {
-    if (!recipes || recipes.length === 0) return null;
-
-    let valid = recipes;
-    if (!showTransmutations) {
-        valid = recipes.filter(r => {
-            if (r.transmutation) return false;
-            if (r.ingredients.length === 1 && itemName) {
-                const ingName = r.ingredients[0].name.toLowerCase();
-                const outName = itemName.toLowerCase();
-                if ((ingName.includes("wall") && !outName.includes("wall")) ||
-                    (ingName.includes("platform") && !outName.includes("platform"))) {
-                    return false;
-                }
-            }
-            return true;
-        });
-        if (valid.length === 0) return null;
-    }
-
-    const modernRecipes = valid.filter(r => r.version !== "Legacy");
-    valid = modernRecipes.length > 0 ? modernRecipes : valid;
-
-    const normalCrafts = valid.filter(r => !r.transmutation);
-    const pool = normalCrafts.length > 0 ? normalCrafts : valid;
-
-    return pool.reduce((best, curr) => {
-        const bestLen = best.ingredients.length;
-        const currLen = curr.ingredients.length;
-        if (currLen > bestLen) return curr;
-        if (currLen < bestLen) return best;
-        const bestCost = best.ingredients.reduce((a, i) => a + i.amount, 0);
-        const currCost = curr.ingredients.reduce((a, i) => a + i.amount, 0);
-        return currCost < bestCost ? curr : best;
-    });
-}
-
 function getDiscoverableItems() {
     if (discoverBoxItems.length === 0) return [];
     
@@ -95,10 +58,11 @@ function createDiscoverRootNode() {
     boxContainer.dataset.id = 'discover_root';
 
     const header = document.createElement('div');
-    header.className = 'w-full flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-700 pb-2';
+    // Added 'select-none' to prevent text highlighting while dragging the canvas
+    header.className = 'w-full flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-700 pb-2 select-none';
     
     const title = document.createElement('h3');
-    title.className = 'text-emerald-600 dark:text-emerald-400 font-bold text-lg flex items-center gap-2';
+    title.className = 'text-emerald-600 dark:text-emerald-400 font-bold text-lg flex items-center gap-2 select-none';
     title.innerHTML = '<i class="fa-solid fa-compass"></i> Discover Box';
     
     header.appendChild(title);
@@ -128,7 +92,7 @@ function createDiscoverRootNode() {
             e.stopPropagation();
             discoverBoxItems = discoverBoxItems.filter(id => id !== itemId);
             saveCurrentState();
-            loadTree(currentTreeItemId, true);
+            loadTree(currentTreeItemId, true, false, 'instant');
         };
         
         miniCardWrapper.append(card, removeBtn);
@@ -156,7 +120,7 @@ function createDiscoverRootNode() {
         if (!discoverBoxItems.includes(item.id)) {
             discoverBoxItems.push(item.id);
             saveCurrentState();
-            loadTree(currentTreeItemId, true);
+            loadTree(currentTreeItemId, true, false, 'instant');
         }
     });
 
@@ -289,13 +253,16 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
 
     let hasValidChildren = false;
     let childrenData = []; 
+    let validRecipes = [];
 
     if (treeMode === 'recipe') {
         if (data.crafting && data.crafting.is_craftable && !visited.has(id)) {
-            const recipe = getSmartRecipe(data.crafting.recipes, data.name);
-            if (recipe && recipe.ingredients.length > 0) {
+            validRecipes = data.crafting.recipes.filter(r => showTransmutations || !r.transmutation);
+            if (validRecipes.length > 0) {
                 hasValidChildren = true;
-                childrenData = recipe.ingredients;
+                if (selectedRecipeIndices[id] === undefined) selectedRecipeIndices[id] = 0;
+                if (selectedRecipeIndices[id] >= validRecipes.length) selectedRecipeIndices[id] = 0;
+                childrenData = validRecipes[selectedRecipeIndices[id]].ingredients;
             }
         }
     } else if (treeMode === 'usage' || treeMode === 'discover') {
@@ -314,6 +281,39 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
             hasValidChildren = true;
             childrenData = uniqueUsages;
         }
+    }
+
+    // Inject the Multiple-Recipe UI Toggle Pill
+    if (treeMode === 'recipe' && validRecipes.length > 1) {
+        const selector = document.createElement('div');
+        selector.className = 'absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center bg-slate-800 dark:bg-slate-900 text-white rounded-full px-2 py-0.5 shadow-lg border border-slate-600 dark:border-slate-500 z-30 text-[10px] font-bold whitespace-nowrap cursor-default no-pan';
+        
+        const btnPrev = document.createElement('button');
+        btnPrev.className = 'hover:text-emerald-400 px-1.5 py-0.5 cursor-pointer no-pan transition-colors';
+        btnPrev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+        btnPrev.onclick = (e) => {
+            e.stopPropagation();
+            selectedRecipeIndices[id] = (selectedRecipeIndices[id] - 1 + validRecipes.length) % validRecipes.length;
+            saveCurrentState();
+            loadTree(currentTreeItemId, true); // Instantly rebuilds the tree below this item
+        };
+
+        const label = document.createElement('span');
+        label.className = 'mx-1 w-8 text-center select-none text-slate-200';
+        label.textContent = `${selectedRecipeIndices[id] + 1}/${validRecipes.length}`;
+
+        const btnNext = document.createElement('button');
+        btnNext.className = 'hover:text-emerald-400 px-1.5 py-0.5 cursor-pointer no-pan transition-colors';
+        btnNext.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+        btnNext.onclick = (e) => {
+            e.stopPropagation();
+            selectedRecipeIndices[id] = (selectedRecipeIndices[id] + 1) % validRecipes.length;
+            saveCurrentState();
+            loadTree(currentTreeItemId, true);
+        };
+
+        selector.append(btnPrev, label, btnNext);
+        card.appendChild(selector);
     }
 
     if (hasValidChildren) {
@@ -393,10 +393,12 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                 const newVis = new Set(visited).add(id);
                 if (treeMode === 'recipe') {
                     childrenData.forEach(ing => {
-                        const isGroup = ing.name.toLowerCase().startsWith("any ");
+                        const ingLower = ing.name.toLowerCase();
+                        const isGroup = Object.keys(RECIPE_GROUPS).some(k => k.toLowerCase() === ingLower) || ingLower.startsWith("any ");
+                        
                         let childNode;
                         if (isGroup) {
-                            childNode = createGroupNode(ing.name, ing.amount, attachLineEvents);
+                            childNode = createFlashingGroupNode(ing.name, ing.amount);
                         } else {
                             const cid = itemIndex.find(i => i.name === ing.name)?.id;
                             childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
@@ -451,7 +453,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
             }
             setTimeout(() => syncExpandAllButton(), 10);
             
-            if (wasClosed || isDeepExpandMode) {
+            if (wasClosed) { // Item was just EXPANDED
                 setTimeout(() => {
                     if (isDeepExpandMode) {
                         focusSubtree(node, container);
@@ -482,7 +484,10 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                     }
                     saveCurrentState();
                 }, 100);
-            } else {
+            } else { // Item was just COLLAPSED
+                if (isDeepExpandMode) {
+                    resetView(); // Matches user expectation: pulls the camera out to view the entire remaining tree
+                }
                 saveCurrentState();
             }
         };
@@ -508,59 +513,101 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
     return node;
 }
 
-function createGroupNode(ingName, amount, lineEventsFn) {
+function createFlashingGroupNode(groupName, amount) {
     const container = document.createElement('div');
     container.className = 'tree-node';
 
-    const box = document.createElement('div');
-    box.className = 'relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-dashed border-slate-300 dark:border-slate-500 shadow-inner z-10';
+    const groupKey = Object.keys(RECIPE_GROUPS).find(k => k.toLowerCase() === groupName.toLowerCase());
+    const groupItems = groupKey ? RECIPE_GROUPS[groupKey] : [groupName.replace("Any ", "")];
 
-    const label = document.createElement('div');
-    label.className = 'text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider mb-2';
-    label.textContent = `${ingName} (x${amount})`;
-    box.appendChild(label);
+    const mockData = {
+        id: 'group_' + groupName,
+        name: groupName,
+        isGroupData: true,
+        groupItems: groupItems,
+        url: `https://terraria.wiki.gg/wiki/Alternative_crafting_ingredients#${groupName.replace(/ /g, '_')}`
+    };
 
-    const itemsRow = document.createElement('div');
-    itemsRow.className = 'flex gap-2';
+    const card = document.createElement('div');
+    // Mimics the exact CSS of a standard item card, no dashed lines!
+    card.className = 'item-card relative flex flex-col items-center justify-center rounded-lg w-24 h-24 bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 shadow-sm transition-transform hover:scale-105';
+    
+    const img = document.createElement('img');
+    img.src = createDirectImageUrl(groupItems[0]);
+    img.draggable = false;
+    img.ondragstart = (e) => e.preventDefault();
+    img.className = 'w-10 h-10 object-contain mb-1 transition-opacity duration-300';
+    img.onerror = () => { img.src = FALLBACK_ICON; };
+    
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = groupItems[0];
+    nameSpan.className = 'text-center font-semibold text-[10px] leading-tight px-1 line-clamp-2 text-slate-800 dark:text-slate-200 transition-opacity duration-300';
 
-    const groupKeys = Object.keys(RECIPE_GROUPS);
-    const matchedKey = groupKeys.find(k => ingName.toLowerCase() === k.toLowerCase());
-    let altNames = matchedKey ? RECIPE_GROUPS[matchedKey] : [ingName.replace("Any ", "")];
+    const badge = document.createElement('span');
+    badge.className = 'absolute -top-2 -right-2 bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-500 text-blue-800 dark:text-blue-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
+    badge.textContent = `x${amount}`;
+    
+    const groupLabel = document.createElement('div');
+    groupLabel.className = 'absolute -bottom-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] px-2 py-0.5 rounded shadow-md uppercase tracking-wider font-bold whitespace-nowrap z-30 border border-orange-700/50';
+    groupLabel.innerHTML = `<i class="fa-solid fa-layer-group mr-1"></i>${groupName}`;
 
-    const displayNames = altNames.slice(0, 3);
-    const remaining = altNames.length - 3;
+    card.append(img, nameSpan, badge, groupLabel);
 
-    displayNames.forEach(altName => {
-        const altId = itemIndex.find(i => i.name === altName)?.id;
-        
-        if (altId) {
-            const data = itemsDatabase[altId];
-            const miniCard = createItemCardElement(data, 'w-16 h-16');
-            itemsRow.appendChild(miniCard);
-        } else {
-            const miniCard = document.createElement('div');
-            miniCard.className = 'item-card flex flex-col items-center justify-center w-16 h-16 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600';
-            const img = document.createElement('img');
-            img.src = createDirectImageUrl(altName);
-            img.draggable = false;
-            img.className = 'w-6 h-6 object-contain mb-1';
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = altName;
-            nameSpan.className = 'text-[10px] text-center leading-tight px-1 line-clamp-2 text-slate-800 dark:text-slate-200';
-            miniCard.append(img, nameSpan);
-            itemsRow.appendChild(miniCard);
-        }
-    });
-
-    if (remaining > 0) {
-        const moreNode = document.createElement('div');
-        moreNode.className = 'flex items-center justify-center w-16 h-16 rounded bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-600 text-slate-500 text-xs font-bold';
-        moreNode.textContent = `+${remaining}`;
-        itemsRow.appendChild(moreNode);
+    if (groupItems.length > 1) {
+        let idx = 0;
+        setInterval(() => {
+            idx = (idx + 1) % groupItems.length;
+            img.style.opacity = '0';
+            nameSpan.style.opacity = '0';
+            setTimeout(() => {
+                img.src = createDirectImageUrl(groupItems[idx]);
+                nameSpan.textContent = groupItems[idx];
+                img.style.opacity = '1';
+                nameSpan.style.opacity = '1';
+            }, 150);
+        }, 1500); 
     }
 
-    box.appendChild(itemsRow);
-    container.appendChild(box);
+    card.onclick = (e) => {
+        e.stopPropagation();
+        if (isDraggingThresholdMet) { isDraggingThresholdMet = false; return; }
+
+        // Secure the primary fallback item
+        const primaryItemId = Object.keys(itemsDatabase).find(id => itemsDatabase[id].name === groupItems[0]);
+        const primaryItemData = primaryItemId ? itemsDatabase[primaryItemId] : null;
+
+        if (isMobileUX()) {
+            if (activeMobileCard !== card) {
+                if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
+                activeMobileCard = card;
+                card.classList.add('mobile-active');
+                showTooltip(e, mockData, null);
+            } 
+            // Second tap is intentionally disabled. User must use the tooltip buttons to navigate.
+            return;
+        }
+
+        // Desktop Behaviors
+        if (e.ctrlKey || e.metaKey) {
+            dom.tooltip.el.classList.add('hidden');
+            window.open(mockData.url, '_blank');
+        } else if (e.shiftKey) {
+            dom.tooltip.el.classList.add('hidden');
+            // Route specifically to the Category page, exactly like standard items!
+            if (primaryItemData && primaryItemData.specific_type) {
+                viewCategory(primaryItemData.specific_type);
+            }
+        }
+        // Standard Left Click intentionally does nothing to prevent accidental navigation
+    };
+
+    card.onmouseenter = e => {
+        if(!isMobileUX()) { clearTimeout(lineTooltipTimeout); showTooltip(e, mockData, null); }
+    };
+    card.onmouseleave = () => { if(!isMobileUX()) dom.tooltip.el.classList.add('hidden'); };
+    card.onmousemove = e => { if(!isMobileUX()) moveTooltip(e); };
+
+    container.appendChild(card);
     return container;
 }
 

@@ -122,6 +122,7 @@ function saveCurrentState(skipBrowserState = false) {
         if (currentViewType === 'tree') {
             appHistory[historyIdx].expanded = Array.from(expandedNodes);
             appHistory[historyIdx].discoverItems = [...discoverBoxItems];
+            appHistory[historyIdx].recipeIndices = { ...selectedRecipeIndices };
             
             const locations = {};
             dom.treeContainer.querySelectorAll('.item-card').forEach(card => {
@@ -149,7 +150,7 @@ dom.navForward.onclick = () => { history.forward(); };
 let transitionTimeout = null;
 let pendingDOMSwap = null; 
 
-function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign) {
+function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign, skipFade = false) {
     if (pendingDOMSwap) {
         clearTimeout(transitionTimeout);
         pendingDOMSwap(); 
@@ -159,9 +160,9 @@ function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign) {
     if (existingGhost) existingGhost.remove();
 
     const hasMovement = preAnimationSetup(); 
-    if (hasMovement) triggerAnimation();
+    if (hasMovement && !skipFade) triggerAnimation();
 
-    const waitTime = hasMovement ? 400 : 0;
+    const waitTime = hasMovement && !skipFade ? 400 : 0;
 
     pendingDOMSwap = () => {
         pendingDOMSwap = null; 
@@ -175,7 +176,7 @@ function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign) {
             dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
         }
         
-        if (hasContent) {
+        if (hasContent && !skipFade) {
             ghost = dom.treeContainer.cloneNode(true);
             ghost.id = 'ghostContainer'; 
             ghost.style.pointerEvents = 'none';
@@ -190,13 +191,18 @@ function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign) {
         }
         dom.treeContainer.innerHTML = '';
         dom.treeContainer.classList.remove('fade-unfocused');
-        dom.treeContainer.style.opacity = '0';
+        if (!skipFade) dom.treeContainer.style.opacity = '0';
         
         buildDOM();
         postDOMAlign(); 
         
         dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
         void dom.treeContainer.offsetWidth; 
+
+        if (skipFade) {
+            dom.treeContainer.style.opacity = '1';
+            return;
+        }
 
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -268,7 +274,7 @@ window.addEventListener('popstate', (e) => {
             const cat = params.get('category');
             
             appHistory = [];
-            appHistory[historyIdx] = { viewType: id ? 'tree' : 'category', id: id, category: cat, mode: treeMode, expanded: [], discoverItems: [] };
+            appHistory[historyIdx] = { viewType: id ? 'tree' : 'category', id: id, category: cat, mode: treeMode, expanded: [], discoverItems: [], recipeIndices: {...selectedRecipeIndices} };
             
             removeHomeMode();
             if (id) loadTree(id, false, false, 'search');
@@ -286,30 +292,58 @@ window.addEventListener('popstate', (e) => {
             document.querySelector(`input[name="treeMode"][value="${state.mode}"]`).checked = true;
             expandedNodes = new Set(state.expanded || []);
             discoverBoxItems = state.discoverItems ? [...state.discoverItems] : [];
+            selectedRecipeIndices = state.recipeIndices ? { ...state.recipeIndices } : {};
 
             if (currentViewType === 'tree' && state.viewType === 'tree') {
-                if (isBackward) {
-                    const bridgeId = currentTreeItemId;
-                    loadTree(state.id, true, true, 'backward', {
-                        bridgeId: bridgeId,
-                        targetState: state
-                    });
-                } else {
-                    const bridgeId = pastState.bridgeId; 
-                    const childCard = Array.from(dom.treeContainer.querySelectorAll('.item-card')).find(c => c.dataset.id === String(state.id)); 
+                
+                // --- Smart Intersection Check (Fly vs Fade) ---
+                let isValidBridge = true;
+                const leavingMode = pastState.mode;
+                const enteringMode = state.mode;
+                
+                if (leavingMode === 'discover' || enteringMode === 'discover') {
+                    // If LEAVING Discover Mode (Forward navigation)
+                    if (leavingMode === 'discover') {
+                        // The item we are navigating TO must have existed in the physical coordinate snapshot we are LEAVING
+                        if (!pastState.itemLocations || !pastState.itemLocations[String(state.id)]) {
+                            isValidBridge = false;
+                        }
+                    }
+                    // If ENTERING Discover Mode (Backward navigation)
+                    if (enteringMode === 'discover') {
+                        // The item we are LEAVING must exist in the coordinate snapshot of the screen we are navigating TO
+                        if (!state.itemLocations || !state.itemLocations[String(pastState.id)]) {
+                            isValidBridge = false;
+                        }
+                    }
+                }
 
-                    if (childCard) {
-                        childCard.classList.add('hero-active');
-                        dom.treeContainer.classList.add('fade-unfocused');
-
-                        const startLocal = getLocalCenter(childCard);
-                        loadTree(state.id, true, true, 'forward', {
-                            startLocal: startLocal,
+                if (isValidBridge) {
+                    if (isBackward) {
+                        const bridgeId = currentTreeItemId;
+                        loadTree(state.id, true, true, 'backward', {
+                            bridgeId: bridgeId,
                             targetState: state
                         });
                     } else {
-                        loadTree(state.id, true, true, 'search', { targetState: state });
+                        const childCard = Array.from(dom.treeContainer.querySelectorAll('.item-card')).find(c => c.dataset.id === String(state.id)); 
+
+                        if (childCard) {
+                            childCard.classList.add('hero-active');
+                            dom.treeContainer.classList.add('fade-unfocused');
+
+                            const startLocal = getLocalCenter(childCard);
+                            loadTree(state.id, true, true, 'forward', {
+                                startLocal: startLocal,
+                                targetState: state
+                            });
+                        } else {
+                            loadTree(state.id, true, true, 'search', { targetState: state });
+                        }
                     }
+                } else {
+                    // Force a standard fade transition instead of flying
+                    loadTree(state.id, true, true, 'search', { targetState: state });
                 }
             } else {
                 loadTree(state.id, true, true, 'search', { targetState: state });
@@ -362,7 +396,7 @@ function switchModeKinematic(newMode) {
         treeMode = newMode; 
         
         appHistory = appHistory.slice(0, historyIdx + 1);
-        appHistory.push({ viewType: 'tree', id: currentTreeItemId, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems] });
+        appHistory.push({ viewType: 'tree', id: currentTreeItemId, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems], recipeIndices: {...selectedRecipeIndices} });
         
         historyIdx++;
         safePushState({ idx: historyIdx }, `?id=${currentTreeItemId}`);
@@ -391,7 +425,7 @@ function transitionToNewItem(cardEl, targetId) {
     saveCurrentState();
     
     appHistory = appHistory.slice(0, historyIdx + 1);
-    appHistory.push({ viewType: 'tree', id: targetId, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems] });
+    appHistory.push({ viewType: 'tree', id: targetId, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems], recipeIndices: {...selectedRecipeIndices} });
     
     historyIdx++;
     safePushState({ idx: historyIdx }, `?id=${targetId}`);
@@ -407,7 +441,7 @@ function viewItem(id, isFromSearch = false, isTransitioning = false) {
     removeHomeMode();
     saveCurrentState(); 
     appHistory = appHistory.slice(0, historyIdx + 1);
-    appHistory.push({ viewType: 'tree', id: id, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems] });
+    appHistory.push({ viewType: 'tree', id: id, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems], recipeIndices: {...selectedRecipeIndices} });
     
     historyIdx++;
     safePushState({ idx: historyIdx }, `?id=${id}`);

@@ -206,9 +206,83 @@ attachSearchLogic(dom.searchInput, dom.searchResults, (item) => {
 
 // Tooltips
 function showTooltip(e, data, extraRecipe = null) {
+    // --- Special Interceptor for Flashing Group Cards ---
+    if (data.isGroupData) {
+        dom.tooltip.name.className = `terraria-text font-bold text-lg leading-tight text-amber-500`;
+        dom.tooltip.name.textContent = data.name;
+        
+        // Use the standard description styling
+        dom.tooltip.desc.textContent = "Accepts ANY of the following items.";
+        dom.tooltip.desc.className = "text-sm text-slate-700 dark:text-slate-300 mb-3 block";
+        dom.tooltip.desc.classList.remove('hidden');
+        
+        dom.tooltip.image.src = createDirectImageUrl(data.groupItems[0]); 
+        dom.tooltip.image.onerror = () => { dom.tooltip.image.src = FALLBACK_ICON; };
+        
+        // Restore exact DOM consistency for the shortcuts under the title
+        if (!isMobileUX()) {
+            dom.tooltip.wikiDesktop.classList.remove('hidden');
+            Array.from(dom.tooltip.wikiDesktop.children).forEach(c => c.classList.remove('hidden'));
+            dom.tooltip.wikiMobile.classList.add('hidden');
+        } else {
+            dom.tooltip.wikiDesktop.classList.add('hidden');
+            dom.tooltip.wikiMobile.classList.remove('hidden');
+            dom.tooltip.btnWiki.classList.remove('hidden');
+            dom.tooltip.btnCategory.classList.remove('hidden');
+
+            dom.tooltip.btnWiki.onclick = (ev) => {
+                ev.stopPropagation();
+                if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
+                activeMobileCard = null; dom.tooltip.el.classList.add('hidden');
+                window.open(data.url, '_blank');
+            };
+
+            dom.tooltip.btnCategory.onclick = (ev) => {
+                ev.stopPropagation();
+                if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
+                activeMobileCard = null; dom.tooltip.el.classList.add('hidden');
+                
+                // Fallback: View the category of the primary default item
+                const primaryItemId = Object.keys(itemsDatabase).find(id => itemsDatabase[id].name === data.groupItems[0]);
+                if (primaryItemId && itemsDatabase[primaryItemId].specific_type) {
+                    viewCategory(itemsDatabase[primaryItemId].specific_type);
+                }
+            };
+        }
+
+        // Build the Alternative Items grid with a clear label so it doesn't look like "Also Requires"
+        dom.tooltip.stats.innerHTML = '<div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 mt-2">Valid Alternatives:</div>';
+        const gridWrap = document.createElement('div');
+        gridWrap.className = 'flex flex-wrap gap-1';
+        data.groupItems.forEach(itemName => {
+            const img = document.createElement('img');
+            img.src = createDirectImageUrl(itemName);
+            img.className = 'w-8 h-8 object-contain rounded bg-slate-100 dark:bg-slate-800 p-1 border border-slate-300 dark:border-slate-600 shadow-sm';
+            img.title = itemName;
+            img.onerror = () => { img.src = FALLBACK_ICON; };
+            gridWrap.appendChild(img);
+        });
+        dom.tooltip.stats.appendChild(gridWrap);
+
+        dom.tooltip.station.classList.add('hidden');
+        dom.tooltip.acq.classList.add('hidden');
+        
+        // Explicitly hide the "Also Requires" container
+        dom.tooltip.extraIngContainer.classList.add('hidden');
+
+        dom.tooltip.el.classList.remove('hidden');
+        if (isMobileUX()) moveTooltip({ clientX: (e.touches ? e.touches[0] : e).clientX, clientY: (e.touches ? e.touches[0] : e).clientY });
+        else moveTooltip(e.clientX !== undefined ? e : { clientX: e.x, clientY: e.y });
+        return;
+    }
+    // --- End Interceptor ---
+
     const rarityVal = data.stats?.rarity !== undefined ? data.stats.rarity : 0;
     dom.tooltip.name.className = `terraria-text font-bold text-lg leading-tight rarity-${rarityVal}`;
     dom.tooltip.name.textContent = data.name;
+    
+    // Reset description class in case the group tooltip altered it
+    dom.tooltip.desc.className = "text-sm text-slate-700 dark:text-slate-300 mb-3 block";
     
     if (!data.description || data.description.trim() === "N/A" || data.description.trim() === "") {
         dom.tooltip.desc.classList.add('hidden');
@@ -279,8 +353,10 @@ function showTooltip(e, data, extraRecipe = null) {
         });
     }
     
-    const r = getSmartRecipe(data.crafting?.recipes, data.name);
-    if (r) {
+    const validRecipes = data.crafting?.recipes?.filter(r => showTransmutations || !r.transmutation) || [];
+    if (validRecipes.length > 0) {
+        const rIndex = selectedRecipeIndices[data.id] || 0;
+        const r = validRecipes[Math.min(rIndex, validRecipes.length - 1)];
         dom.tooltip.stationText.textContent = `Crafted at: ${r.station}`;
         dom.tooltip.station.classList.remove('hidden');
     } else {

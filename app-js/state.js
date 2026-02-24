@@ -22,6 +22,7 @@ let currentCategoryName = null;
 let treeMode = 'recipe'; 
 let expandedNodes = new Set(); 
 let isExpandedAll = false;
+let selectedRecipeIndices = {}; // Tracks user-selected alternative recipes
 
 let discoverBoxItems = []; 
 
@@ -40,7 +41,7 @@ const FALLBACK_ICON = 'https://terraria.wiki.gg/wiki/Special:FilePath/Angel_Stat
 const JSON_FILENAME = 'terraria_items_final.json';
 
 const RECIPE_GROUPS = {
-    "Any Wood": ["Wood", "Boreal Wood", "Rich Mahogany", "Ebonwood", "Shadewood", "Pearlwood", "Ash Wood"],
+    "Any Wood": ["Wood", "Boreal Wood", "Rich Mahogany", "Ebonwood", "Shadewood", "Pearlwood", "Spooky Wood", "Dynasty Wood", "Ash Wood"],
     "Any Iron Bar": ["Iron Bar", "Lead Bar"],
     "Any Copper Bar": ["Copper Bar", "Tin Bar"],
     "Any Silver Bar": ["Silver Bar", "Tungsten Bar"],
@@ -51,7 +52,22 @@ const RECIPE_GROUPS = {
     "Any Demonite Bar": ["Demonite Bar", "Crimtane Bar"],
     "Any Sand": ["Sand Block", "Ebonsand Block", "Crimsand Block", "Pearlsand Block"],
     "Any Bird": ["Bird", "Blue Jay", "Cardinal", "Goldfinch"],
-    "Any Pressure Plate": ["Red Pressure Plate", "Green Pressure Plate", "Gray Pressure Plate", "Brown Pressure Plate"]
+    "Any Scorpion": ["Scorpion", "Black Scorpion"],
+    "Any Squirrel": ["Squirrel", "Red Squirrel", "Gold Squirrel"],
+    "Any Bug": ["Grubby", "Sluggy", "Buggy"],
+    "Any Jungle Bug": ["Grubby", "Sluggy", "Buggy"],
+    "Any Duck": ["Duck", "Mallard Duck"],
+    "Any Butterfly": ["Monarch Butterfly", "Sulphur Butterfly", "Zebra Swallowtail Butterfly", "Ulysses Butterfly", "Julia Butterfly", "Red Admiral Butterfly", "Purple Emperor Butterfly", "Tree Nymph Butterfly"],
+    "Any Firefly": ["Firefly", "Lightning Bug"],
+    "Any Snail": ["Snail", "Glowing Snail", "Magma Snail"],
+    "Any Fruit": ["Apple", "Apricot", "Banana", "Blackcurrant", "Blood Orange", "Cherry", "Coconut", "Dragon Fruit", "Elderberry", "Grapefruit", "Lemon", "Mango", "Peach", "Pineapple", "Plum", "Rambutan", "Starfruit", "Spicy Pepper", "Pomegranate"],
+    "Any Dragonfly": ["Black Dragonfly", "Blue Dragonfly", "Green Dragonfly", "Orange Dragonfly", "Red Dragonfly", "Yellow Dragonfly"],
+    "Any Turtle": ["Turtle", "Jungle Turtle"],
+    "Any Macaw": ["Blue Macaw", "Scarlet Macaw"],
+    "Any Cockatiel": ["Gray Cockatiel", "Yellow Cockatiel"],
+    "Any Balloon": ["Shiny Red Balloon", "Green Balloon", "Pink Balloon"],
+    "Any Cloud": ["Cloud", "Rain Cloud", "Snow Cloud"],
+    "Any Pressure Plate": ["Red Pressure Plate", "Green Pressure Plate", "Gray Pressure Plate", "Brown Pressure Plate", "Blue Pressure Plate", "Yellow Pressure Plate", "Lihzahrd Pressure Plate"]
 };
 
 const dom = {
