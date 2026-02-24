@@ -6,7 +6,7 @@ import urllib.parse
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-OUTPUT_FILE = "terraria_items_final.json"
+OUTPUT_FILE = "terraria_items.json"
 USER_AGENT = "TerrariaJSONBuilder/14.0 (Heuristic Fallback Engine)"
 
 # --- THE ULTIMATE CATEGORY MAP (Layer 1: Category API) ---

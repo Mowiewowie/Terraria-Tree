@@ -535,6 +535,7 @@ function createFlashingGroupNode(groupName, amount) {
     const img = document.createElement('img');
     // Start explicitly with the safe, offline-ready fallback to prevent native browser flashing
     img.src = FALLBACK_ICON; 
+    img.alt = `Any ${groupItems[0]} Terraria Crafting Alternative`; // SEO Addition
     img.draggable = false;
     img.ondragstart = (e) => e.preventDefault();
     img.className = 'w-10 h-10 object-contain mb-1 transition-opacity duration-300';

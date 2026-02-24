@@ -444,6 +444,7 @@ function transitionToNewItem(cardEl, targetId) {
 function viewItem(id, isFromSearch = false, isTransitioning = false) {
     removeHomeMode();
     saveCurrentState(); 
+    updateSEOState('tree', id); // Fire SEO Engine 
     appHistory = appHistory.slice(0, historyIdx + 1);
     appHistory.push({ viewType: 'tree', id: id, mode: treeMode, expanded: [], discoverItems: [...discoverBoxItems], recipeIndices: {...selectedRecipeIndices} });
     
@@ -462,6 +463,7 @@ function viewCategory(typeStr) {
     removeHomeMode();
     if (!typeStr) return;
     saveCurrentState();
+    updateSEOState('category', typeStr); // Fire SEO Engine
     appHistory = appHistory.slice(0, historyIdx + 1);
     appHistory.push({ viewType: 'category', category: typeStr });
     
@@ -469,4 +471,58 @@ function viewCategory(typeStr) {
     safePushState({ idx: historyIdx }, `?category=${encodeURIComponent(typeStr)}`);
     updateNavButtons();
     loadCategory(typeStr, false);
+}
+
+// --- Dynamic SEO & Structured Data Engine ---
+function updateSEOState(viewType, idOrCategory) {
+    let title = 'Terraria Crafting Tree & Tool';
+    let desc = 'A modern and interactive crafting tree, recipe explorer, and discover tool for Terraria. Find base ingredients, workstations, and total resources required.';
+    let schema = null;
+
+    if (viewType === 'tree' && itemsDatabase[idOrCategory]) {
+        const item = itemsDatabase[idOrCategory];
+        title = `How to Craft ${item.name} | Terraria Crafting Tree`;
+        desc = item.description || `Interactive crafting tree and recipe guide for the ${item.name} in Terraria. View base ingredients, workstations, and total resources required.`;
+        
+        // Generate JSON-LD Structured Data
+        if (item.crafting && item.crafting.recipes && item.crafting.recipes.length > 0) {
+            schema = {
+                "@context": "https://schema.org/",
+                "@type": "HowTo",
+                "name": `How to craft ${item.name} in Terraria`,
+                "image": createDirectImageUrl(item.name),
+                "step": item.crafting.recipes[0].ingredients.map(ing => ({
+                    "@type": "HowToStep",
+                    "text": `Obtain ${ing.amount}x ${ing.name}`
+                }))
+            };
+        }
+    } else if (viewType === 'category') {
+        title = `${idOrCategory} Items | Terraria Crafting Tree`;
+        desc = `Explore all ${idOrCategory} items in Terraria. View interactive crafting trees and recipe paths.`;
+    }
+
+    // 1. Update Title
+    document.title = title;
+
+    // 2. Update Meta Description
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.name = "description";
+        document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute("content", desc);
+
+    // 3. Update or Inject JSON-LD
+    let scriptTag = document.getElementById('seo-structured-data');
+    if (scriptTag) scriptTag.remove();
+    
+    if (schema) {
+        const script = document.createElement('script');
+        script.id = 'seo-structured-data';
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schema);
+        document.head.appendChild(script);
+    }
 }

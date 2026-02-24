@@ -17,7 +17,7 @@ const CORE_ASSETS = [
     '/app-js/tree-core.js',
     '/app-js/tree-nodes.js',
     '/app-js/ui.js',
-    '/terraria_items_final.json',
+    '/terraria_items.json',
     // Add any specific CSS files or local fonts here if they aren't inline
 ];
 

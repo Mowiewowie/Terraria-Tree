@@ -39,7 +39,7 @@ let activeMobileCard = null;
 
 // A completely offline-ready, inline SVG (Sleek Slate-400 Question Mark)
 const FALLBACK_ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpath d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3'%3E%3C/path%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'%3E%3C/line%3E%3C/svg%3E";
-const JSON_FILENAME = 'terraria_items_final.json';
+const JSON_FILENAME = 'terraria_items.json';
 
 const RECIPE_GROUPS = {
     "Any Wood": ["Wood", "Boreal Wood", "Rich Mahogany", "Ebonwood", "Shadewood", "Pearlwood", "Spooky Wood", "Dynasty Wood", "Ash Wood"],

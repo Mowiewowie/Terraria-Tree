@@ -1,4 +1,4 @@
-// --- Function: Handles local file dropping, fetching terraria_items_final.json, and structuring indices ---
+// --- Function: Handles local file dropping, fetching terraria_items.json, and structuring indices ---
 
 // --- Data Fetching & Initialization Engine ---
 
