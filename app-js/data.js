@@ -17,17 +17,17 @@ window.addEventListener('load', loadDefaultData);
 
 async function loadDefaultData() {
     const isLocal = window.location.protocol === 'file:';
+    const manualUploadText = document.querySelector('#manualUpload p:first-child');
 
     if (isLocal) {
-        // Local files cannot fetch without a server, ask for upload immediately
         dom.uploadSection.classList.remove('hidden');
         dom.autoLoadStatus.classList.add('hidden');
         dom.manualUpload.classList.remove('hidden');
+        if (manualUploadText) manualUploadText.innerText = "Local mode detected. Please drop your JSON database here.";
         dom.dbStatus.innerText = "Local Mode";
         return;
     }
 
-    // Hosted mode, display loading text in the top bar
     dom.dbStatus.innerText = "Initializing... Please Wait...";
 
     try {
@@ -35,10 +35,10 @@ async function loadDefaultData() {
         if (!res.ok) throw new Error("Fetch failed");
         initializeData(await res.json());
     } catch (e) {
-        // Fallback if the network fetch actually fails
         dom.uploadSection.classList.remove('hidden');
         dom.autoLoadStatus.classList.add('hidden');
         dom.manualUpload.classList.remove('hidden');
+        if (manualUploadText) manualUploadText.innerText = "Auto-load failed. Please drop your JSON database here.";
         dom.dbStatus.innerHTML = `Loading failed. <button onclick="document.getElementById('fileInput').click()" class="text-blue-500 hover:text-blue-600 underline ml-1 pointer-events-auto">Upload Data</button>`;
     }
 }
