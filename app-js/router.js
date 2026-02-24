@@ -72,9 +72,9 @@ function toggleHomeMode(isGoingHome, isHistoryPop = false) {
         el.style.transition = 'none';
         
         if (el.id === 'logoContainer') {
-            el.style.transform = `translate(${invertX}px, ${invertY}px) scale(${invertScaleX})`;
+            el.style.transform = `translate3d(${invertX}px, ${invertY}px, 0) scale(${invertScaleX})`;
         } else {
-            el.style.transform = `translate(${invertX}px, ${invertY}px)`;
+            el.style.transform = `translate3d(${invertX}px, ${invertY}px, 0)`;
         }
     });
 
@@ -172,7 +172,7 @@ function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign) {
             currentX = targetX;
             currentY = targetY;
             currentScale = targetScale;
-            dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+            dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
         }
         
         if (hasContent) {
@@ -195,7 +195,7 @@ function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign) {
         buildDOM();
         postDOMAlign(); 
         
-        dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+        dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
         void dom.treeContainer.offsetWidth; 
 
         requestAnimationFrame(() => {

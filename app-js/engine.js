@@ -8,16 +8,19 @@ function renderLoop() {
     currentY += (targetY - currentY) * factor;
     currentScale += (targetScale - currentScale) * factor;
 
-    dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+    // Force GPU Acceleration with translate3d
+    dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
 
     const diff = Math.abs(targetX - currentX) + Math.abs(targetY - currentY) + Math.abs(targetScale - currentScale);
     if (diff < 0.001 && !isPanning && !initialPinchDist) {
         currentX = targetX;
         currentY = targetY;
         currentScale = targetScale;
-        dom.treeContainer.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+        dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
+        dom.treeContainer.style.pointerEvents = ''; // Restore hit-boxes
         isAnimating = false;
     } else {
+        dom.treeContainer.style.pointerEvents = 'none'; // Disable hover math while moving to save CPU
         requestAnimationFrame(renderLoop);
     }
 }

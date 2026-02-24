@@ -259,6 +259,19 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
             } else {
                 calculateResetView();
                 currentX = targetX; currentY = targetY; currentScale = targetScale;
+                
+                // --- Mobile Keyboard & Layout Settling Fix ---
+                // Queue a secondary recenter after the OS keyboard finishes sliding down (~300ms)
+                // or the DOM flexbox layout finishes its initial paint.
+                if (isFirstLoad) {
+                    setTimeout(() => {
+                        if (!isPanning && currentViewType === 'tree') {
+                            calculateResetView();
+                            triggerAnimation();
+                            saveCurrentState();
+                        }
+                    }, 400); 
+                }
             }
             targetScale = currentScale; targetX = currentX; targetY = currentY;
         };
