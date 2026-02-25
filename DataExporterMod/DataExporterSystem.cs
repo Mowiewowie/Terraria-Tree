@@ -12,7 +12,6 @@ namespace DataExporterMod
 {
     public class DataExporterSystem : ModSystem
     {
-        // FIX: Moved from PostSetupContent to PostAddRecipes to guarantee data exists
         public override void PostAddRecipes()
         {
             if (Main.netMode == NetmodeID.Server || Console.IsInputRedirected)
@@ -29,7 +28,7 @@ namespace DataExporterMod
                 catch (Exception e) 
                 {
                     Console.WriteLine($"[CI/CD] Export Failed: {e.Message}");
-                    Console.WriteLine(e.StackTrace); // Provide exact line numbers if it fails again
+                    Console.WriteLine(e.StackTrace); 
                 }
 
                 Environment.Exit(0); 
@@ -44,7 +43,6 @@ namespace DataExporterMod
             var allDropsForSlime = Main.ItemDropsDB.GetRulesForNPCID(1, includeGlobalDrops: true);
             var specificDropsForSlime = Main.ItemDropsDB.GetRulesForNPCID(1, includeGlobalDrops: false);
             
-            // FIX: Ensure lists aren't null before calling .Except()
             var globalRules = (allDropsForSlime ?? new List<IItemDropRule>())
                 .Except(specificDropsForSlime ?? new List<IItemDropRule>())
                 .ToList();
@@ -107,8 +105,8 @@ namespace DataExporterMod
                         ModSource = item.ModItem?.Mod?.Name ?? "Vanilla",
                         Stats = new {
                             Damage = item.damage,
-                            // FIX: Gracefully handle missing DamageClasses
-                            DamageClass = item.DamageType?.DisplayName ?? "Default",
+                            // FIX: Safely extract the primitive string from the LocalizedText object
+                            DamageClass = item.DamageType?.DisplayName?.Value ?? item.DamageType?.Name ?? "Default",
                             Knockback = item.knockBack,
                             CritChance = item.crit,
                             UseTime = item.useTime,
@@ -130,17 +128,15 @@ namespace DataExporterMod
         {
             var recipeList = new List<object>();
             
-            // FIX: Restrict to valid recipes and ensure objects are not null
             var validRecipes = Main.recipe.Take(Recipe.numRecipes)
                 .Where(r => r != null && r.createItem != null && r.createItem.type == itemId);
 
             foreach (Recipe recipe in validRecipes)
             {
                 recipeList.Add(new {
-                    // FIX: Safe Tile name resolution bypassing MapHelper
                     Stations = recipe.requiredTile?.Select(t => TileLoader.GetTile(t)?.Name ?? TileID.Search.GetName(t) ?? t.ToString()).ToList() ?? new List<string>(),
-                    // FIX: Ignore ID 0 (Air)
-                    Ingredients = recipe.requiredItem?.Where(req => req != null && req.type > 0).Select(req => new { 
+                    // FIX: Explicitly cast the LINQ projection to <Item, object> to match the fallback list type
+                    Ingredients = recipe.requiredItem?.Where(req => req != null && req.type > 0).Select<Item, object>(req => new { 
                         ID = req.type, 
                         Name = Lang.GetItemNameValue(req.type), 
                         Amount = req.stack 
