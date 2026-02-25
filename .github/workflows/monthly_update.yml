@@ -89,4 +89,4 @@ jobs:
           
           # Prevents workflow failure if no data changed this month
           git commit -m "chore(data): Automated Monthly Data Update" || echo "No changes to commit"
-          git push
+          git push origin dev
