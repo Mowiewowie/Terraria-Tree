@@ -14,17 +14,24 @@ jobs:
     timeout-minutes: 20 # Security: Kills process if tModLoader hangs to prevent CI/CD billing drain
 
     steps:
-      - name: Checkout Repository (DEV Branch)
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: dev # Strictly targets the dev branch so production is unaffected
+          ref: main
 
-      - name: Setup .NET 6.0
+      - name: Setup .NET 8.0
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x' 
+          dotnet-version: '8.0.x' # tModLoader requires .NET 8
 
-      - name: Install SteamCMD & Download tModLoader/Mods
+      - name: Download tModLoader Engine (Bypass Steam DRM)
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/tml-server
+          # Directly pull the headless server from GitHub to guarantee files exist
+          curl -sL https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip -o tml.zip
+          unzip -q tml.zip -d $GITHUB_WORKSPACE/tml-server
+
+      - name: Install SteamCMD & Download Mods
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
@@ -33,26 +40,25 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/steamcmd
           curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C $GITHUB_WORKSPACE/steamcmd
 
-          # SECURITY: Absolute paths guarantee the download lands inside the CI/CD workspace
-          mkdir -p $GITHUB_WORKSPACE/tml-server
-          $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/tml-server +login anonymous \
-            +app_update 1281930 validate \
+          # Execute SteamCMD strictly for Workshop Mods
+          mkdir -p $GITHUB_WORKSPACE/steamcmd_downloads
+          $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/steamcmd_downloads +login anonymous \
             +workshop_download_item 1281930 2824688072 \
             +workshop_download_item 1281930 2815540735 \
             +quit
           
-          # Move workshop downloads to the TML Mods folder
+          # Safely move workshop mods to the active server
           mkdir -p $GITHUB_WORKSPACE/tml-server/Mods
-          cp -r $GITHUB_WORKSPACE/tml-server/steamapps/workshop/content/1281930/* $GITHUB_WORKSPACE/tml-server/Mods/ || true
+          cp -r $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/* $GITHUB_WORKSPACE/tml-server/Mods/ || true
 
       - name: Build Custom Data Exporter Mod
         run: |
           cd $GITHUB_WORKSPACE/tml-server
           
-          # Directly invoke the .NET compiler built into TML
+          # Execute the .NET compiler
           dotnet tModLoader.dll -server -build $GITHUB_WORKSPACE/DataExporterMod -eac $GITHUB_WORKSPACE/DataExporterMod/bin/DataExporterMod.tmod
           
-          # Move the compiled mod into the server's load directory
+          # Move our compiled mod into the server's load directory
           cp $GITHUB_WORKSPACE/DataExporterMod/bin/DataExporterMod.tmod $GITHUB_WORKSPACE/tml-server/Mods/
 
       - name: Run Headless tModLoader Server
@@ -62,10 +68,10 @@ jobs:
           echo "worldname=ExportWorld" >> serverconfig.txt
           echo "language=en-US" >> serverconfig.txt
           
-          # Execute the server directly via .NET
+          # Boot the server (Our mod will run, export the JSON, and call Environment.Exit)
           dotnet tModLoader.dll -server -config serverconfig.txt
           
-          # Safely locate the JSON created by the C# mod and move it to our root workspace
+          # Extract the generated JSON
           find ~/.local/share/Terraria/ -name "Terraria_Comprehensive_Export.json" -exec cp {} $GITHUB_WORKSPACE/ \;
 
       - name: Run Python Scraper & Generate Sitemap
@@ -83,4 +89,4 @@ jobs:
           
           # Prevents workflow failure if no data changed this month
           git commit -m "chore(data): Automated Monthly Data Update" || echo "No changes to commit"
-          git push origin dev
+          git push
