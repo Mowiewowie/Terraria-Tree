@@ -26,49 +26,47 @@ jobs:
 
       - name: Install SteamCMD & Download tModLoader/Mods
         run: |
-          # 1. Install required 32-bit C libraries for SteamCMD
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install -y lib32gcc-s1
 
-          # 2. Download SteamCMD directly from Valve's secure CDN
-          mkdir -p ./steamcmd
-          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C ./steamcmd
+          mkdir -p $GITHUB_WORKSPACE/steamcmd
+          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C $GITHUB_WORKSPACE/steamcmd
 
-          # 3. Execute the local shell script instead of the apt package
-          ./steamcmd/steamcmd.sh +force_install_dir ../tml-server +login anonymous \
+          # SECURITY: Absolute paths guarantee the download lands inside the CI/CD workspace
+          mkdir -p $GITHUB_WORKSPACE/tml-server
+          $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/tml-server +login anonymous \
             +app_update 1281930 validate \
             +workshop_download_item 1281930 2824688072 \
             +workshop_download_item 1281930 2815540735 \
             +quit
           
-          # 4. Move workshop downloads to the TML Mods folder
-          mkdir -p ./tml-server/Mods
-          cp -r ./tml-server/steamapps/workshop/content/1281930/* ./tml-server/Mods/ || true
+          # Move workshop downloads to the TML Mods folder
+          mkdir -p $GITHUB_WORKSPACE/tml-server/Mods
+          cp -r $GITHUB_WORKSPACE/tml-server/steamapps/workshop/content/1281930/* $GITHUB_WORKSPACE/tml-server/Mods/ || true
 
       - name: Build Custom Data Exporter Mod
         run: |
-          cd tml-server
-          # Directly invoke the .NET compiler built into TML, bypassing bash wrappers
-          dotnet tModLoader.dll -server -build ../DataExporterMod -eac ../DataExporterMod/bin/DataExporterMod.tmod
+          cd $GITHUB_WORKSPACE/tml-server
+          
+          # Directly invoke the .NET compiler built into TML
+          dotnet tModLoader.dll -server -build $GITHUB_WORKSPACE/DataExporterMod -eac $GITHUB_WORKSPACE/DataExporterMod/bin/DataExporterMod.tmod
           
           # Move the compiled mod into the server's load directory
-          cp ../DataExporterMod/bin/DataExporterMod.tmod ./Mods/
-          cd ..
+          cp $GITHUB_WORKSPACE/DataExporterMod/bin/DataExporterMod.tmod $GITHUB_WORKSPACE/tml-server/Mods/
 
       - name: Run Headless tModLoader Server
         run: |
-          cd tml-server
+          cd $GITHUB_WORKSPACE/tml-server
           echo "autocreate=2" > serverconfig.txt
           echo "worldname=ExportWorld" >> serverconfig.txt
           echo "language=en-US" >> serverconfig.txt
           
           # Execute the server directly via .NET
           dotnet tModLoader.dll -server -config serverconfig.txt
-          cd ..
           
           # Safely locate the JSON created by the C# mod and move it to our root workspace
-          find ~/.local/share/Terraria/ -name "Terraria_Comprehensive_Export.json" -exec cp {} ./ \;
+          find ~/.local/share/Terraria/ -name "Terraria_Comprehensive_Export.json" -exec cp {} $GITHUB_WORKSPACE/ \;
 
       - name: Run Python Scraper & Generate Sitemap
         run: |
