@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: dev
 
       - name: Setup .NET 8.0
         uses: actions/setup-dotnet@v4
@@ -89,4 +89,4 @@ jobs:
           
           # Prevents workflow failure if no data changed this month
           git commit -m "chore(data): Automated Monthly Data Update" || echo "No changes to commit"
-          git push
+          git push origin dev
