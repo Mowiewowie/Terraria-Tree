@@ -2,32 +2,31 @@ name: Monthly Terraria Data Update
 
 on:
   schedule:
-    - cron: '0 0 1 * *' # Runs at 00:00 on the 1st of every month
-  workflow_dispatch:    # Manual trigger
+    - cron: '0 0 1 * *' 
+  workflow_dispatch: 
 
 permissions:
-  contents: write # Security: Restrict GITHUB_TOKEN strictly to code commits
+  contents: write 
 
 jobs:
   build-and-export:
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # Security: Kills process if tModLoader hangs to prevent CI/CD billing drain
+    timeout-minutes: 60 
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository (DEV Branch)
         uses: actions/checkout@v4
         with:
-          ref: dev
+          ref: dev 
 
       - name: Setup .NET 8.0
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' # tModLoader requires .NET 8
+          dotnet-version: '8.0.x' 
 
       - name: Download tModLoader Engine (Bypass Steam DRM)
         run: |
           mkdir -p $GITHUB_WORKSPACE/tml-server
-          # Directly pull the headless server from GitHub to guarantee files exist
           curl -sL https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip -o tml.zip
           unzip -q tml.zip -d $GITHUB_WORKSPACE/tml-server
 
@@ -35,51 +34,39 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y lib32gcc-s1 jq
+          sudo apt-get install -y lib32gcc-s1
 
           mkdir -p $GITHUB_WORKSPACE/steamcmd
           curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C $GITHUB_WORKSPACE/steamcmd
 
           mkdir -p $GITHUB_WORKSPACE/steamcmd_downloads
           
-          # 1. Download Calamity, Calamity Music, and Fargo's Souls via SteamCMD
+          # FIX: Download Calamity, Calamity Music, Fargo's Souls, and their dependencies with verified IDs
           $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/steamcmd_downloads +login anonymous \
             +workshop_download_item 1281930 2824688072 \
             +workshop_download_item 1281930 2824688266 \
             +workshop_download_item 1281930 2815540735 \
+            +workshop_download_item 1281930 2570931073 \
+            +workshop_download_item 1281930 3222493606 \
             +quit
-            
-          # 2. Download Fargo's Mutant Mod and Luminance safely using the GitHub API
-          mkdir -p $GITHUB_WORKSPACE/github_mods
           
-          download_github_mod() {
-            local repo=$1
-            local url=$(curl -s "https://api.github.com/repos/$repo/releases/latest" | jq -r '.assets[] | select(.name | endswith(".tmod")) | .browser_download_url' | head -n 1)
-            if [ -n "$url" ]; then
-              wget -q "$url" -P $GITHUB_WORKSPACE/github_mods/
-            fi
-          }
-
-          download_github_mod "FargoMods/Fargowiltas"
-          download_github_mod "DominicKarma/Luminance"
+          # Stage the downloads for the server
+          mkdir -p $GITHUB_WORKSPACE/tml-server/Mods
+          find $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/ -name "*.tmod" -exec cp {} $GITHUB_WORKSPACE/tml-server/Mods/ \;
 
       - name: Build Custom Data Exporter Mod
         run: |
           cd $GITHUB_WORKSPACE/tml-server
           
+          # Compile the exporter
           dotnet tModLoader.dll -server -build $GITHUB_WORKSPACE/DataExporterMod
           
+          # Migrate all mods to the Linux system AppData directory so the server can see them
           mkdir -p ~/.local/share/Terraria/tModLoader/Mods/
-          
-          # Move SteamCMD Mods
-          find $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/ -name "*.tmod" -exec cp {} ~/.local/share/Terraria/tModLoader/Mods/ \;
-          
-          # Move GitHub Mods
-          cp $GITHUB_WORKSPACE/github_mods/*.tmod ~/.local/share/Terraria/tModLoader/Mods/
-          
-          # Move Our Custom Exporter Mod
+          find $GITHUB_WORKSPACE/tml-server/Mods/ -name "*.tmod" -exec cp {} ~/.local/share/Terraria/tModLoader/Mods/ \;
           find ~/.local/share/Terraria/ -name "DataExporterMod.tmod" -exec cp {} ~/.local/share/Terraria/tModLoader/Mods/ \;
           
+          # Enable everything
           echo '[
             "CalamityMod",
             "CalamityModMusic",
@@ -96,10 +83,10 @@ jobs:
           echo "worldname=ExportWorld" >> serverconfig.txt
           echo "language=en-US" >> serverconfig.txt
           
-          # Boot the server (Our mod will run, export the JSON, and call Environment.Exit)
+          # Boot server (Extractor will run, dump JSONs, and kill process)
           dotnet tModLoader.dll -server -config serverconfig.txt
           
-          # Extract the generated JSON
+          # Extract ALL generated JSON files to workspace
           find ~/.local/share/Terraria/ -name "Terraria_*_Export.json" -exec cp {} $GITHUB_WORKSPACE/ \;
 
       - name: Run Python Scraper & Generate Sitemap
@@ -112,7 +99,7 @@ jobs:
           git config --global user.name "TerrariTree CI/CD Bot"
           git config --global user.email "bot@terraritree.com"
           
-          # Track the dynamically generated JSON files instead of the old Merged file
+          # FIX: This wildcard properly tracks the multiple generated files
           git add Terraria_*_Final.json
           git add sitemap_test.xml
           
