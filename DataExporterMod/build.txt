@@ -1,0 +1,4 @@
+displayName: JSON Data Exporter
+author: CI/CD Pipeline
+version: 1.0
+buildIgnore: *.csproj, *.user, obj\*, bin\*

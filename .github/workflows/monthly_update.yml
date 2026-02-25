@@ -1,0 +1,77 @@
+name: Monthly Terraria Data Update
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # Runs at 00:00 on the 1st of every month
+  workflow_dispatch:    # Manual trigger
+
+permissions:
+  contents: write # Security: Restrict GITHUB_TOKEN strictly to code commits
+
+jobs:
+  build-and-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20 # Security: Kills process if tModLoader hangs to prevent CI/CD billing drain
+
+    steps:
+      - name: Checkout Repository (DEV Branch)
+        uses: actions/checkout@v4
+        with:
+          ref: dev # Strictly targets the dev branch so production is unaffected
+
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x' 
+
+      - name: Install SteamCMD & Download tModLoader/Mods
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y steamcmd
+          
+          # Downloads TML (1281930), Calamity (2824688072), and Fargo's (2815540735)
+          /usr/games/steamcmd +force_install_dir ./tml-server +login anonymous \
+            +app_update 1281930 validate \
+            +workshop_download_item 1281930 2824688072 \
+            +workshop_download_item 1281930 2815540735 \
+            +quit
+          
+          mkdir -p ./tml-server/Mods
+          cp -r ./tml-server/steamapps/workshop/content/1281930/* ./tml-server/Mods/ || true
+
+      - name: Build Custom Data Exporter Mod
+        run: |
+          cd tml-server
+          chmod +x LaunchUtils/ScriptCaller.sh
+          ./LaunchUtils/ScriptCaller.sh -build ../DataExporterMod -eac ../DataExporterMod/bin/DataExporterMod.tmod
+          cp ../DataExporterMod/bin/DataExporterMod.tmod ./Mods/
+          cd ..
+
+      - name: Run Headless tModLoader Server
+        run: |
+          cd tml-server
+          echo "autocreate=2" > serverconfig.txt
+          echo "worldname=ExportWorld" >> serverconfig.txt
+          echo "language=en-US" >> serverconfig.txt
+          
+          ./LaunchUtils/ScriptCaller.sh -server -config serverconfig.txt
+          cd ..
+          
+          # Safely locate the JSON created by the C# mod and move it to workspace root
+          find ~/.local/share/Terraria/ -name "Terraria_Comprehensive_Export.json" -exec cp {} ./ \;
+
+      - name: Run Python Scraper & Generate Sitemap
+        run: |
+          pip install requests beautifulsoup4
+          python scripts/pipeline.py
+
+      - name: Commit and Push to DEV Branch
+        run: |
+          git config --global user.name "TerrariTree CI/CD Bot"
+          git config --global user.email "bot@terraritree.com"
+          git add Terraria_Merged_Final.json
+          git add sitemap_test.xml
+          
+          # Prevents workflow failure if no data changed this month
+          git commit -m "chore(data): Automated Monthly Data Update" || echo "No changes to commit"
+          git push origin dev
