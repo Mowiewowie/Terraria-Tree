@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Terraria;
 using Terraria.ID;
+using Terraria.Map; // FIX: Added Terraria.Map for MapHelper
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 
@@ -14,8 +15,8 @@ namespace DataExporterMod
     {
         public override void PostSetupContent()
         {
-            // SECURITY: Only run if the environment is a headless server (GitHub Action)
-            if (Main.netMode == ID.NetmodeID.Server || Console.IsInputRedirected)
+            // FIX: Removed the redundant 'ID.' prefix since we are utilizing the Terraria.ID namespace
+            if (Main.netMode == NetmodeID.Server || Console.IsInputRedirected)
             {
                 Console.WriteLine("[CI/CD] Automated Export Started...");
                 string exportPath = Path.Combine(Main.SavePath, "Terraria_Comprehensive_Export.json");
@@ -31,7 +32,6 @@ namespace DataExporterMod
                     Console.WriteLine($"[CI/CD] Export Failed: {e.Message}");
                 }
 
-                // Force the server to close so the GitHub Action step finishes
                 Environment.Exit(0); 
             }
         }
@@ -41,8 +41,11 @@ namespace DataExporterMod
             var dropMap = new Dictionary<int, List<object>>();
             var feed = new DropRateInfoChainFeed(1f);
 
-            // 1. Evaluate Global Drops ("Any Enemy") to save JSON space
-            var globalRules = Main.ItemDropsDB.GetGlobalRules();
+            // FIX: Isolate Global Rules safely by finding the difference between a slime's full drops and its specific drops
+            var allDropsForSlime = Main.ItemDropsDB.GetRulesForNPCID(1, includeGlobalDrops: true);
+            var specificDropsForSlime = Main.ItemDropsDB.GetRulesForNPCID(1, includeGlobalDrops: false);
+            var globalRules = allDropsForSlime.Except(specificDropsForSlime).ToList();
+
             var globalRates = new List<DropRateInfo>();
             foreach (var rule in globalRules) rule.ReportDroprates(globalRates, feed);
 
@@ -57,7 +60,7 @@ namespace DataExporterMod
                 });
             }
 
-            // 2. Evaluate Specific Enemy Drops
+            // Evaluate Specific Enemy Drops
             for (int npcId = -65; npcId < NPCLoader.NPCCount; npcId++)
             {
                 var rules = Main.ItemDropsDB.GetRulesForNPCID(npcId, includeGlobalDrops: false);
@@ -80,7 +83,6 @@ namespace DataExporterMod
 
         private void ExportData(string path, Dictionary<int, List<object>> globalDropMap)
         {
-            // SECURITY: Stream writing prevents OOM (Out of Memory) DoS attacks on the runner
             using (StreamWriter sw = new StreamWriter(path))
             using (JsonTextWriter writer = new JsonTextWriter(sw))
             {
@@ -125,6 +127,7 @@ namespace DataExporterMod
             foreach (Recipe recipe in Main.recipe.Where(r => r.createItem.type == itemId))
             {
                 recipeList.Add(new {
+                    // FIX: MapHelper is now correctly referenced
                     Stations = recipe.requiredTile.Select(t => Lang.GetMapObjectName(MapHelper.TileToLookup(t, 0))).ToList(),
                     Ingredients = recipe.requiredItem.Select(req => new { ID = req.type, Name = Lang.GetItemNameValue(req.type), Amount = req.stack }).ToList()
                 });
