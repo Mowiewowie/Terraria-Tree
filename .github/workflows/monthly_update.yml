@@ -41,29 +41,34 @@ jobs:
           curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C $GITHUB_WORKSPACE/steamcmd
 
           mkdir -p $GITHUB_WORKSPACE/steamcmd_downloads
+          
+          # Downloads Calamity, Fargo's Souls, and their strict dependencies (Luminance, Mutant Mod)
           $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/steamcmd_downloads +login anonymous \
             +workshop_download_item 1281930 2824688072 \
             +workshop_download_item 1281930 2815540735 \
+            +workshop_download_item 1281930 2815809808 \
+            +workshop_download_item 1281930 3105782500 \
             +quit
-          
-          # FIX: Recursively find the actual .tmod files and copy them directly to the active Mods folder
-          mkdir -p $GITHUB_WORKSPACE/tml-server/Mods
-          find $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/ -name "*.tmod" -exec cp {} $GITHUB_WORKSPACE/tml-server/Mods/ \;
 
       - name: Build Custom Data Exporter Mod
         run: |
           cd $GITHUB_WORKSPACE/tml-server
           
+          # Compile the mod. TML automatically drops the built .tmod into ~/.local/share/Terraria/tModLoader/Mods/
           dotnet tModLoader.dll -server -build $GITHUB_WORKSPACE/DataExporterMod
-          mkdir -p $GITHUB_WORKSPACE/tml-server/Mods/
-          find ~/.local/share/Terraria/ -name "DataExporterMod.tmod" -exec cp {} $GITHUB_WORKSPACE/tml-server/Mods/ \;
           
-          # SECURITY: Force TML to enable the mods in headless mode
+          # Forcefully migrate the SteamCMD downloads into the Linux system Mods directory
+          mkdir -p ~/.local/share/Terraria/tModLoader/Mods/
+          find $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/ -name "*.tmod" -exec cp {} ~/.local/share/Terraria/tModLoader/Mods/ \;
+          
+          # Force TML to enable the mods and their dependencies
           echo '[
             "CalamityMod",
+            "Fargowiltas",
             "FargowiltasSouls",
+            "Luminance",
             "DataExporterMod"
-          ]' > $GITHUB_WORKSPACE/tml-server/Mods/enabled.json
+          ]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
 
       - name: Run Headless tModLoader Server
         run: |
