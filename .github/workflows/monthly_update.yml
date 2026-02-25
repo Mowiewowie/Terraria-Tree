@@ -35,23 +35,33 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y lib32gcc-s1
+          sudo apt-get install -y lib32gcc-s1 jq
 
           mkdir -p $GITHUB_WORKSPACE/steamcmd
           curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C $GITHUB_WORKSPACE/steamcmd
 
           mkdir -p $GITHUB_WORKSPACE/steamcmd_downloads
           
-          # 1. Download Calamity and Fargo's Souls via SteamCMD (Proven to work)
+          # 1. Download Calamity, Calamity Music, and Fargo's Souls via SteamCMD
           $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/steamcmd_downloads +login anonymous \
             +workshop_download_item 1281930 2824688072 \
+            +workshop_download_item 1281930 2824688266 \
             +workshop_download_item 1281930 2815540735 \
             +quit
             
-          # 2. Download Fargo's Mutant Mod and Luminance directly from GitHub to bypass Steam DRM
+          # 2. Download Fargo's Mutant Mod and Luminance safely using the GitHub API
           mkdir -p $GITHUB_WORKSPACE/github_mods
-          curl -sL https://github.com/FargoMods/Fargowiltas/releases/latest/download/Fargowiltas.tmod -o $GITHUB_WORKSPACE/github_mods/Fargowiltas.tmod
-          curl -sL https://github.com/DominicKarma/Luminance/releases/latest/download/Luminance.tmod -o $GITHUB_WORKSPACE/github_mods/Luminance.tmod
+          
+          download_github_mod() {
+            local repo=$1
+            local url=$(curl -s "https://api.github.com/repos/$repo/releases/latest" | jq -r '.assets[] | select(.name | endswith(".tmod")) | .browser_download_url' | head -n 1)
+            if [ -n "$url" ]; then
+              wget -q "$url" -P $GITHUB_WORKSPACE/github_mods/
+            fi
+          }
+
+          download_github_mod "FargoMods/Fargowiltas"
+          download_github_mod "DominicKarma/Luminance"
 
       - name: Build Custom Data Exporter Mod
         run: |
@@ -72,6 +82,7 @@ jobs:
           
           echo '[
             "CalamityMod",
+            "CalamityModMusic",
             "Fargowiltas",
             "FargowiltasSouls",
             "Luminance",
@@ -100,9 +111,10 @@ jobs:
         run: |
           git config --global user.name "TerrariTree CI/CD Bot"
           git config --global user.email "bot@terraritree.com"
-          git add Terraria_Merged_Final.json
+          
+          # Track the dynamically generated JSON files instead of the old Merged file
+          git add Terraria_*_Final.json
           git add sitemap_test.xml
           
-          # Prevents workflow failure if no data changed this month
           git commit -m "chore(data): Automated Monthly Data Update" || echo "No changes to commit"
           git push origin dev
