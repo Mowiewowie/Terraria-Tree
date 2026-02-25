@@ -49,8 +49,10 @@ jobs:
       - name: Build Custom Data Exporter Mod
         run: |
           cd tml-server
-          chmod +x LaunchUtils/ScriptCaller.sh
-          ./LaunchUtils/ScriptCaller.sh -build ../DataExporterMod -eac ../DataExporterMod/bin/DataExporterMod.tmod
+          # Directly invoke the .NET compiler built into TML, bypassing bash wrappers
+          dotnet tModLoader.dll -server -build ../DataExporterMod -eac ../DataExporterMod/bin/DataExporterMod.tmod
+          
+          # Move the compiled mod into the server's load directory
           cp ../DataExporterMod/bin/DataExporterMod.tmod ./Mods/
           cd ..
 
@@ -61,10 +63,11 @@ jobs:
           echo "worldname=ExportWorld" >> serverconfig.txt
           echo "language=en-US" >> serverconfig.txt
           
-          ./LaunchUtils/ScriptCaller.sh -server -config serverconfig.txt
+          # Execute the server directly via .NET
+          dotnet tModLoader.dll -server -config serverconfig.txt
           cd ..
           
-          # Safely locate the JSON created by the C# mod and move it to workspace root
+          # Safely locate the JSON created by the C# mod and move it to our root workspace
           find ~/.local/share/Terraria/ -name "Terraria_Comprehensive_Export.json" -exec cp {} ./ \;
 
       - name: Run Python Scraper & Generate Sitemap
@@ -74,6 +77,7 @@ jobs:
 
       - name: Commit and Push to DEV Branch
         run: |
+          git checkout dev
           git config --global user.name "TerrariTree CI/CD Bot"
           git config --global user.email "bot@terraritree.com"
           git add Terraria_Merged_Final.json
