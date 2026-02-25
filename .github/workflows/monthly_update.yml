@@ -55,11 +55,12 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/tml-server
           
-          # Execute the .NET compiler
-          dotnet tModLoader.dll -server -build $GITHUB_WORKSPACE/DataExporterMod -eac $GITHUB_WORKSPACE/DataExporterMod/bin/DataExporterMod.tmod
+          # Execute the .NET compiler (Removed the faulty -eac flag)
+          dotnet tModLoader.dll -server -build $GITHUB_WORKSPACE/DataExporterMod
           
-          # Move our compiled mod into the server's load directory
-          cp $GITHUB_WORKSPACE/DataExporterMod/bin/DataExporterMod.tmod $GITHUB_WORKSPACE/tml-server/Mods/
+          # Find the successfully compiled mod and securely move it into the active server's Mods directory
+          mkdir -p $GITHUB_WORKSPACE/tml-server/Mods/
+          find ~/.local/share/Terraria/ -name "DataExporterMod.tmod" -exec cp {} $GITHUB_WORKSPACE/tml-server/Mods/ \;
 
       - name: Run Headless tModLoader Server
         run: |
