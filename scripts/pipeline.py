@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 # FIX: Corrected "Biome_Crate" to "Biome_Crates" to prevent 404 redirects
-CHESTS_TO_SCRAPE = ["Gold_Chest", "Water_Chest", "Ivy_Chest", "Ice_Chest", "Skyware_Chest", "Shadow_Chest", "Biome_Crates"]
+CHESTS_TO_SCRAPE = ["Gold_Chest", "Water_Chest", "Ivy_Chest", "Ice_Chest", "Skyware_Chest", "Shadow_Chest", "Crates"]
 HEADERS = {"User-Agent": "TerrariTreeDataPipeline/1.0 (Contact: admin@terraritree.com)"}
 BASE_WEBSITE_URL = "https://terraritree.com/?id=" 
 
