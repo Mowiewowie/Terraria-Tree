@@ -8,11 +8,9 @@ import xml.etree.ElementTree as ET
 # --- CONFIGURATION ---
 CHESTS_TO_SCRAPE = ["Gold_Chest", "Water_Chest", "Ivy_Chest", "Ice_Chest", "Skyware_Chest", "Shadow_Chest", "Biome_Crate"]
 HEADERS = {"User-Agent": "TerrariTreeDataPipeline/1.0 (Contact: admin@terraritree.com)"}
+BASE_WEBSITE_URL = "https://terraritree.com/?id="
 
-CSHARP_FILE_PATH = "Terraria_Comprehensive_Export.json"
-JSON_OUTPUT_PATH = "./Terraria_Merged_Final.json"  # Root output
-SITEMAP_OUTPUT_PATH = "./sitemap_test.xml"         # Root output
-BASE_WEBSITE_URL = "https://terraritree.com/?id="  # Extracted from router.js logic
+SITEMAP_OUTPUT_PATH = "./sitemap_test.xml"
 
 def scrape_chest_loot(chest_url_name):
     url = f"https://terraria.wiki.gg/wiki/{chest_url_name}"
@@ -63,27 +61,41 @@ def generate_sitemap(data):
     tree.write(SITEMAP_OUTPUT_PATH, encoding="utf-8", xml_declaration=True)
 
 def main():
+    # 1. Scrape Vanilla Chest Loot
     all_chest_loot = []
     for chest in CHESTS_TO_SCRAPE:
         print(f"Scraping Chest: {chest}")
         all_chest_loot.extend(scrape_chest_loot(chest))
 
-    with open(CSHARP_FILE_PATH, 'r', encoding='utf-8') as f:
-        master_data = json.load(f)
+    # 2. Find all dynamically generated JSON files from the C# Mod
+    json_files = glob.glob("Terraria_*_Export.json")
+    all_items_for_sitemap = []
 
-    for item in master_data:
-        display_name = item.get("DisplayName")
-        matching_chests = [loot for loot in all_chest_loot if loot["ItemName"] == display_name]
+    for file_path in json_files:
+        print(f"Processing {file_path}...")
+        with open(file_path, 'r', encoding='utf-8') as f:
+            mod_data = json.load(f)
         
-        if matching_chests:
-            item["ObtainedFromChests"] = [{"ChestType": m["ChestName"], "Probability": m["ChanceText"]} for m in matching_chests]
+        # 3. Only attempt to inject chest loot if this is the Vanilla file
+        # (Modded wikis have different HTML structures, preventing reliable cross-scraping here)
+        if "Vanilla" in file_path:
+            for item in mod_data:
+                display_name = item.get("DisplayName")
+                matching_chests = [loot for loot in all_chest_loot if loot["ItemName"] == display_name]
+                if matching_chests:
+                    item["ObtainedFromChests"] = [{"ChestType": m["ChestName"], "Probability": m["ChanceText"]} for m in matching_chests]
 
-    # Save finalized JSON to root
-    with open(JSON_OUTPUT_PATH, 'w', encoding='utf-8') as f:
-        json.dump(master_data, f, indent=4)
-        
-    generate_sitemap(master_data)
-    print("Pipeline Complete! JSON and Sitemap generated.")
+        # Accumulate all items for the global sitemap
+        all_items_for_sitemap.extend(mod_data)
+
+        # 4. Save the finalized file back to the root, renaming it for the frontend
+        output_name = file_path.replace("_Export", "_Final")
+        with open(f"./{output_name}", 'w', encoding='utf-8') as f:
+            json.dump(mod_data, f, indent=4)
+
+    # 5. Generate one massive sitemap pointing to all items
+    generate_sitemap(all_items_for_sitemap)
+    print("Pipeline Complete! Distinct JSONs and unified Sitemap generated.")
 
 if __name__ == "__main__":
     main()

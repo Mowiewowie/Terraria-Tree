@@ -40,16 +40,15 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/steamcmd
           curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C $GITHUB_WORKSPACE/steamcmd
 
-          # Execute SteamCMD strictly for Workshop Mods
           mkdir -p $GITHUB_WORKSPACE/steamcmd_downloads
           $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/steamcmd_downloads +login anonymous \
             +workshop_download_item 1281930 2824688072 \
             +workshop_download_item 1281930 2815540735 \
             +quit
           
-          # Safely move workshop mods to the active server
+          # FIX: Recursively find the actual .tmod files and copy them directly to the active Mods folder
           mkdir -p $GITHUB_WORKSPACE/tml-server/Mods
-          cp -r $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/* $GITHUB_WORKSPACE/tml-server/Mods/ || true
+          find $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/ -name "*.tmod" -exec cp {} $GITHUB_WORKSPACE/tml-server/Mods/ \;
 
       - name: Build Custom Data Exporter Mod
         run: |
@@ -77,7 +76,7 @@ jobs:
           dotnet tModLoader.dll -server -config serverconfig.txt
           
           # Extract the generated JSON
-          find ~/.local/share/Terraria/ -name "Terraria_Comprehensive_Export.json" -exec cp {} $GITHUB_WORKSPACE/ \;
+          find ~/.local/share/Terraria/ -name "Terraria_*_Export.json" -exec cp {} $GITHUB_WORKSPACE/ \;
 
       - name: Run Python Scraper & Generate Sitemap
         run: |

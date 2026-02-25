@@ -22,7 +22,7 @@ namespace DataExporterMod
                 try 
                 {
                     Dictionary<int, List<object>> globalDropMap = BuildDropDatabase();
-                    ExportData(exportPath, globalDropMap);
+                    ExportData(globalDropMap);
                     Console.WriteLine("[CI/CD] Export Successful. Shutting down server gracefully.");
                 }
                 catch (Exception e) 
@@ -83,44 +83,56 @@ namespace DataExporterMod
             return dropMap;
         }
 
-        private void ExportData(string path, Dictionary<int, List<object>> globalDropMap)
+        private void ExportData(Dictionary<int, List<object>> globalDropMap)
         {
-            using (StreamWriter sw = new StreamWriter(path))
-            using (JsonTextWriter writer = new JsonTextWriter(sw))
+            // 1. Gather all items into memory
+            var allExportedItems = new List<object>();
+
+            for (int i = 1; i < ItemLoader.ItemCount; i++)
             {
-                writer.Formatting = Formatting.Indented;
-                writer.WriteStartArray();
+                Item item = ContentSamples.ItemsByType[i];
+                if (item == null || string.IsNullOrEmpty(item.Name)) continue;
 
-                for (int i = 1; i < ItemLoader.ItemCount; i++)
+                globalDropMap.TryGetValue(i, out var drops);
+                string modSourceName = item.ModItem?.Mod?.Name ?? "Vanilla";
+
+                var itemData = new {
+                    ID = i,
+                    InternalName = ItemID.Search.GetName(i) ?? item.Name,
+                    DisplayName = Lang.GetItemNameValue(i) ?? item.Name,
+                    ModSource = modSourceName,
+                    Stats = new {
+                        Damage = item.damage,
+                        DamageClass = item.DamageType?.DisplayName?.Value ?? item.DamageType?.Name ?? "Default",
+                        Knockback = item.knockBack,
+                        CritChance = item.crit,
+                        UseTime = item.useTime,
+                        Defense = item.defense,
+                        Value = item.value,
+                        Rarity = item.rare
+                    },
+                    Recipes = GetRecipesForItem(i),
+                    ObtainedFromDrops = drops ?? new List<object>()
+                };
+
+                allExportedItems.Add(itemData);
+            }
+
+            // 2. Group the items by their Mod Source and export separate files
+            var groupedItems = allExportedItems.GroupBy(item => (string)((dynamic)item).ModSource);
+
+            foreach (var group in groupedItems)
+            {
+                string modName = group.Key;
+                string path = Path.Combine(Main.SavePath, $"Terraria_{modName}_Export.json");
+
+                using (StreamWriter sw = new StreamWriter(path))
+                using (JsonTextWriter writer = new JsonTextWriter(sw))
                 {
-                    Item item = ContentSamples.ItemsByType[i];
-                    if (item == null || string.IsNullOrEmpty(item.Name)) continue;
-
-                    globalDropMap.TryGetValue(i, out var drops);
-
-                    var itemData = new {
-                        ID = i,
-                        InternalName = ItemID.Search.GetName(i) ?? item.Name,
-                        DisplayName = Lang.GetItemNameValue(i) ?? item.Name,
-                        ModSource = item.ModItem?.Mod?.Name ?? "Vanilla",
-                        Stats = new {
-                            Damage = item.damage,
-                            // FIX: Safely extract the primitive string from the LocalizedText object
-                            DamageClass = item.DamageType?.DisplayName?.Value ?? item.DamageType?.Name ?? "Default",
-                            Knockback = item.knockBack,
-                            CritChance = item.crit,
-                            UseTime = item.useTime,
-                            Defense = item.defense,
-                            Value = item.value,
-                            Rarity = item.rare
-                        },
-                        Recipes = GetRecipesForItem(i),
-                        ObtainedFromDrops = drops ?? new List<object>()
-                    };
-
-                    JsonSerializer.CreateDefault().Serialize(writer, itemData);
+                    writer.Formatting = Formatting.Indented;
+                    JsonSerializer.CreateDefault().Serialize(writer, group.ToList());
                 }
-                writer.WriteEndArray();
+                Console.WriteLine($"[CI/CD] Exported {group.Count()} items to {modName}.json");
             }
         }
 
