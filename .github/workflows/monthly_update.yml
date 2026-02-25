@@ -55,12 +55,16 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/tml-server
           
-          # Execute the .NET compiler (Removed the faulty -eac flag)
           dotnet tModLoader.dll -server -build $GITHUB_WORKSPACE/DataExporterMod
-          
-          # Find the successfully compiled mod and securely move it into the active server's Mods directory
           mkdir -p $GITHUB_WORKSPACE/tml-server/Mods/
           find ~/.local/share/Terraria/ -name "DataExporterMod.tmod" -exec cp {} $GITHUB_WORKSPACE/tml-server/Mods/ \;
+          
+          # SECURITY: Force TML to enable the mods in headless mode
+          echo '[
+            "CalamityMod",
+            "FargowiltasSouls",
+            "DataExporterMod"
+          ]' > $GITHUB_WORKSPACE/tml-server/Mods/enabled.json
 
       - name: Run Headless tModLoader Server
         run: |
