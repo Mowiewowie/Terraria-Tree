@@ -1,12 +1,12 @@
 # TerrariTree 🌳✨
 We all know the Terraria Wiki is legendary, but sometimes finding a complex crafting path feels like a deep-dive expedition. I got tired of clicking through five different wiki links and google searches just to see the crafting details, so I decided to build a tool that puts it all in one place.
 
-**TerrariTree** is a modern, interactive visualizer that makes navigating recipes feel as smooth as the game itself. It’s **vibe-coded with a little help from Gemini**, focusing on a sleek UI that stays out of your way while you're playing.
+**[TerrariTree](https://terraritree.com/)** is a modern, interactive visualizer that makes navigating recipes feel as smooth as the game itself. It’s **vibe-coded with a little help from Gemini**, focusing on a sleek UI that stays out of your way while you're playing.
 
 ---
 
 ### 📱 Take it Anywhere
-Whether you're playing on PC and have your phone open next to you, or you're playing the mobile version of Terraria, this app is **fully mobile-optimized**. It feels like a native app on your phone, so you can check recipes without having to minimize your game.
+While the best version of this app is on the browser, this app is **fully mobile-optimized**. It feels like a native app on your phone, so you can check recipes without having to minimize your game.
 
 ### 🛠️ What it actually does
 
