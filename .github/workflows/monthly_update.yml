@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: dev
 
       - name: Setup .NET 8.0
         uses: actions/setup-dotnet@v4
@@ -82,7 +82,6 @@ jobs:
 
       - name: Commit and Push to DEV Branch
         run: |
-          git checkout dev
           git config --global user.name "TerrariTree CI/CD Bot"
           git config --global user.email "bot@terraritree.com"
           git add Terraria_Merged_Final.json
