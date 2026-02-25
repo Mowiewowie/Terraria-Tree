@@ -26,16 +26,23 @@ jobs:
 
       - name: Install SteamCMD & Download tModLoader/Mods
         run: |
+          # 1. Install required 32-bit C libraries for SteamCMD
+          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y steamcmd
-          
-          # Downloads TML (1281930), Calamity (2824688072), and Fargo's (2815540735)
-          /usr/games/steamcmd +force_install_dir ./tml-server +login anonymous \
+          sudo apt-get install -y lib32gcc-s1
+
+          # 2. Download SteamCMD directly from Valve's secure CDN
+          mkdir -p ./steamcmd
+          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C ./steamcmd
+
+          # 3. Execute the local shell script instead of the apt package
+          ./steamcmd/steamcmd.sh +force_install_dir ../tml-server +login anonymous \
             +app_update 1281930 validate \
             +workshop_download_item 1281930 2824688072 \
             +workshop_download_item 1281930 2815540735 \
             +quit
           
+          # 4. Move workshop downloads to the TML Mods folder
           mkdir -p ./tml-server/Mods
           cp -r ./tml-server/steamapps/workshop/content/1281930/* ./tml-server/Mods/ || true
 
