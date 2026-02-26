@@ -26,17 +26,14 @@ jobs:
           cd tmodloader
           wget https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip
           unzip tModLoader.zip
-          
-          # Grant execution permissions to the server scripts
-          chmod +x start-tModLoaderServer.sh
-          chmod +x tModLoader
+          # No chmod needed because we are using the dotnet command directly
 
       - name: 4. Build Custom Extraction Mod
         run: |
           cd tmodloader
           
-          # Run the build command, but don't instantly fail the workflow if it crashes
-          ./start-tModLoaderServer.sh -build ../DataExporterMod -eac || true
+          # Directly invoke the .NET SDK to compile the mod
+          dotnet tModLoader.dll -server -build ../DataExporterMod -eac || true
           
           echo "================ COMPILER ERROR LOGS ================"
           # Print the master logs so we can read any C# syntax errors
@@ -51,8 +48,8 @@ jobs:
       - name: 5. Execute C# Memory Extraction
         run: |
           cd tmodloader
-          # Boot the server. Our compiled mod will hijack the boot process.
-          ./start-tModLoaderServer.sh -server -autocreate 1 -world name.wld || true
+          # Boot the server directly using dotnet
+          dotnet tModLoader.dll -server -autocreate 1 -world name.wld || true
           
       - name: 6. Move C# JSON Artifacts to Workspace
         run: |
