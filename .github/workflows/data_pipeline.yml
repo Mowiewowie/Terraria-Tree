@@ -76,11 +76,11 @@ jobs:
 
       - name: 7. Move C# JSON Artifacts & Inject Wiki Data
         run: |
-          # Extract all generated JSON files
           find ~/.local/share/Terraria/ -name "*_Export.json" -exec cp {} ./ \;
           
-          pip install requests beautifulsoup4
-          python scripts/wiki-injector.py # Or pipeline.py depending on your file name
+          # Install aiohttp instead of requests
+          pip install aiohttp beautifulsoup4
+          python scripts/wiki-injector.py
 
       - name: 8. Commit & Push Final Databases
         run: |
