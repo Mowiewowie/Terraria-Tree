@@ -17,8 +17,6 @@ namespace DataExporterMod
             if (Main.netMode == NetmodeID.Server || Console.IsInputRedirected)
             {
                 Console.WriteLine("[CI/CD] Automated Export Started...");
-                string exportPath = Path.Combine(Main.SavePath, "Terraria_Comprehensive_Export.json");
-                
                 try 
                 {
                     Dictionary<int, List<object>> globalDropMap = BuildDropDatabase();
@@ -30,7 +28,6 @@ namespace DataExporterMod
                     Console.WriteLine($"[CI/CD] Export Failed: {e.Message}");
                     Console.WriteLine(e.StackTrace); 
                 }
-
                 Environment.Exit(0); 
             }
         }
@@ -85,7 +82,6 @@ namespace DataExporterMod
 
         private void ExportData(Dictionary<int, List<object>> globalDropMap)
         {
-            // 1. Gather all items into memory
             var allExportedItems = new List<object>();
 
             for (int i = 1; i < ItemLoader.ItemCount; i++)
@@ -96,11 +92,19 @@ namespace DataExporterMod
                 globalDropMap.TryGetValue(i, out var drops);
                 string modSourceName = item.ModItem?.Mod?.Name ?? "Vanilla";
 
+                string deterministicID = modSourceName == "Vanilla" 
+                    ? i.ToString() 
+                    : $"{modSourceName}_{item.ModItem?.Name ?? item.Name}".Replace(" ", "");
+
+                string displayName = Lang.GetItemNameValue(i) ?? item.Name;
+
                 var itemData = new {
-                    ID = i,
-                    InternalName = ItemID.Search.GetName(i) ?? item.Name,
-                    DisplayName = Lang.GetItemNameValue(i) ?? item.Name,
+                    ID = deterministicID,
+                    InternalName = item.ModItem?.Name ?? item.Name,
+                    DisplayName = displayName,
                     ModSource = modSourceName,
+                    Category = DetermineCategory(item),
+                    WikiUrl = GenerateWikiUrl(modSourceName, displayName),
                     Stats = new {
                         Damage = item.damage,
                         DamageClass = item.DamageType?.DisplayName?.Value ?? item.DamageType?.Name ?? "Default",
@@ -109,22 +113,27 @@ namespace DataExporterMod
                         UseTime = item.useTime,
                         Defense = item.defense,
                         Value = item.value,
-                        Rarity = item.rare
+                        Rarity = item.rare,
+                        IsHardmode = item.rare >= ItemRarityID.LightRed
                     },
                     Recipes = GetRecipesForItem(i),
-                    ObtainedFromDrops = drops ?? new List<object>()
+                    ObtainedFromDrops = drops ?? new List<object>(),
+                    ShimmerDecraft = GetShimmerResult(i)
                 };
 
                 allExportedItems.Add(itemData);
             }
 
-            // 2. Group the items by their Mod Source and export separate files
             var groupedItems = allExportedItems.GroupBy(item => (string)((dynamic)item).ModSource);
+
+            // Dynamically detect the Terraria engine version (e.g., maps "1.4.4.9" to "1.4.4")
+            string baseVersion = Main.versionNumber.StartsWith("1.4.5") ? "1.4.5" : "1.4.4";
 
             foreach (var group in groupedItems)
             {
                 string modName = group.Key;
-                string path = Path.Combine(Main.SavePath, $"Terraria_{modName}_Export.json");
+                // Stamps the version directly into the filename
+                string path = Path.Combine(Main.SavePath, $"Terraria_{modName}_{baseVersion}_Export.json");
 
                 using (StreamWriter sw = new StreamWriter(path))
                 using (JsonTextWriter writer = new JsonTextWriter(sw))
@@ -132,14 +141,97 @@ namespace DataExporterMod
                     writer.Formatting = Formatting.Indented;
                     JsonSerializer.CreateDefault().Serialize(writer, group.ToList());
                 }
-                Console.WriteLine($"[CI/CD] Exported {group.Count()} items to {modName}.json");
+                Console.WriteLine($"[CI/CD] Exported {group.Count()} items to {modName}_{baseVersion}.json");
             }
+        }
+
+        private string DetermineCategory(Item item)
+        {
+            // 1. Equipment & Mobility
+            if (item.wingSlot > 0) return "Wings";
+            if (item.mountType != -1) return "Mount";
+            if (item.dye > 0) return "Dye";
+            if (item.accessory) return "Accessory";
+            if (item.headSlot > 0) return "Helmet";
+            if (item.bodySlot > 0) return "Chestplate";
+            if (item.legSlot > 0) return "Leggings";
+
+            // 2. Tools
+            if (item.pick > 0) return "Pickaxe";
+            if (item.axe > 0) return "Axe";
+            if (item.hammer > 0) return "Hammer";
+            if (item.fishingPole > 0) return "Fishing Pole";
+
+            // 3. Weapons (Granular Damage Types)
+            if (item.damage > 0 && item.useStyle != 0)
+            {
+                if (item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed)
+                {
+                    if (ItemID.Sets.Yoyo[item.type]) return "Yoyo";
+                    if (item.shoot > 0 && item.noMelee) return "Melee Projectile"; // Flails, Boomerangs, Spears
+                    return "Sword";
+                }
+                if (item.DamageType == DamageClass.Ranged)
+                {
+                    if (item.useAmmo == AmmoID.Arrow) return "Bow";
+                    if (item.useAmmo == AmmoID.Bullet) return "Gun";
+                    if (item.useAmmo == AmmoID.Rocket) return "Launcher";
+                    if (item.consumable) return "Consumable Ranged"; // Throwing knives, shurikens
+                    return "Ranged Weapon";
+                }
+                if (item.DamageType == DamageClass.Magic) return "Magic Weapon";
+                if (item.DamageType == DamageClass.Summon || item.DamageType == DamageClass.SummonMeleeSpeed)
+                {
+                    if (item.sentry) return "Sentry";
+                    // TML internally tracks whips via their projectile flags
+                    if (item.shoot > 0 && ProjectileID.Sets.IsAWhip[item.shoot]) return "Whip";
+                    return "Summon Weapon";
+                }
+                return "Weapon";
+            }
+
+            // 4. Utilities & Items
+            if (item.ammo != AmmoID.None) return "Ammunition";
+            if (item.bait > 0) return "Bait";
+            
+            // 5. Consumables
+            if (item.potion || item.healLife > 0 || item.healMana > 0) return "Potion";
+            if (item.buffType > 0)
+            {
+                if (Main.vanityPet[item.buffType] || Main.lightPet[item.buffType]) return "Pet";
+                return "Consumable";
+            }
+            if (item.bossBagNPC > 0) return "Treasure Bag";
+
+            // 6. Placeables
+            if (item.createTile > -1) return "Block / Furniture";
+            if (item.createWall > -1) return "Wall";
+
+            return "Material";
+        }
+
+        private string GenerateWikiUrl(string modSource, string displayName)
+        {
+            string urlName = displayName.Replace(" ", "_");
+            if (modSource == "Vanilla") return $"https://terraria.wiki.gg/wiki/{urlName}";
+            if (modSource == "CalamityMod") return $"https://calamitymod.wiki.gg/wiki/{urlName}";
+            if (modSource == "FargowiltasSouls" || modSource == "Fargowiltas") return $"https://fargosmods.wiki.gg/wiki/{urlName}";
+            return ""; 
+        }
+
+        private string GetShimmerResult(int itemId)
+        {
+            if (ItemID.Sets.ShimmerTransformToItem.Length > itemId)
+            {
+                int shimmerResult = ItemID.Sets.ShimmerTransformToItem[itemId];
+                if (shimmerResult > 0) return Lang.GetItemNameValue(shimmerResult);
+            }
+            return null;
         }
 
         private List<object> GetRecipesForItem(int itemId)
         {
             var recipeList = new List<object>();
-            
             var validRecipes = Main.recipe.Take(Recipe.numRecipes)
                 .Where(r => r != null && r.createItem != null && r.createItem.type == itemId);
 
@@ -147,11 +239,19 @@ namespace DataExporterMod
             {
                 recipeList.Add(new {
                     Stations = recipe.requiredTile?.Select(t => TileLoader.GetTile(t)?.Name ?? TileID.Search.GetName(t) ?? t.ToString()).ToList() ?? new List<string>(),
-                    // FIX: Explicitly cast the LINQ projection to <Item, object> to match the fallback list type
-                    Ingredients = recipe.requiredItem?.Where(req => req != null && req.type > 0).Select<Item, object>(req => new { 
-                        ID = req.type, 
-                        Name = Lang.GetItemNameValue(req.type), 
-                        Amount = req.stack 
+                    Conditions = recipe.Conditions?.Select(c => c.Description.Value).ToList() ?? new List<string>(),
+                    Ingredients = recipe.requiredItem?.Where(req => req != null && req.type > 0).Select<Item, object>(req => {
+                        
+                        string ingModSource = req.ModItem?.Mod?.Name ?? "Vanilla";
+                        string ingDeterministicID = ingModSource == "Vanilla" 
+                            ? req.type.ToString() 
+                            : $"{ingModSource}_{req.ModItem?.Name ?? req.Name}".Replace(" ", "");
+
+                        return new { 
+                            ID = ingDeterministicID, 
+                            Name = Lang.GetItemNameValue(req.type), 
+                            Amount = req.stack 
+                        };
                     }).ToList() ?? new List<object>()
                 });
             }

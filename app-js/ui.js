@@ -279,50 +279,49 @@ function showTooltip(e, data, extraRecipe = null) {
     }
     // --- End Interceptor ---
 
-    const rarityVal = data.stats?.rarity !== undefined ? data.stats.rarity : 0;
+    const rarityVal = data.Stats?.Rarity !== undefined ? data.Stats.Rarity : 0;
     dom.tooltip.name.className = `terraria-text font-bold text-lg leading-tight rarity-${rarityVal}`;
-    dom.tooltip.name.textContent = data.name;
+    dom.tooltip.name.textContent = data.DisplayName || data.name;
     
-    // Reset description class in case the group tooltip altered it
     dom.tooltip.desc.className = "text-sm text-slate-700 dark:text-slate-300 mb-3 block";
     
-    if (!data.description || data.description.trim() === "N/A" || data.description.trim() === "") {
+    if (!data.Category || data.Category.trim() === "") {
         dom.tooltip.desc.classList.add('hidden');
     } else {
-        dom.tooltip.desc.textContent = data.description;
+        dom.tooltip.desc.textContent = `Type: ${data.Category}`;
         dom.tooltip.desc.classList.remove('hidden');
     }
     
-    dom.tooltip.image.src = createDirectImageUrl(data.name);
-    dom.tooltip.image.onerror = () => { if(dom.tooltip.image.src !== data.image_url) dom.tooltip.image.src = data.image_url; else dom.tooltip.image.src = FALLBACK_ICON; };
+    dom.tooltip.image.src = createDirectImageUrl(data.DisplayName || data.name);
+    dom.tooltip.image.onerror = () => { dom.tooltip.image.src = FALLBACK_ICON; };
     
     const usingMobileUX = isMobileUX();
 
-    if (data.url || data.specific_type) {
+    if (data.WikiUrl || data.Category) {
         if (usingMobileUX) {
             dom.tooltip.wikiDesktop.classList.add('hidden');
             dom.tooltip.wikiMobile.classList.remove('hidden');
             
-            dom.tooltip.btnWiki.classList.toggle('hidden', !data.url);
-            dom.tooltip.btnCategory.classList.toggle('hidden', !data.specific_type);
+            dom.tooltip.btnWiki.classList.toggle('hidden', !data.WikiUrl);
+            dom.tooltip.btnCategory.classList.toggle('hidden', !data.Category);
             
             dom.tooltip.btnWiki.onclick = (ev) => { 
                 ev.stopPropagation(); 
                 if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
                 activeMobileCard = null; dom.tooltip.el.classList.add('hidden'); 
-                window.open(data.url, '_blank'); 
+                window.open(data.WikiUrl, '_blank'); 
             };
             dom.tooltip.btnCategory.onclick = (ev) => { 
                 ev.stopPropagation(); 
                 if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
                 activeMobileCard = null; dom.tooltip.el.classList.add('hidden'); 
-                viewCategory(data.specific_type); 
+                viewCategory(data.Category); 
             };
         } else {
             dom.tooltip.wikiMobile.classList.add('hidden');
             dom.tooltip.wikiDesktop.classList.remove('hidden');
-            dom.tooltip.wikiDesktop.children[0].classList.toggle('hidden', !data.url);
-            dom.tooltip.wikiDesktop.children[1].classList.toggle('hidden', !data.specific_type);
+            dom.tooltip.wikiDesktop.children[0].classList.toggle('hidden', !data.WikiUrl);
+            dom.tooltip.wikiDesktop.children[1].classList.toggle('hidden', !data.Category);
         }
     } else {
         dom.tooltip.wikiDesktop.classList.add('hidden');

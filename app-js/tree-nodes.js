@@ -5,21 +5,20 @@
 function getDiscoverableItems() {
     if (discoverBoxItems.length === 0) return [];
     
-    const boxItemNames = discoverBoxItems.map(id => itemsDatabase[id].name.toLowerCase());
+    const boxItemNames = discoverBoxItems.map(id => (itemsDatabase[id].DisplayName || "").toLowerCase());
     const uniqueUsagesMap = new Map();
 
     for (const itemId in itemsDatabase) {
         const item = itemsDatabase[itemId];
-        if (!item.crafting || !item.crafting.is_craftable) continue;
+        if (!item.Recipes || item.Recipes.length === 0) continue;
         
-        for (const recipe of item.crafting.recipes) {
-            if (!showTransmutations && recipe.transmutation) continue;
-            
+        for (const recipe of item.Recipes) {
             let recipeMatchesAll = true;
             for (const boxName of boxItemNames) {
                 let hasBoxItem = false;
-                for (const ing of recipe.ingredients) {
-                    const ingLower = ing.name.toLowerCase();
+                if (!recipe.Ingredients) continue;
+                for (const ing of recipe.Ingredients) {
+                    const ingLower = (ing.Name || "").toLowerCase();
                     if (ingLower === boxName) {
                         hasBoxItem = true; break;
                     }
@@ -256,18 +255,18 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
     let validRecipes = [];
 
     if (treeMode === 'recipe') {
-        if (data.crafting && data.crafting.is_craftable && !visited.has(id)) {
-            validRecipes = data.crafting.recipes.filter(r => showTransmutations || !r.transmutation);
+        if (data.Recipes && data.Recipes.length > 0 && !visited.has(id)) {
+            validRecipes = data.Recipes;
             if (validRecipes.length > 0) {
                 hasValidChildren = true;
                 if (selectedRecipeIndices[id] === undefined) selectedRecipeIndices[id] = 0;
                 if (selectedRecipeIndices[id] >= validRecipes.length) selectedRecipeIndices[id] = 0;
-                childrenData = validRecipes[selectedRecipeIndices[id]].ingredients;
+                childrenData = validRecipes[selectedRecipeIndices[id]].Ingredients || [];
             }
         }
     } else if (treeMode === 'usage' || treeMode === 'discover') {
-        const allUsages = usageIndex[data.name.toLowerCase()] || [];
-        const validUsages = allUsages.filter(u => showTransmutations || !u.recipe.transmutation);
+        const allUsages = usageIndex[(data.DisplayName || "").toLowerCase()] || [];
+        const validUsages = allUsages;
         
         const uniqueUsagesMap = new Map();
         validUsages.forEach(u => {

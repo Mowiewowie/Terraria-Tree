@@ -49,8 +49,11 @@
                 </div>
             </div>
 
-            <div id="statusWrapper" class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap z-50 pointer-events-auto shrink-0 flex items-center">
+            <div id="statusWrapper" class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap z-50 pointer-events-auto shrink-0 flex items-center gap-3">
                 <span id="dbStatus">Initializing...</span>
+                <button id="btnSettings" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none" title="Data Sources & Mods">
+                    <i class="fa-solid fa-gear text-xl"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -174,6 +177,89 @@
             <div id="ttExtraIngredientsList" class="flex flex-wrap gap-1.5"></div>
         </div>
     </div>
+
+    <div id="settingsModal" class="hidden fixed inset-0 bg-white/80 dark:bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">Data Sources & Mods</h2>
+                <button id="btnCloseSettings" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none rounded-md">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+                
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Game Version</label>
+                    <select id="engineVersionSelect" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none shadow-inner">
+                        <option value="1.4.5">Vanilla 1.4.5 (Latest)</option>
+                        <option value="1.4.4">tModLoader 1.4.4 (Modded Era)</option>
+                    </select>
+                    <p class="text-xs text-slate-500 mt-1">Modded items are currently only compatible with 1.4.4.</p>
+                </div>
+                
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Mods</label>
+                    <div id="modsContainer" class="space-y-2 opacity-50 pointer-events-none transition-opacity duration-300">
+                        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700/50 cursor-pointer transition-colors shadow-sm">
+                            <input type="checkbox" id="modCalamity" value="CalamityMod" class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-800 bg-white dark:bg-slate-900">
+                            <span class="text-slate-700 dark:text-slate-200 font-medium">Calamity Mod</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700/50 cursor-pointer transition-colors shadow-sm">
+                            <input type="checkbox" id="modFargos" value="FargowiltasSouls" class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-800 bg-white dark:bg-slate-900">
+                            <span class="text-slate-700 dark:text-slate-200 font-medium">Fargo's Souls</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-end">
+                <button id="btnApplySettings" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/30 dark:shadow-blue-900/20 transition-all focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    Apply & Reload
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btnSettings = document.getElementById('btnSettings');
+        const settingsModal = document.getElementById('settingsModal');
+        const btnCloseSettings = document.getElementById('btnCloseSettings');
+        const versionSelect = document.getElementById('engineVersionSelect');
+        const modsContainer = document.getElementById('modsContainer');
+        const btnApplySettings = document.getElementById('btnApplySettings');
+
+        // Toggle Modal Visibility
+        btnSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+        btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+        // Lock Mod checkboxes if not on 1.4.4
+        versionSelect.addEventListener('change', (e) => {
+            if (e.target.value === '1.4.4') {
+                modsContainer.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                modsContainer.classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('modCalamity').checked = false;
+                document.getElementById('modFargos').checked = false;
+            }
+        });
+
+        // Trigger Data Layer Reload
+        btnApplySettings.addEventListener('click', async () => {
+            settingsModal.classList.add('hidden');
+            const targetVersion = versionSelect.value;
+            
+            // Re-fetch base game version (defined in data.js)
+            await loadVersionData(targetVersion);
+            
+            // Conditionally fetch mods
+            if (targetVersion === '1.4.4') {
+                if (document.getElementById('modCalamity').checked) await loadModData('CalamityMod');
+                if (document.getElementById('modFargos').checked) await loadModData('FargowiltasSouls');
+            }
+            
+            // Redirect home to ensure clean UI state
+            if (typeof goHome === 'function') goHome();
+        });
+    </script>
 
 <script>
         // Only register if supported AND we are not running directly from the local hard drive

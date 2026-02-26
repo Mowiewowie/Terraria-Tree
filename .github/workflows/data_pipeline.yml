@@ -1,0 +1,70 @@
+name: TerrariTree Automated Data Extraction
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Runs automatically every Sunday at midnight
+  workflow_dispatch: # Allows you to click a "Run workflow" button manually
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup .NET Core (For tModLoader)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x' # tModLoader 1.4.4 requires .NET 6.0
+
+      - name: 3. Download & Extract Headless tModLoader
+        run: |
+          mkdir tmodloader
+          cd tmodloader
+          wget https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip
+          unzip tModLoader.zip
+          chmod +x start-tModLoaderServer.sh
+          
+      - name: 4. Inject Custom Extraction Mod
+        run: |
+          mkdir -p ~/.local/share/Terraria/tModLoader/Mods
+          # Assuming your C# mod is stored in a folder called 'DataExporterMod' in your repo
+          cp -r DataExporterMod ~/.local/share/Terraria/tModLoader/Mods/
+          echo '[{"name": "DataExporterMod", "enabled": true}]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
+
+      - name: 5. Execute C# Memory Extraction
+        run: |
+          cd tmodloader
+          # Run the headless server. The C# script uses Environment.Exit(0) to shut it down once done.
+          ./start-tModLoaderServer.sh -server -autocreate 1 -world name.wld || true
+          
+      - name: 6. Move C# JSON Artifacts to Workspace
+        run: |
+          # tModLoader saves logs to Main.SavePath. We move them to our frontend data folder.
+          cp ~/.local/share/Terraria/tModLoader/Terraria_Vanilla_1.4.4_Export.json ./
+          cp ~/.local/share/Terraria/tModLoader/Terraria_CalamityMod_1.4.4_Export.json ./ || true
+          cp ~/.local/share/Terraria/tModLoader/Terraria_FargowiltasSouls_1.4.4_Export.json ./ || true
+
+      - name: 7. Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: 8. Install Python Dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: 9. Run Python Wiki Injector (Chest & NPC Shop Data)
+        run: python scripts/wiki-injector.py
+
+      - name: 10. Commit & Push Final Databases
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add Terraria_*_Export.json
+          
+          # Only commit if the files have actually changed to prevent empty commits
+          git commit -m "[CI/CD] Automated Terraria Database Update (v1.4.4 Engine)" || echo "No changes to commit"
+          git push

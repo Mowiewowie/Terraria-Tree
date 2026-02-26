@@ -8,17 +8,17 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
     card.dataset.id = data.id; 
     
     const img = document.createElement('img');
-    img.src = createDirectImageUrl(data.name);
+    img.src = createDirectImageUrl(data.DisplayName || data.name);
     img.draggable = false; 
     img.ondragstart = (e) => e.preventDefault(); // Strict JS block
     img.className = sizeClasses.includes('w-32') ? 'w-14 h-14 object-contain mb-2' : 'w-10 h-10 object-contain mb-1';
-    img.onerror = () => { if(img.src !== data.image_url) img.src = data.image_url; else img.src = FALLBACK_ICON; };
+    img.onerror = () => { img.src = FALLBACK_ICON; };
     
     const name = document.createElement('span');
-    name.textContent = data.name;
+    name.textContent = data.DisplayName || data.name;
     name.className = `text-center font-semibold leading-tight px-1 line-clamp-2 text-slate-800 dark:text-slate-200 ${sizeClasses.includes('w-32') ? 'text-sm' : 'text-[10px]'}`;
     
-    if (data.hardmode) {
+    if (data.Stats && data.Stats.IsHardmode) {
         const hmBadge = document.createElement('div');
         hmBadge.className = 'absolute top-1 left-1 flex items-center justify-center w-4 h-4 bg-gradient-to-br from-pink-500 to-purple-600 rounded-sm shadow-md border border-purple-800/50 text-[9px] font-bold text-white z-20 cursor-help';
         hmBadge.title = "Hardmode Item";
@@ -56,11 +56,11 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
         }
 
         if (e.ctrlKey || e.metaKey) {
-            if(data.url) window.open(data.url, '_blank'); 
+            if(data.WikiUrl) window.open(data.WikiUrl, '_blank'); 
             return;
         } 
-        if (e.shiftKey && data.specific_type) {
-            viewCategory(data.specific_type);
+        if (e.shiftKey && data.Category) {
+            viewCategory(data.Category);
             return;
         } 
         
@@ -108,15 +108,15 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
         () => false, 
         () => {
             dom.treeContainer.classList.remove('mode-usage');
-            const items = Object.values(itemsDatabase).filter(i => i.specific_type === typeStr);
+            const items = Object.values(itemsDatabase).filter(i => i.Category === typeStr);
             
             items.sort((a, b) => {
-                const dmgA = a.stats?.damage ?? -1;
-                const dmgB = b.stats?.damage ?? -1;
+                const dmgA = a.Stats?.Damage ?? -1;
+                const dmgB = b.Stats?.Damage ?? -1;
                 if (dmgA !== dmgB) {
                     return dmgB - dmgA; 
                 }
-                return a.name.localeCompare(b.name);
+                return (a.DisplayName || "").localeCompare(b.DisplayName || "");
             });
 
             const box = document.createElement('div');
