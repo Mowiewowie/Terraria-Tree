@@ -33,13 +33,17 @@ jobs:
           echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
           cd tmodloader
           
-          # 1. Create our explicit save directory first
+          # Create our explicit save directory
           mkdir -p ./TMDSave/Mods
           
-          # 2. Compile the mod AND force it to save the output directly to our custom directory
-          ./start-tModLoaderServer.sh -savedirectory ./TMDSave -build ../DataExporterMod -eac
+          # Compile the mod. Using '|| true' so it doesn't kill the pipeline before printing our logs!
+          ./start-tModLoaderServer.sh -savedirectory ./TMDSave -build ../DataExporterMod -eac || true
           
-          # 3. Enable the mod in the custom directory
+          echo "================ COMPILER ERROR LOGS ================"
+          cat ./TMDSave/Logs/Launch.log || echo "Launch.log not found"
+          cat ./TMDSave/Logs/server.log || echo "server.log not found"
+          echo "====================================================="
+          
           echo '["DataExporterMod"]' > ./TMDSave/Mods/enabled.json
 
       - name: 5. Execute C# Memory Extraction
