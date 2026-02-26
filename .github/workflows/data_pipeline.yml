@@ -30,12 +30,13 @@ jobs:
 
       - name: 4. Build Custom Extraction Mod
         run: |
-          # Generates the mandatory .csproj file required by the 1.4.4+ compiler
-          echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > ../DataExporterMod/DataExporterMod.csproj
+          # We are in the repo root here, so we don't use ../
+          echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
           
+          # NOW we move into the server folder
           cd tmodloader
           
-          # Compile the mod
+          # Compile the mod (Because we are in the tmodloader folder now, we DO use ../ to point back to the source folder)
           ./start-tModLoaderServer.sh -build ../DataExporterMod -eac || true
           
           echo "================ COMPILER ERROR LOGS ================"
