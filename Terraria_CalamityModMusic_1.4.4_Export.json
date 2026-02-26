@@ -5,7 +5,8 @@
     "DisplayName": "Music Box (Abyss - Layer 1)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Abyss_-_Layer_1)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Abyss_-_Layer_1).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -27,7 +28,8 @@
     "DisplayName": "Music Box (Abyss - Layer 2)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Abyss_-_Layer_2)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Abyss_-_Layer_2).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -49,7 +51,8 @@
     "DisplayName": "Music Box (Abyss - Layer 3)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Abyss_-_Layer_3)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Abyss_-_Layer_3).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -71,7 +74,8 @@
     "DisplayName": "Music Box (Abyss - Layer 4)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Abyss_-_Layer_4)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Abyss_-_Layer_4).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -93,7 +97,8 @@
     "DisplayName": "Music Box (Abyss - Legacy)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Abyss_-_Legacy)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Abyss_-_Legacy).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -144,7 +149,8 @@
     "DisplayName": "Music Box (Acid Rain - Tiers 1 and 2)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Acid_Rain_-_Tiers_1_and_2)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Acid_Rain_-_Tiers_1_and_2).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -203,7 +209,8 @@
     "DisplayName": "Music Box (Acid Rain - Tier 3)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Acid_Rain_-_Tier_3)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Acid_Rain_-_Tier_3).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -225,7 +232,8 @@
     "DisplayName": "Music Box (Anahita)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Anahita)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Anahita).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -247,7 +255,8 @@
     "DisplayName": "Music Box (Anahita's Lure)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Anahita's_Lure)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Anahita's_Lure).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -269,7 +278,8 @@
     "DisplayName": "Music Box (Aquatic Scourge)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Aquatic_Scourge)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Aquatic_Scourge).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -291,7 +301,8 @@
     "DisplayName": "Music Box (Astral Infection)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Astral_Infection)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Astral_Infection).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -313,7 +324,8 @@
     "DisplayName": "Music Box (Underground Astral Infection)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Underground_Astral_Infection)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Underground_Astral_Infection).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -335,7 +347,8 @@
     "DisplayName": "Music Box (Astrum Aureus)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Astrum_Aureus)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Astrum_Aureus).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -357,7 +370,8 @@
     "DisplayName": "Music Box (Astrum Deus)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Astrum_Deus)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Astrum_Deus).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -379,7 +393,8 @@
     "DisplayName": "Music Box (Bio Lab)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Bio_Lab)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Bio_Lab).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -401,7 +416,8 @@
     "DisplayName": "Music Box (Boss Rush - Tier 1)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Boss_Rush_-_Tier_1)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Boss_Rush_-_Tier_1).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -423,7 +439,8 @@
     "DisplayName": "Music Box (Boss Rush - Tier 2)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Boss_Rush_-_Tier_2)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Boss_Rush_-_Tier_2).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -445,7 +462,8 @@
     "DisplayName": "Music Box (Boss Rush - Tier 3)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Boss_Rush_-_Tier_3)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Boss_Rush_-_Tier_3).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -467,7 +485,8 @@
     "DisplayName": "Music Box (Boss Rush - Tier 4)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Boss_Rush_-_Tier_4)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Boss_Rush_-_Tier_4).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -489,7 +508,8 @@
     "DisplayName": "Music Box (Boss Rush - Tier 5)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Boss_Rush_-_Tier_5)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Boss_Rush_-_Tier_5).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -511,7 +531,8 @@
     "DisplayName": "Music Box (Brimstone Crags)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Brimstone_Crags)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Brimstone_Crags).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -533,7 +554,8 @@
     "DisplayName": "Music Box (Brimstone Elemental)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Brimstone_Elemental)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Brimstone_Elemental).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -555,7 +577,8 @@
     "DisplayName": "Music Box (Calamitas Clone)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Calamitas_Clone)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Calamitas_Clone).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -577,7 +600,8 @@
     "DisplayName": "Music Box (Calamitas - Defeat)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Calamitas_-_Defeat)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Calamitas_-_Defeat).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -623,7 +647,8 @@
     "DisplayName": "Music Box (Calamitas - Phase 1)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Calamitas_-_Phase_1)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Calamitas_-_Phase_1).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -645,7 +670,8 @@
     "DisplayName": "Music Box (Calamitas - Phase 2)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Calamitas_-_Phase_2)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Calamitas_-_Phase_2).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -667,7 +693,8 @@
     "DisplayName": "Music Box (Calamitas - Phase 3)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Calamitas_-_Phase_3)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Calamitas_-_Phase_3).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -689,7 +716,8 @@
     "DisplayName": "Music Box (Calamity Title)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Calamity_Title)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Calamity_Title).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -762,7 +790,8 @@
     "DisplayName": "Music Box (Ceaseless Void)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Ceaseless_Void)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Ceaseless_Void).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -784,7 +813,8 @@
     "DisplayName": "Music Box (Crabulon)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Crabulon)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Crabulon).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -806,7 +836,8 @@
     "DisplayName": "Music Box (Cryogen)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Cryogen)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Cryogen).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -828,7 +859,8 @@
     "DisplayName": "Music Box (Desert Scourge)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Desert_Scourge)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Desert_Scourge).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -850,7 +882,8 @@
     "DisplayName": "Music Box (Devourer of Gods - Eulogy)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Devourer_of_Gods_-_Eulogy)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Devourer_of_Gods_-_Eulogy).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -881,7 +914,8 @@
     "DisplayName": "Music Box (Devourer of Gods - Phase 1)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Devourer_of_Gods_-_Phase_1)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Devourer_of_Gods_-_Phase_1).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -903,7 +937,8 @@
     "DisplayName": "Music Box (Devourer of Gods - Phase 2)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Devourer_of_Gods_-_Phase_2)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Devourer_of_Gods_-_Phase_2).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -925,7 +960,8 @@
     "DisplayName": "Music Box (Dragonfolly)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Dragonfolly)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Dragonfolly).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -947,7 +983,8 @@
     "DisplayName": "Music Box (Exo Mechs)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Exo_Mechs)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Exo_Mechs).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -969,7 +1006,8 @@
     "DisplayName": "Music Box (Hive Mind)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Hive_Mind)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Hive_Mind).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -991,7 +1029,8 @@
     "DisplayName": "Music Box (Interlude 1)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Interlude_1)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Interlude_1).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1022,7 +1061,8 @@
     "DisplayName": "Music Box (Interlude 2)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Interlude_2)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Interlude_2).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1053,7 +1093,8 @@
     "DisplayName": "Music Box (Interlude 3)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Interlude_3)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Interlude_3).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1084,7 +1125,8 @@
     "DisplayName": "Music Box (Leviathan)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Leviathan)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Leviathan).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1106,7 +1148,8 @@
     "DisplayName": "Music Box (Old Duke)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Old_Duke)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Old_Duke).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1128,7 +1171,8 @@
     "DisplayName": "Music Box (Perforators)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Perforators)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Perforators).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1150,7 +1194,8 @@
     "DisplayName": "Music Box (Plaguebringer Goliath)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Plaguebringer_Goliath)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Plaguebringer_Goliath).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1172,7 +1217,8 @@
     "DisplayName": "Music Box (Polterghast)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Polterghast)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Polterghast).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1194,7 +1240,8 @@
     "DisplayName": "Music Box (Primordial Wyrm)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Primordial_Wyrm)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Primordial_Wyrm).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1216,7 +1263,8 @@
     "DisplayName": "Music Box (Profaned Guardians)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Profaned_Guardians)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Profaned_Guardians).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1238,7 +1286,8 @@
     "DisplayName": "Music Box (Providence)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Providence)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Providence).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1260,7 +1309,8 @@
     "DisplayName": "Music Box (Ravager)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Ravager)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Ravager).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1282,7 +1332,8 @@
     "DisplayName": "Music Box (Signus)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Signus)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Signus).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1304,7 +1355,8 @@
     "DisplayName": "Music Box (Slime God)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Slime_God)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Slime_God).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1326,7 +1378,8 @@
     "DisplayName": "Music Box (Storm Weaver)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Storm_Weaver)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Storm_Weaver).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1348,7 +1401,8 @@
     "DisplayName": "Music Box (Sulphurous Sea Day)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Sulphurous_Sea_Day)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Sulphurous_Sea_Day).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1370,7 +1424,8 @@
     "DisplayName": "Music Box (Sulphurous Sea Night)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Sulphurous_Sea_Night)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Sulphurous_Sea_Night).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1392,7 +1447,8 @@
     "DisplayName": "Music Box (Sulphurous Sea Rain)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Sulphurous_Sea_Rain)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Sulphurous_Sea_Rain).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1414,7 +1470,8 @@
     "DisplayName": "Music Box (Sunken Sea)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Sunken_Sea)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Sunken_Sea).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1436,7 +1493,8 @@
     "DisplayName": "Music Box (Yharon - Legacy)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Yharon_-_Legacy)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Yharon_-_Legacy).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1477,7 +1535,8 @@
     "DisplayName": "Music Box (Yharon - Phase 1)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Yharon_-_Phase_1)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Yharon_-_Phase_1).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1499,7 +1558,8 @@
     "DisplayName": "Music Box (Yharon - Phase 2)",
     "ModSource": "CalamityModMusic",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://calamitymod.wiki.gg/wiki/Music_Box_(Yharon_-_Phase_2)",
+    "IconUrl": "https://calamitymod.wiki.gg/wiki/Special:FilePath/Music_Box_(Yharon_-_Phase_2).png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",

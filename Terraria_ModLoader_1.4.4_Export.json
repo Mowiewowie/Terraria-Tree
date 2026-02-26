@@ -5,7 +5,8 @@
     "DisplayName": "Andromedon Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Andromedon_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Andromedon_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -27,7 +28,8 @@
     "DisplayName": "Andromedon Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Andromedon_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Andromedon_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -49,7 +51,8 @@
     "DisplayName": "Andromedon Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Andromedon_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Andromedon_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -71,7 +74,8 @@
     "DisplayName": "AetherBreaker's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AetherBreaker's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AetherBreaker's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -93,7 +97,8 @@
     "DisplayName": "AetherBreaker's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AetherBreaker's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AetherBreaker's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -115,7 +120,8 @@
     "DisplayName": "AetherBreaker's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AetherBreaker's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AetherBreaker's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -137,7 +143,8 @@
     "DisplayName": "AetherBreaker's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AetherBreaker's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AetherBreaker's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -159,7 +166,8 @@
     "DisplayName": "AlejandroAkbal's Back",
     "ModSource": "ModLoader",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AlejandroAkbal's_Back",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AlejandroAkbal's_Back.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -181,7 +189,8 @@
     "DisplayName": "AlejandroAkbal's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AlejandroAkbal's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AlejandroAkbal's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -203,7 +212,8 @@
     "DisplayName": "AlejandroAkbal's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AlejandroAkbal's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AlejandroAkbal's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -225,7 +235,8 @@
     "DisplayName": "AlejandroAkbal's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/AlejandroAkbal's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/AlejandroAkbal's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -247,7 +258,8 @@
     "DisplayName": "Coolmike5000's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Coolmike5000's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Coolmike5000's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -269,7 +281,8 @@
     "DisplayName": "Coolmike5000's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Coolmike5000's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Coolmike5000's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -291,7 +304,8 @@
     "DisplayName": "Coolmike5000's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Coolmike5000's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Coolmike5000's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -313,7 +327,8 @@
     "DisplayName": "Coolmike5000's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Coolmike5000's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Coolmike5000's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -335,7 +350,8 @@
     "DisplayName": "dinidini's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dinidini's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dinidini's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -357,7 +373,8 @@
     "DisplayName": "dinidini's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dinidini's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dinidini's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -379,7 +396,8 @@
     "DisplayName": "dinidini's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dinidini's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dinidini's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -401,7 +419,8 @@
     "DisplayName": "dinidini's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dinidini's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dinidini's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -423,7 +442,8 @@
     "DisplayName": "dschosen's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dschosen's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dschosen's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -445,7 +465,8 @@
     "DisplayName": "dschosen's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dschosen's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dschosen's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -467,7 +488,8 @@
     "DisplayName": "dschosen's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dschosen's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dschosen's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -489,7 +511,8 @@
     "DisplayName": "dschosen's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/dschosen's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/dschosen's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -511,7 +534,8 @@
     "DisplayName": "Elfinlocks' Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Elfinlocks'_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Elfinlocks'_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -533,7 +557,8 @@
     "DisplayName": "Elfinlocks' Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Elfinlocks'_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Elfinlocks'_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -555,7 +580,8 @@
     "DisplayName": "Elfinlocks' Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Elfinlocks'_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Elfinlocks'_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -577,7 +603,8 @@
     "DisplayName": "Frosty's Hat",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Frosty's_Hat",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Frosty's_Hat.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -599,7 +626,8 @@
     "DisplayName": "Frosty's Hoodie",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Frosty's_Hoodie",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Frosty's_Hoodie.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -621,7 +649,8 @@
     "DisplayName": "Frosty's Pants",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Frosty's_Pants",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Frosty's_Pants.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -643,7 +672,8 @@
     "DisplayName": "Glory's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Glory's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Glory's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -665,7 +695,8 @@
     "DisplayName": "Glory's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Glory's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Glory's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -687,7 +718,8 @@
     "DisplayName": "Glory's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Glory's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Glory's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -709,7 +741,8 @@
     "DisplayName": "Guildpack's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Guildpack's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Guildpack's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -731,7 +764,8 @@
     "DisplayName": "Guildpack's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Guildpack's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Guildpack's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -753,7 +787,8 @@
     "DisplayName": "Guildpack's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Guildpack's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Guildpack's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -775,7 +810,8 @@
     "DisplayName": "HER0zero's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/HER0zero's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/HER0zero's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -797,7 +833,8 @@
     "DisplayName": "HER0zero's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/HER0zero's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/HER0zero's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -819,7 +856,8 @@
     "DisplayName": "HER0zero's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/HER0zero's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/HER0zero's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -841,7 +879,8 @@
     "DisplayName": "Hunter Garb",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Hunter_Garb",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Hunter_Garb.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -863,7 +902,8 @@
     "DisplayName": "Hunter Hat",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Hunter_Hat",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Hunter_Hat.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -885,7 +925,8 @@
     "DisplayName": "Hunter Trousers",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Hunter_Trousers",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Hunter_Trousers.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -907,7 +948,8 @@
     "DisplayName": "A Call Beyond",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/A_Call_Beyond",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/A_Call_Beyond.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -929,7 +971,8 @@
     "DisplayName": "Mayne's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Mayne's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Mayne's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -951,7 +994,8 @@
     "DisplayName": "Mayne's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Mayne's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Mayne's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -973,7 +1017,8 @@
     "DisplayName": "Mayne's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Mayne's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Mayne's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -995,7 +1040,8 @@
     "DisplayName": "Mayne's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Mayne's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Mayne's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1017,7 +1063,8 @@
     "DisplayName": "Orian's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Orian's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Orian's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1039,7 +1086,8 @@
     "DisplayName": "Orian's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Orian's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Orian's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1061,7 +1109,8 @@
     "DisplayName": "Orian's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Orian's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Orian's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1083,7 +1132,8 @@
     "DisplayName": "POCKETS' Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/POCKETS'_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/POCKETS'_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1105,7 +1155,8 @@
     "DisplayName": "POCKETS' Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/POCKETS'_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/POCKETS'_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1127,7 +1178,8 @@
     "DisplayName": "POCKETS' Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/POCKETS'_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/POCKETS'_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1149,7 +1201,8 @@
     "DisplayName": "POCKETS' Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/POCKETS'_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/POCKETS'_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1171,7 +1224,8 @@
     "DisplayName": "Polyblank's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Polyblank's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Polyblank's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1193,7 +1247,8 @@
     "DisplayName": "Polyblank's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Polyblank's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Polyblank's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1215,7 +1270,8 @@
     "DisplayName": "Polyblank's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Polyblank's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Polyblank's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1237,7 +1293,8 @@
     "DisplayName": "Remeus' Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Remeus'_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Remeus'_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1259,7 +1316,8 @@
     "DisplayName": "Remeus' Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Remeus'_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Remeus'_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1281,7 +1339,8 @@
     "DisplayName": "Remeus' Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Remeus'_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Remeus'_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1303,7 +1362,8 @@
     "DisplayName": "Saethar's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Saethar's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Saethar's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1325,7 +1385,8 @@
     "DisplayName": "Saethar's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Saethar's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Saethar's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1347,7 +1408,8 @@
     "DisplayName": "Saethar's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Saethar's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Saethar's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1369,7 +1431,8 @@
     "DisplayName": "Saethar's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Saethar's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Saethar's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1391,7 +1454,8 @@
     "DisplayName": "Sailing_Squid's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Sailing_Squid's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Sailing_Squid's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1413,7 +1477,8 @@
     "DisplayName": "Sailing_Squid's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Sailing_Squid's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Sailing_Squid's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1435,7 +1500,8 @@
     "DisplayName": "Sailing_Squid's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Sailing_Squid's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Sailing_Squid's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1457,7 +1523,8 @@
     "DisplayName": "Sailing_Squid's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Sailing_Squid's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Sailing_Squid's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1479,7 +1546,8 @@
     "DisplayName": "Squid's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Squid's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Squid's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1501,7 +1569,8 @@
     "DisplayName": "Squid's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Squid's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Squid's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1523,7 +1592,8 @@
     "DisplayName": "Squid's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Squid's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Squid's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1545,7 +1615,8 @@
     "DisplayName": "Tantamount's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Tantamount's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Tantamount's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1567,7 +1638,8 @@
     "DisplayName": "Tantamount's Head",
     "ModSource": "ModLoader",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Tantamount's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Tantamount's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1589,7 +1661,8 @@
     "DisplayName": "Tantamount's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Tantamount's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Tantamount's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1611,7 +1684,8 @@
     "DisplayName": "Tantamount's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Tantamount's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Tantamount's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1633,7 +1707,8 @@
     "DisplayName": "toplayz's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/toplayz's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/toplayz's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1655,7 +1730,8 @@
     "DisplayName": "toplayz's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/toplayz's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/toplayz's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1677,7 +1753,8 @@
     "DisplayName": "toplayz's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/toplayz's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/toplayz's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1699,7 +1776,8 @@
     "DisplayName": "WitchDaggah's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/WitchDaggah's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/WitchDaggah's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1721,7 +1799,8 @@
     "DisplayName": "Catalyst's Soul",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Catalyst's_Soul",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Catalyst's_Soul.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1743,7 +1822,8 @@
     "DisplayName": "Catalyst's Honorable Tiara",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Catalyst's_Honorable_Tiara",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Catalyst's_Honorable_Tiara.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1765,7 +1845,8 @@
     "DisplayName": "Catalyst's Stand",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Catalyst's_Stand",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Catalyst's_Stand.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1787,7 +1868,8 @@
     "DisplayName": "Catalyst's Sight",
     "ModSource": "ModLoader",
     "Category": "Accessory",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Catalyst's_Sight",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Catalyst's_Sight.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1809,7 +1891,8 @@
     "DisplayName": "Catalyst Mask",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Catalyst_Mask",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Catalyst_Mask.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1831,7 +1914,8 @@
     "DisplayName": "Catalyst's Prismic Sabers",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Catalyst's_Prismic_Sabers",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Catalyst's_Prismic_Sabers.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1853,7 +1937,8 @@
     "DisplayName": "Zeph's Body",
     "ModSource": "ModLoader",
     "Category": "Chestplate",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Zeph's_Body",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Zeph's_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1875,7 +1960,8 @@
     "DisplayName": "Zeph's Head",
     "ModSource": "ModLoader",
     "Category": "Helmet",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Zeph's_Head",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Zeph's_Head.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1897,7 +1983,8 @@
     "DisplayName": "Zeph's Legs",
     "ModSource": "ModLoader",
     "Category": "Leggings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Zeph's_Legs",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Zeph's_Legs.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1919,7 +2006,8 @@
     "DisplayName": "Zeph's Wings",
     "ModSource": "ModLoader",
     "Category": "Wings",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Zeph's_Wings",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Zeph's_Wings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1941,7 +2029,8 @@
     "DisplayName": "Starting Bag",
     "ModSource": "ModLoader",
     "Category": "Material",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Starting_Bag",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Starting_Bag.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1963,7 +2052,8 @@
     "DisplayName": "Unloaded Item",
     "ModSource": "ModLoader",
     "Category": "Material",
-    "WikiUrl": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Unloaded_Item",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Unloaded_Item.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",

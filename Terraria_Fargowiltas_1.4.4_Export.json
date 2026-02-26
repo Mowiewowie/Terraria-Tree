@@ -6,6 +6,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Bone_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Bone_Quiver.png",
     "Stats": {
       "Damage": 8,
       "DamageClass": " ranged damage",
@@ -42,6 +43,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Chlorophyte_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Chlorophyte_Quiver.png",
     "Stats": {
       "Damage": 16,
       "DamageClass": " ranged damage",
@@ -78,6 +80,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Cursed_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Cursed_Quiver.png",
     "Stats": {
       "Damage": 14,
       "DamageClass": " ranged damage",
@@ -114,6 +117,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Flame_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Flame_Quiver.png",
     "Stats": {
       "Damage": 7,
       "DamageClass": " ranged damage",
@@ -150,6 +154,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Frostburn_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Frostburn_Quiver.png",
     "Stats": {
       "Damage": 7,
       "DamageClass": " ranged damage",
@@ -186,6 +191,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Hellfire_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Hellfire_Quiver.png",
     "Stats": {
       "Damage": 13,
       "DamageClass": " ranged damage",
@@ -222,6 +228,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Holy_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Holy_Quiver.png",
     "Stats": {
       "Damage": 13,
       "DamageClass": " ranged damage",
@@ -258,6 +265,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Ichor_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Ichor_Quiver.png",
     "Stats": {
       "Damage": 13,
       "DamageClass": " ranged damage",
@@ -294,6 +302,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Jester's_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Jester's_Quiver.png",
     "Stats": {
       "Damage": 10,
       "DamageClass": " ranged damage",
@@ -330,6 +339,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Luminite_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Luminite_Quiver.png",
     "Stats": {
       "Damage": 15,
       "DamageClass": " ranged damage",
@@ -366,6 +376,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Unholy_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Unholy_Quiver.png",
     "Stats": {
       "Damage": 11,
       "DamageClass": " ranged damage",
@@ -402,6 +413,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Venom_Quiver",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Venom_Quiver.png",
     "Stats": {
       "Damage": 19,
       "DamageClass": " ranged damage",
@@ -438,6 +450,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Brittle_Bone",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Brittle_Bone.png",
     "Stats": {
       "Damage": 20,
       "DamageClass": " ranged damage",
@@ -475,6 +488,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Chlorophyte_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Chlorophyte_Pouch.png",
     "Stats": {
       "Damage": 9,
       "DamageClass": " ranged damage",
@@ -511,6 +525,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Crystal_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Crystal_Pouch.png",
     "Stats": {
       "Damage": 8,
       "DamageClass": " ranged damage",
@@ -547,6 +562,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Cursed_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Cursed_Pouch.png",
     "Stats": {
       "Damage": 12,
       "DamageClass": " ranged damage",
@@ -583,6 +599,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Explosive_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Explosive_Pouch.png",
     "Stats": {
       "Damage": 10,
       "DamageClass": " ranged damage",
@@ -619,6 +636,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Golden_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Golden_Pouch.png",
     "Stats": {
       "Damage": 10,
       "DamageClass": " ranged damage",
@@ -655,6 +673,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Ichor_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Ichor_Pouch.png",
     "Stats": {
       "Damage": 11,
       "DamageClass": " ranged damage",
@@ -691,6 +710,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Luminite_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Luminite_Pouch.png",
     "Stats": {
       "Damage": 19,
       "DamageClass": " ranged damage",
@@ -727,6 +747,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Meteor_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Meteor_Pouch.png",
     "Stats": {
       "Damage": 8,
       "DamageClass": " ranged damage",
@@ -763,6 +784,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Nano_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Nano_Pouch.png",
     "Stats": {
       "Damage": 15,
       "DamageClass": " ranged damage",
@@ -799,6 +821,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Party_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Party_Pouch.png",
     "Stats": {
       "Damage": 10,
       "DamageClass": " ranged damage",
@@ -835,6 +858,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Silver_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Silver_Pouch.png",
     "Stats": {
       "Damage": 8,
       "DamageClass": " ranged damage",
@@ -871,6 +895,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Tungsten_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Tungsten_Pouch.png",
     "Stats": {
       "Damage": 8,
       "DamageClass": " ranged damage",
@@ -907,6 +932,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_High_Velocity_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_High_Velocity_Pouch.png",
     "Stats": {
       "Damage": 13,
       "DamageClass": " ranged damage",
@@ -943,6 +969,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Venom_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Venom_Pouch.png",
     "Stats": {
       "Damage": 15,
       "DamageClass": " ranged damage",
@@ -979,6 +1006,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Copper_Coin_Safe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Copper_Coin_Safe.png",
     "Stats": {
       "Damage": 25,
       "DamageClass": " ranged damage",
@@ -1015,6 +1043,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Gold_Coin_Safe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Gold_Coin_Safe.png",
     "Stats": {
       "Damage": 100,
       "DamageClass": " ranged damage",
@@ -1051,6 +1080,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Platinum_Coin_Safe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Platinum_Coin_Safe.png",
     "Stats": {
       "Damage": 200,
       "DamageClass": " ranged damage",
@@ -1087,6 +1117,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Silver_Coin_Safe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Silver_Coin_Safe.png",
     "Stats": {
       "Damage": 50,
       "DamageClass": " ranged damage",
@@ -1123,6 +1154,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Crystal_Dart_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Crystal_Dart_Box.png",
     "Stats": {
       "Damage": 20,
       "DamageClass": " ranged damage",
@@ -1159,6 +1191,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Cursed_Dart_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Cursed_Dart_Box.png",
     "Stats": {
       "Damage": 25,
       "DamageClass": " ranged damage",
@@ -1195,6 +1228,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Ichor_Dart_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Ichor_Dart_Box.png",
     "Stats": {
       "Damage": 10,
       "DamageClass": " ranged damage",
@@ -1231,6 +1265,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Poison_Dart_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Poison_Dart_Box.png",
     "Stats": {
       "Damage": 10,
       "DamageClass": " ranged damage",
@@ -1267,6 +1302,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Gel_Pack",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Gel_Pack.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1303,6 +1339,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Cluster_Rocket_I_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Cluster_Rocket_I_Box.png",
     "Stats": {
       "Damage": 50,
       "DamageClass": " ranged damage",
@@ -1339,6 +1376,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Cluster_Rocket_II_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Cluster_Rocket_II_Box.png",
     "Stats": {
       "Damage": 50,
       "DamageClass": " ranged damage",
@@ -1375,6 +1413,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Dry_Rocket_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Dry_Rocket_Box.png",
     "Stats": {
       "Damage": 40,
       "DamageClass": " ranged damage",
@@ -1411,6 +1450,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Honey_Rocket_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Honey_Rocket_Box.png",
     "Stats": {
       "Damage": 40,
       "DamageClass": " ranged damage",
@@ -1447,6 +1487,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Lava_Rocket_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Lava_Rocket_Box.png",
     "Stats": {
       "Damage": 40,
       "DamageClass": " ranged damage",
@@ -1483,6 +1524,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Mini_Nuke_I_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Mini_Nuke_I_Box.png",
     "Stats": {
       "Damage": 90,
       "DamageClass": " ranged damage",
@@ -1519,6 +1561,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Mini_Nuke_II_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Mini_Nuke_II_Box.png",
     "Stats": {
       "Damage": 90,
       "DamageClass": " ranged damage",
@@ -1555,6 +1598,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Rocket_I_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Rocket_I_Box.png",
     "Stats": {
       "Damage": 40,
       "DamageClass": " ranged damage",
@@ -1591,6 +1635,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Rocket_II_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Rocket_II_Box.png",
     "Stats": {
       "Damage": 40,
       "DamageClass": " ranged damage",
@@ -1627,6 +1672,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Rocket_III_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Rocket_III_Box.png",
     "Stats": {
       "Damage": 65,
       "DamageClass": " ranged damage",
@@ -1663,6 +1709,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Rocket_IV_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Rocket_IV_Box.png",
     "Stats": {
       "Damage": 65,
       "DamageClass": " ranged damage",
@@ -1699,6 +1746,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Wet_Rocket_Box",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Wet_Rocket_Box.png",
     "Stats": {
       "Damage": 40,
       "DamageClass": " ranged damage",
@@ -1735,6 +1783,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Ammunition",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Endless_Star_Pouch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Endless_Star_Pouch.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1771,6 +1820,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Altar_Exterminator",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Altar_Exterminator.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1840,6 +1890,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/InstaHouse",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/InstaHouse.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1881,6 +1932,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Weapon",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Boom_Shuriken",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Boom_Shuriken.png",
     "Stats": {
       "Damage": 10,
       "DamageClass": " damage",
@@ -1929,6 +1981,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/City_Buster",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/City_Buster.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -1970,6 +2023,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Double_Obsidian_Instabridge",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Double_Obsidian_Instabridge.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2006,6 +2060,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Grave_Buster",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Grave_Buster.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2052,6 +2107,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Half_Instavator",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Half_Instavator.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2074,6 +2130,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Instabridge",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Instabridge.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2120,6 +2177,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Instalake",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Instalake.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2161,6 +2219,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Instatrack",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Instatrack.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2207,6 +2266,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Instavator",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Instavator.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2258,6 +2318,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lihzahrd_Instactuation_Bomb",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lihzahrd_Instactuation_Bomb.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2313,6 +2374,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mini_Dirt_Instabridge",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mini_Dirt_Instabridge.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2359,6 +2421,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mini_Instabridge",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mini_Instabridge.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2405,6 +2468,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Obsidian_Instabridge",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Obsidian_Instabridge.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2451,6 +2515,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Omni-Bridgifier",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Omni-Bridgifier.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2500,6 +2565,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Semi-Bridgifier",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Semi-Bridgifier.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2536,6 +2602,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Battle_Cry",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Battle_Cry.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2587,6 +2654,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Big_Suck_Potion",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Big_Suck_Potion.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2633,6 +2701,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Death_Fruit",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Death_Fruit.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2669,6 +2738,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Instant_Research",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Instant_Research.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2691,6 +2761,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Koha_Crystal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Koha_Crystal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2727,6 +2798,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/The_Ancient_Master's_Map_of_the_Lost_King's_Great_Ancestors",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/The_Ancient_Master's_Map_of_the_Lost_King's_Great_Ancestors.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2783,6 +2855,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/World_Token",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/World_Token.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2826,6 +2899,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Portable_Sundial",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Portable_Sundial.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2867,6 +2941,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Pylon_Cleaner",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Pylon_Cleaner.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2903,6 +2978,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Super_Dummy",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Super_Dummy.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2944,6 +3020,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Corruption_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Corruption_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -2985,6 +3062,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Corruption_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Corruption_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3026,6 +3104,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Crimson_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Crimson_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3067,6 +3146,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Crimson_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Crimson_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3108,6 +3188,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Forest_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Forest_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3149,6 +3230,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Forest_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Forest_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3190,6 +3272,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Hallowed_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Hallowed_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3231,6 +3314,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Hallowed_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Hallowed_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3272,6 +3356,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mushroom_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mushroom_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3313,6 +3398,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mushroom_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mushroom_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3354,6 +3440,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Purity_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Purity_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3395,6 +3482,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Purity_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Purity_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3436,6 +3524,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Desert_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Desert_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3477,6 +3566,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Desert_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Desert_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3518,6 +3608,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Snow_Renewal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Snow_Renewal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3559,6 +3650,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Snow_Renewal_Supreme",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Snow_Renewal_Supreme.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3600,6 +3692,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Anemometer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Anemometer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3629,6 +3722,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Battered_Club",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Battered_Club.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3660,6 +3754,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Old_Dragon_Egg",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Old_Dragon_Egg.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3691,6 +3786,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Festive_Ornament",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Festive_Ornament.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3722,6 +3818,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Forbidden_Scarab",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Forbidden_Scarab.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3751,6 +3848,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Forbidden_Tome",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Forbidden_Tome.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3782,6 +3880,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Head_of_Man",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Head_of_Man.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3813,6 +3912,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Ice_King's_Remains",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Ice_King's_Remains.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3844,6 +3944,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Martian_Memory_Stick",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Martian_Memory_Stick.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3875,6 +3976,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Matsuri_Lantern",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Matsuri_Lantern.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3906,6 +4008,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Naughty_List",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Naughty_List.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3937,6 +4040,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Party_Invite",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Party_Invite.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3966,6 +4070,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Outsider's_Portal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Outsider's_Portal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -3997,6 +4102,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Runaway_Probe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Runaway_Probe.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4028,6 +4134,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Slimy_Barometer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Slimy_Barometer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4057,6 +4164,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Spent_Lantern",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Spent_Lantern.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4093,6 +4201,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Spooky_Branch",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Spooky_Branch.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4124,6 +4233,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Suspicious_Looking_Scythe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Suspicious_Looking_Scythe.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4155,6 +4265,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Weather_Balloon",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Weather_Balloon.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4184,6 +4295,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Amalgamated_Skull",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Amalgamated_Skull.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4215,6 +4327,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Amalgamated_Spirit",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Amalgamated_Spirit.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4246,6 +4359,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Athenian_Idol",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Athenian_Idol.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4277,6 +4391,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Attractive_Ore",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Attractive_Ore.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4332,6 +4447,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Blood_Sushi_Platter",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Blood_Sushi_Platter.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4387,6 +4503,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Blood_Urchin",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Blood_Urchin.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4442,6 +4559,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Cloud_Snack",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Cloud_Snack.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4473,6 +4591,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Clown_License",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Clown_License.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4504,6 +4623,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Core_of_the_Frost_Core",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Core_of_the_Frost_Core.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4535,6 +4655,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Corrupt_Chest",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Corrupt_Chest.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4566,6 +4687,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Crimson_Chest",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Crimson_Chest.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4597,6 +4719,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Demonic_Plushie",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Demonic_Plushie.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4628,6 +4751,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Diluted_Rainbow_Matter",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Diluted_Rainbow_Matter.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4659,6 +4783,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Eggplant",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Eggplant.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4747,6 +4872,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Forbidden_Forbidden_Fragment",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Forbidden_Forbidden_Fragment.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4778,6 +4904,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Gnome_Hat",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Gnome_Hat.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4809,6 +4936,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Goblin_Scrap",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Goblin_Scrap.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4840,6 +4968,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Golden_Slime_Crown",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Golden_Slime_Crown.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4890,6 +5019,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Grand_Cross",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Grand_Cross.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4921,6 +5051,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Hallow_Chest",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Hallow_Chest.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -4952,6 +5083,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Heart_Chocolate",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Heart_Chocolate.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5002,6 +5134,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Hemoclaw_Crab",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Hemoclaw_Crab.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5057,6 +5190,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Holy_Grail",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Holy_Grail.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5117,6 +5251,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Jungle_Chest",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Jungle_Chest.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5208,6 +5343,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lee's_Headband",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lee's_Headband.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5239,6 +5375,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Moth_Lamp",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Moth_Lamp.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5270,6 +5407,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mothron_Egg",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mothron_Egg.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5301,6 +5439,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Pincushion",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Pincushion.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5332,6 +5471,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Pink_Slime_Tiara",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Pink_Slime_Tiara.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5382,6 +5522,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Pirate_Flag",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Pirate_Flag.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5413,6 +5554,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Plundered_Booty",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Plundered_Booty.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5444,6 +5586,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Rune_Orb",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Rune_Orb.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5499,6 +5642,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Shadowflame_Icon",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Shadowflame_Icon.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5530,6 +5674,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Slimy_Lock",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Slimy_Lock.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5561,6 +5706,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Suspicious_Looking_Chest",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Suspicious_Looking_Chest.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5616,6 +5762,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Suspicious_Looking_Lure",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Suspicious_Looking_Lure.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5671,6 +5818,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Worm_Snack",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Worm_Snack.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5702,6 +5850,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Ancient_Seal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Ancient_Seal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5731,6 +5880,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Zealot's_Possession",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Zealot's_Possession.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5770,6 +5920,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Death_Bringer_Fairy",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Death_Bringer_Fairy.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5801,6 +5952,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Guide_Doll_and_Match_Kit",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Guide_Doll_and_Match_Kit.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5846,6 +5998,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Royal_Slime_Crown",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Royal_Slime_Crown.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5909,6 +6062,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mechanical_Amalgam",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mechanical_Amalgam.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5940,6 +6094,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mutant_Plushie",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mutant_Plushie.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -5971,6 +6126,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Plantera's_Fruit",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Plantera's_Fruit.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6026,6 +6182,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Prismatic_Primrose",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Prismatic_Primrose.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6071,6 +6228,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Suspicious_Skull",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Suspicious_Skull.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6116,6 +6274,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Buzzy_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Buzzy_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6138,6 +6297,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Draco_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Draco_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6160,6 +6320,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Brainy_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Brainy_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6182,6 +6343,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Insanity_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Insanity_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6204,6 +6366,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mysterious_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mysterious_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6226,6 +6389,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Deary_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Deary_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6248,6 +6412,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Destruction_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Destruction_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6270,6 +6435,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Extra_Boney_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Extra_Boney_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6292,6 +6458,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Fairy_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Fairy_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6314,6 +6481,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Optical_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Optical_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6336,6 +6504,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Fishy_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Fishy_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6358,6 +6527,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lihzahrd_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lihzahrd_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6380,6 +6550,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lunar_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lunar_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6402,6 +6573,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Leafy_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Leafy_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6424,6 +6596,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Prime_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Prime_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6446,6 +6619,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Crystalline_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Crystalline_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6468,6 +6642,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Boney_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Boney_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6490,6 +6665,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Slimy_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Slimy_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6512,6 +6688,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Sibling_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Sibling_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6534,6 +6711,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Wally_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Wally_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6556,6 +6734,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Wormy_Energizer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Wormy_Energizer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6578,6 +6757,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Overstuffed_Larva",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Overstuffed_Larva.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6619,6 +6799,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Dragon_Egg_Tray",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Dragon_Egg_Tray.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6660,6 +6841,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Brain_Storm",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Brain_Storm.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6701,6 +6883,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Zealot's_Madness",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Zealot's_Madness.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6742,6 +6925,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Really_Forbidden_Tome",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Really_Forbidden_Tome.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6783,6 +6967,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Deer_Amalgamation",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Deer_Amalgamation.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6824,6 +7009,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Seismic_Actuator",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Seismic_Actuator.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6865,6 +7051,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Slimy_Stormcaller",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Slimy_Stormcaller.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6906,6 +7093,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Jar_of_Lacewings",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Jar_of_Lacewings.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6947,6 +7135,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Overloader",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Overloader.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -6978,6 +7167,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Eyemalgamation",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Eyemalgamation.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7019,6 +7209,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Can_of_Truffle_Worms",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Can_of_Truffle_Worms.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7060,6 +7251,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Naughty_Present_Sack",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Naughty_Present_Sack.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7101,6 +7293,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Goblin_War_Banner",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Goblin_War_Banner.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7142,6 +7335,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Runic_Power_Cell",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Runic_Power_Cell.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7183,6 +7377,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Martian_Communications_Satellite",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Martian_Communications_Satellite.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7224,6 +7419,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Runic_Inscription",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Runic_Inscription.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7265,6 +7461,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Pirate's_Bounty",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Pirate's_Bounty.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7306,6 +7503,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Heart_of_the_Jungle",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Heart_of_the_Jungle.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7347,6 +7545,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Primal_Control_Chip",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Primal_Control_Chip.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7388,6 +7587,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Overloaded_Pumpkin_Moon_Medallion",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Overloaded_Pumpkin_Moon_Medallion.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7429,6 +7629,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Overloaded_Crystal",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Overloaded_Crystal.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7470,6 +7671,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Skull_Chain_Necklace",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Skull_Chain_Necklace.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7511,6 +7713,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Personal_Royal_Order",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Personal_Royal_Order.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7552,6 +7755,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Omnifocal_Lens",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Omnifocal_Lens.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7593,6 +7797,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Bundle_of_Dolls",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Bundle_of_Dolls.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7634,6 +7839,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Worm_Chicken",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Worm_Chicken.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7675,6 +7881,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/A_Bee_In_My_Nation",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/A_Bee_In_My_Nation.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7720,6 +7927,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Celestially_Sigil",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Celestially_Sigil.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7765,6 +7973,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unusual_Deer_Skull",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unusual_Deer_Skull.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7810,6 +8019,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Brain_Matter",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Brain_Matter.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7855,6 +8065,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lihzahrd_Battery_Pack",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lihzahrd_Battery_Pack.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7900,6 +8111,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Some_Kind_of_Metallic_Eye",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Some_Kind_of_Metallic_Eye.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7945,6 +8157,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Some_Kind_of_Metallic_Skull",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Some_Kind_of_Metallic_Skull.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -7990,6 +8203,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Some_Kind_of_Metallic_Worm",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Some_Kind_of_Metallic_Worm.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8035,6 +8249,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Slimy_Decree",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Slimy_Decree.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8080,6 +8295,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Suspicious_Looking_Eyedrops",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Suspicious_Looking_Eyedrops.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8125,6 +8341,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Concentrated_Truffle_Worm_Oil",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Concentrated_Truffle_Worm_Oil.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8170,6 +8387,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Rotting_Bait",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Rotting_Bait.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8215,6 +8433,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Crimson_Altar",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Crimson_Altar.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8256,6 +8475,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Crucible_of_the_Cosmos",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Crucible_of_the_Cosmos.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8378,6 +8598,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Demon_Altar",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Demon_Altar.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8419,6 +8640,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Ech_Painting",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Ech_Painting.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8441,6 +8663,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Elemental_Assembler",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Elemental_Assembler.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8555,6 +8778,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Golden_Dipping_Vat",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Golden_Dipping_Vat.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8594,6 +8818,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Multitask_Center",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Multitask_Center.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8683,6 +8908,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mutant_Toilet",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mutant_Toilet.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8724,6 +8950,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Omnistation",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Omnistation.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8790,6 +9017,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Omnistation",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Omnistation.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8856,6 +9084,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Purity_Totem",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Purity_Totem.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8897,6 +9126,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Regal_Statue",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Regal_Statue.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8938,6 +9168,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Semistation",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Semistation.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -8989,6 +9220,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Sibling_Pylon",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Sibling_Pylon.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9062,6 +9294,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Blue_Brick_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Blue_Brick_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9091,6 +9324,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Blue_Slab_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Blue_Slab_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9120,6 +9354,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Blue_Tile_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Blue_Tile_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9149,6 +9384,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Granite_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Granite_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9198,6 +9434,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Green_Brick_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Green_Brick_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9227,6 +9464,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Green_Slab_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Green_Slab_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9256,6 +9494,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Green_Tile_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Green_Tile_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9285,6 +9524,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Lihzahrd_Brick_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Lihzahrd_Brick_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9334,6 +9574,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Marble_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Marble_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9383,6 +9624,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Pink_Brick_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Pink_Brick_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9412,6 +9654,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Pink_Slab_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Pink_Slab_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9441,6 +9684,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Pink_Tile_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Pink_Tile_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9470,6 +9714,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Wall",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Unsafe_Spider_Wall",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Unsafe_Spider_Wall.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9506,6 +9751,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Walking_Rick",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Walking_Rick.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9528,6 +9774,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Wires_Painting",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Wires_Painting.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9550,6 +9797,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Block / Furniture",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Wooden_Token",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Wooden_Token.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9579,6 +9827,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Chestplate",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Abominationn_Body",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Abominationn_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9620,6 +9869,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Helmet",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Abominationn_Mask",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Abominationn_Mask.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9661,6 +9911,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Leggings",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Abominationn_Pants",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Abominationn_Pants.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9702,6 +9953,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Accessory",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Abominationn's_Scythe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Abominationn's_Scythe.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9733,6 +9985,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Pet",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Crab-Sized_Glasses",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Crab-Sized_Glasses.png",
     "Stats": {
       "Damage": 0,
       "DamageClass": " damage",
@@ -9762,6 +10015,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Chestplate",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Deviantt_Body",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Deviantt_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9808,6 +10062,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Helmet",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Deviantt_Mask",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Deviantt_Mask.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9849,6 +10104,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Leggings",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Deviantt_Pants",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Deviantt_Pants.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9890,6 +10146,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Helmet",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lumberjack's_Hat",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lumberjack's_Hat.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9919,6 +10176,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Chestplate",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lumberjack_Body",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lumberjack_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9948,6 +10206,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Helmet",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lumberjack_Mask",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lumberjack_Mask.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -9977,6 +10236,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Leggings",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Lumberjack_Pants",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Lumberjack_Pants.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10006,6 +10266,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Chestplate",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mutant_Body",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mutant_Body.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10077,6 +10338,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Helmet",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mutant_Mask",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mutant_Mask.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10123,6 +10385,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Leggings",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mutant_Pants",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mutant_Pants.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10174,6 +10437,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Axe",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/The_Lumber_Jaxe",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/The_Lumber_Jaxe.png",
     "Stats": {
       "Damage": 15,
       "DamageClass": "true melee damage",
@@ -10215,6 +10479,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Abominationn",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Abominationn.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10237,6 +10502,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Bait",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Angler",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Angler.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10259,6 +10525,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Arms_Dealer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Arms_Dealer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10281,6 +10548,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Clothier",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Clothier.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10303,6 +10571,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Cyborg",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Cyborg.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10325,6 +10594,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Demolitionist",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Demolitionist.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10347,6 +10617,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Deviantt",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Deviantt.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10369,6 +10640,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Dryad",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Dryad.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10391,6 +10663,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Dye_Trader",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Dye_Trader.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10413,6 +10686,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Goblin_Tinkerer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Goblin_Tinkerer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10435,6 +10709,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Golfer",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Golfer.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10457,6 +10732,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Guide",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Guide.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10479,6 +10755,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/LumberJack",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/LumberJack.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10501,6 +10778,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mechanic",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mechanic.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10523,6 +10801,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Merchant",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Merchant.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10545,6 +10824,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mutant",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mutant.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10567,6 +10847,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Nurse",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Nurse.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10589,6 +10870,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Painter",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Painter.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10611,6 +10893,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Party_Girl",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Party_Girl.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10633,6 +10916,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Pirate",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Pirate.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10655,6 +10939,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Santa_Claus",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Santa_Claus.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10677,6 +10962,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Skeleton_Merchant",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Skeleton_Merchant.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10718,6 +11004,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Squirrel",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Squirrel.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10759,6 +11046,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Steampunker",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Steampunker.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10781,6 +11069,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Stylist",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Stylist.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10803,6 +11092,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Tavernkeep",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Tavernkeep.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10825,6 +11115,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Tax_Collector",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Tax_Collector.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10847,6 +11138,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Travelling_Merchant",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Travelling_Merchant.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10906,6 +11198,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Truffle",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Truffle.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10928,6 +11221,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Witch_Doctor",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Witch_Doctor.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10950,6 +11244,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Wizard",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Wizard.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10972,6 +11267,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Zoologist",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Zoologist.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -10994,6 +11290,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Princess",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Princess.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11016,6 +11313,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Town_Dog",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Town_Dog.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11038,6 +11336,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Town_Cat",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Town_Cat.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11060,6 +11359,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Town_Bunny",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Town_Bunny.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11082,6 +11382,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Nerdy_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Nerdy_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11104,6 +11405,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Cool_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Cool_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11126,6 +11428,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Elder_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Elder_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11148,6 +11451,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Clumsy_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Clumsy_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11170,6 +11474,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Diva_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Diva_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11192,6 +11497,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Surly_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Surly_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11214,6 +11520,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Mystic_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Mystic_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
@@ -11236,6 +11543,7 @@
     "ModSource": "Fargowiltas",
     "Category": "Material",
     "WikiUrl": "https://fargosmods.wiki.gg/wiki/Squire_Slime",
+    "IconUrl": "https://fargosmods.wiki.gg/wiki/Special:FilePath/Squire_Slime.png",
     "Stats": {
       "Damage": -1,
       "DamageClass": " damage",
