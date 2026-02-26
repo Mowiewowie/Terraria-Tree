@@ -68,14 +68,31 @@ jobs:
             "DataExporterMod"
           ]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
 
-      - name: 6. Execute C# Memory Extraction
+      - name: 6. Execute Multi-Environment C# Extraction
         run: |
           cd tmodloader
           echo "autocreate=2" > serverconfig.txt
           echo "worldname=ExportWorld" >> serverconfig.txt
           echo "language=en-US" >> serverconfig.txt
-          
-          # This boots the server, runs your C#, builds the JSON with the shop data, and exits.
+
+          echo "========================================="
+          echo "BOOT 1: Extracting Pure Vanilla..."
+          echo '["DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
+          dotnet tModLoader.dll -server -config serverconfig.txt || true
+
+          echo "========================================="
+          echo "BOOT 2: Extracting Vanilla + Calamity..."
+          echo '["Luminance", "CalamityMod", "CalamityModMusic", "DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
+          dotnet tModLoader.dll -server -config serverconfig.txt || true
+
+          echo "========================================="
+          echo "BOOT 3: Extracting Vanilla + Fargo's..."
+          echo '["Fargowiltas", "FargowiltasSouls", "DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
+          dotnet tModLoader.dll -server -config serverconfig.txt || true
+
+          echo "========================================="
+          echo "BOOT 4: Extracting ALL Mods Combined..."
+          echo '["Luminance", "CalamityMod", "CalamityModMusic", "Fargowiltas", "FargowiltasSouls", "DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
           dotnet tModLoader.dll -server -config serverconfig.txt || true
 
       - name: 7. Commit & Push Final Databases

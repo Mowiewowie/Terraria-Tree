@@ -166,7 +166,7 @@ namespace DataExporterMod
                     WikiUrl = GenerateWikiUrl(modSourceName, displayName),
                     IconUrl = GenerateIconUrl(modSourceName, displayName),
                     Stats = new {
-                        Damage = item.damage,
+                        Damage = item.damage, // This will now accurately reflect the active mod's balance changes!
                         DamageClass = item.DamageType?.DisplayName?.Value ?? item.DamageType?.Name ?? "Default",
                         Knockback = item.knockBack,
                         CritChance = item.crit,
@@ -184,23 +184,26 @@ namespace DataExporterMod
                 allExportedItems.Add(itemData);
             }
 
-            var groupedItems = allExportedItems.GroupBy(item => (string)((dynamic)item).ModSource);
+            // Dynamically determine the environment name based on which mods are currently loaded
+            bool hasCalamity = ModLoader.TryGetMod("CalamityMod", out _);
+            bool hasFargo = ModLoader.TryGetMod("Fargowiltas", out _);
+            
+            string envName = "Vanilla";
+            if (hasCalamity && hasFargo) envName = "All";
+            else if (hasCalamity) envName = "Vanilla_Calamity";
+            else if (hasFargo) envName = "Vanilla_Fargowiltas";
 
             string baseVersion = Main.versionNumber.StartsWith("1.4.5") ? "1.4.5" : "1.4.4";
+            string path = Path.Combine(Main.SavePath, $"Terraria_{envName}_{baseVersion}_Export.json");
 
-            foreach (var group in groupedItems)
+            using (StreamWriter sw = new StreamWriter(path))
+            using (JsonTextWriter writer = new JsonTextWriter(sw))
             {
-                string modName = group.Key;
-                string path = Path.Combine(Main.SavePath, $"Terraria_{modName}_{baseVersion}_Export.json");
-
-                using (StreamWriter sw = new StreamWriter(path))
-                using (JsonTextWriter writer = new JsonTextWriter(sw))
-                {
-                    writer.Formatting = Formatting.Indented;
-                    JsonSerializer.CreateDefault().Serialize(writer, group.ToList());
-                }
-                Console.WriteLine($"[CI/CD] Exported {group.Count()} items to {modName}_{baseVersion}.json");
+                writer.Formatting = Formatting.Indented;
+                JsonSerializer.CreateDefault().Serialize(writer, allExportedItems);
             }
+            
+            Console.WriteLine($"[CI/CD] Exported {allExportedItems.Count} items to {envName}_{baseVersion}.json");
         }
 
         private string DetermineCategory(Item item)
