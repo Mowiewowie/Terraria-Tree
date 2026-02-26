@@ -30,14 +30,11 @@ jobs:
 
       - name: 4. Build Custom Extraction Mod
         run: |
-          # We are in the repo root here, so we don't use ../
           echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
           
-          # NOW we move into the server folder
           cd tmodloader
           
-          # Compile the mod (Because we are in the tmodloader folder now, we DO use ../ to point back to the source folder)
-          ./start-tModLoaderServer.sh -build ../DataExporterMod -eac || true
+          dotnet tModLoader.dll -server -build ../DataExporterMod -eac || true
           
           echo "================ COMPILER ERROR LOGS ================"
           cat tModLoader-Logs/Launch.log || echo "Launch.log not found"
@@ -45,7 +42,9 @@ jobs:
           
           mkdir -p ~/.local/share/Terraria/tModLoader/Mods
           cp ../DataExporterMod/DataExporterMod.tmod ~/.local/share/Terraria/tModLoader/Mods/ || true
-          echo '[{"name": "DataExporterMod", "enabled": true}]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
+          
+          # Generates the correctly formatted 1.4.4+ string array
+          echo '["DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
 
       - name: 5. Execute C# Memory Extraction
         run: |
