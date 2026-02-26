@@ -28,20 +28,35 @@ jobs:
           unzip tModLoader.zip
           chmod +x start-tModLoaderServer.sh
 
-      - name: 4. Build Custom Extraction Mod
+      - name: 4. Assemble and Build Custom Extraction Mod
         run: |
-          # 1. Clean up cache and generate the mandatory C# project file
-          rm -rf DataExporterMod/bin DataExporterMod/obj
-          echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
+          # 1. Create a pristine, guaranteed workspace for the compiler
+          mkdir -p TML_Workspace/DataExporterMod
           
+          # 2. Hunt down the C# file anywhere in the repo and force it into the workspace
+          TARGET_CS=$(find . -name "DataExporterSystem.cs" | head -n 1)
+          if [ -z "$TARGET_CS" ]; then
+            echo "FATAL ERROR: DataExporterSystem.cs does not exist in the repository!"
+            exit 1
+          fi
+          cp "$TARGET_CS" TML_Workspace/DataExporterMod/
+          
+          # 3. Dynamically generate the required configurations to bypass typos or casing issues
+          echo "displayName = Automated Data Exporter" > TML_Workspace/DataExporterMod/build.txt
+          echo "author = TerrariTree" >> TML_Workspace/DataExporterMod/build.txt
+          echo "version = 1.0" >> TML_Workspace/DataExporterMod/build.txt
+          echo "tModLoaderVersion = 1.4.4" >> TML_Workspace/DataExporterMod/build.txt
+          echo "side = Server" >> TML_Workspace/DataExporterMod/build.txt
+          echo "A headless utility mod." > TML_Workspace/DataExporterMod/description.txt
+          echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > TML_Workspace/DataExporterMod/DataExporterMod.csproj
+          
+          # 4. Compile the mod from the pristine workspace
           cd tmodloader
           mkdir -p ./TMDSave/Mods
+          dotnet tModLoader.dll -server -savedirectory ./TMDSave -build ../TML_Workspace/DataExporterMod -eac
           
-          # 2. Compile the mod using the global .NET engine (Bypasses the interactive prompt!)
-          dotnet tModLoader.dll -server -savedirectory ./TMDSave -build ../DataExporterMod -eac
-          
-          # 3. Enable the mod
-          cp ./TMDSave/Mods/DataExporterMod.tmod ./TMDSave/Mods/ 2>/dev/null || cp ../DataExporterMod/DataExporterMod.tmod ./TMDSave/Mods/
+          # 5. Enable the mod and fail the pipeline instantly if the .tmod wasn't created
+          cp ./TMDSave/Mods/DataExporterMod.tmod ./TMDSave/Mods/ 2>/dev/null || cp ../TML_Workspace/DataExporterMod/DataExporterMod.tmod ./TMDSave/Mods/
           echo '["DataExporterMod"]' > ./TMDSave/Mods/enabled.json
 
       - name: 5. Execute C# Memory Extraction
