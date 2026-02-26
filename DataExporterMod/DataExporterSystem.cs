@@ -164,6 +164,7 @@ namespace DataExporterMod
                     ModSource = modSourceName,
                     Category = DetermineCategory(item),
                     WikiUrl = GenerateWikiUrl(modSourceName, displayName),
+                    IconUrl = GenerateIconUrl(modSourceName, displayName),
                     Stats = new {
                         Damage = item.damage,
                         DamageClass = item.DamageType?.DisplayName?.Value ?? item.DamageType?.Name ?? "Default",
@@ -269,9 +270,21 @@ namespace DataExporterMod
         private string GenerateWikiUrl(string modSource, string displayName)
         {
             string urlName = displayName.Replace(" ", "_");
-            if (modSource == "Vanilla") return $"https://terraria.wiki.gg/wiki/{urlName}";
-            if (modSource == "CalamityMod") return $"https://calamitymod.wiki.gg/wiki/{urlName}";
+            if (modSource == "Vanilla" || modSource == "ModLoader") return $"https://terraria.wiki.gg/wiki/{urlName}";
+            if (modSource == "CalamityMod" || modSource == "CalamityModMusic") return $"https://calamitymod.wiki.gg/wiki/{urlName}";
             if (modSource == "FargowiltasSouls" || modSource == "Fargowiltas") return $"https://fargosmods.wiki.gg/wiki/{urlName}";
+            return ""; 
+        }
+
+        private string GenerateIconUrl(string modSource, string displayName)
+        {
+            // MediaWiki requires spaces to be replaced by underscores, and a file extension
+            string fileName = displayName.Replace(" ", "_") + ".png";
+            
+            if (modSource == "Vanilla" || modSource == "ModLoader") return $"https://terraria.wiki.gg/wiki/Special:FilePath/{fileName}";
+            if (modSource == "CalamityMod" || modSource == "CalamityModMusic") return $"https://calamitymod.wiki.gg/wiki/Special:FilePath/{fileName}";
+            if (modSource == "FargowiltasSouls" || modSource == "Fargowiltas") return $"https://fargosmods.wiki.gg/wiki/Special:FilePath/{fileName}";
+            
             return ""; 
         }
 
