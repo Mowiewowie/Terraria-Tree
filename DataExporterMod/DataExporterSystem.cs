@@ -201,7 +201,7 @@ namespace DataExporterMod
                 if (Main.vanityPet[item.buffType] || Main.lightPet[item.buffType]) return "Pet";
                 return "Consumable";
             }
-            if (item.bossBagNPC > 0) return "Treasure Bag";
+            if (ItemID.Sets.BossBag[item.type]) return "Treasure Bag";
 
             // 6. Placeables
             if (item.createTile > -1) return "Block / Furniture";

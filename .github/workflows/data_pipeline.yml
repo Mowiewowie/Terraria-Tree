@@ -2,14 +2,16 @@ name: TerrariTree Automated Data Extraction
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Runs automatically every Sunday at midnight
-  workflow_dispatch: # Allows you to click a "Run workflow" button manually
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    timeout-minutes: 10
 
     steps:
       - name: 1. Checkout Repository
@@ -18,72 +20,55 @@ jobs:
       - name: 2. Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' # Updated to match tModLoader's new architecture
+          dotnet-version: '8.0.x'
 
-      - name: 3. Download & Extract Headless tModLoader
+      - name: 3. Download Headless tModLoader
         run: |
           mkdir tmodloader
           cd tmodloader
-          wget https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip
-          unzip tModLoader.zip
-          chmod +x start-tModLoaderServer.sh
+          wget -q https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip
+          unzip -q tModLoader.zip
 
-      - name: 4. Prepare and Build Custom Extraction Mod
+      - name: 4. Build Custom Extraction Mod (Legacy Method)
         run: |
           cd tmodloader
           
-          # 1. Define the official tModLoader user directories
-          TML_USER_DIR=~/.local/share/Terraria/tModLoader
-          mkdir -p $TML_USER_DIR/ModSources/DataExporterMod
-          mkdir -p $TML_USER_DIR/Mods
+          # Clean old artifacts to trigger TML's automatic .csproj generation
+          rm -f ../DataExporterMod/*.csproj
           
-          # 2. Copy your raw C# source code into the official ModSources folder
-          cp ../DataExporterMod/DataExporterSystem.cs $TML_USER_DIR/ModSources/DataExporterMod/
-          cp ../DataExporterMod/build.txt $TML_USER_DIR/ModSources/DataExporterMod/
-          cp ../DataExporterMod/description.txt $TML_USER_DIR/ModSources/DataExporterMod/
+          # Compile using the exact pathing from the legacy script
+          dotnet tModLoader.dll -server -build ../DataExporterMod
           
-          # 3. Boot the compiler. Because the files are in ModSources, tModLoader will automatically 
-          #    generate the correct .csproj and .targets files with the Terraria API references before building.
-          dotnet tModLoader.dll -server -build $TML_USER_DIR/ModSources/DataExporterMod -eac || true
+          # Use find to locate the output, just like the legacy script
+          mkdir -p ~/.local/share/Terraria/tModLoader/Mods/
+          find ../DataExporterMod/ -name "DataExporterMod.tmod" -exec cp {} ~/.local/share/Terraria/tModLoader/Mods/ \;
           
-          # 4. Extract the exact MSBuild compiler logs in case of C# syntax errors
-          echo "================ COMPILER ERROR LOGS ================"
-          cat $TML_USER_DIR/Logs/Launch.log || echo "Launch.log not found"
-          echo "====================================================="
-          
-          # 5. Enable the freshly compiled mod
-          echo '["DataExporterMod"]' > $TML_USER_DIR/Mods/enabled.json
+          echo '["DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
 
-      - name: 5. Execute C# Memory Extraction
+      - name: 5. Execute C# Memory Extraction (Config File Method)
         run: |
           cd tmodloader
-          # Boot the server using the default directories. It will run the mod, extract the data, and exit.
-          dotnet tModLoader.dll -server -autocreate 1 -world name.wld
-
-      - name: 6. Move C# JSON Artifacts to Workspace
-        run: |
-          # The C# script uses Main.SavePath, which defaults to the TML_USER_DIR
-          cp ~/.local/share/Terraria/tModLoader/Terraria_Vanilla_1.4.4_Export.json ./
-          cp ~/.local/share/Terraria/tModLoader/Terraria_CalamityMod_1.4.4_Export.json ./ || true
-          cp ~/.local/share/Terraria/tModLoader/Terraria_FargowiltasSouls_1.4.4_Export.json ./ || true
-
-      - name: 7. Setup Python Environment
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
           
-      - name: 8. Install Python Dependencies
-        run: pip install requests beautifulsoup4
+          # Re-implement the legacy serverconfig.txt to permanently kill interactive prompts
+          echo "autocreate=2" > serverconfig.txt
+          echo "worldname=ExportWorld" >> serverconfig.txt
+          echo "language=en-US" >> serverconfig.txt
+          
+          # Boot the server using the config file
+          dotnet tModLoader.dll -server -config serverconfig.txt || true
 
-      - name: 9. Run Python Wiki Injector (Chest & NPC Shop Data)
-        run: python scripts/wiki-injector.py
+      - name: 6. Move C# JSON Artifacts & Inject Wiki Data
+        run: |
+          # Extract the JSON using find, matching legacy behavior
+          find ~/.local/share/Terraria/ -name "Terraria_Vanilla_*_Export.json" -exec cp {} ./Terraria_Vanilla_1.4.4_Export.json \;
+          
+          pip install requests beautifulsoup4
+          python scripts/wiki-injector.py
 
-      - name: 10. Commit & Push Final Databases
+      - name: 7. Commit & Push Final Databases
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add Terraria_*_Export.json
-          
-          # Only commit if the files have actually changed to prevent empty commits
-          git commit -m "[CI/CD] Automated Terraria Database Update (v1.4.4 Engine)" || echo "No changes to commit"
+          git add Terraria_Vanilla_1.4.4_Export.json
+          git commit -m "[CI/CD] Automated Terraria Database Update" || echo "No changes to commit"
           git push
