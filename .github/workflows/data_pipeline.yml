@@ -11,7 +11,7 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 180 # Increased to 3 hours
+    timeout-minutes: 240
 
     steps:
       - name: 1. Checkout Repository
@@ -81,8 +81,7 @@ jobs:
         run: |
           find ~/.local/share/Terraria/ -name "*_Export.json" -exec cp {} ./ \;
           
-          # Install cloudscraper to bypass Cloudflare
-          pip install cloudscraper beautifulsoup4
+          pip install aiohttp beautifulsoup4
           python scripts/wiki-injector.py
 
       - name: 8. Commit & Push Final Databases
