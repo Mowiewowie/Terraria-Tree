@@ -31,32 +31,26 @@ jobs:
       - name: 4. Build Custom Extraction Mod
         run: |
           echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
-          
           cd tmodloader
+          ./start-tModLoaderServer.sh -build ../DataExporterMod -eac || true
           
-          dotnet tModLoader.dll -server -build ../DataExporterMod -eac || true
-          
-          echo "================ COMPILER ERROR LOGS ================"
-          cat tModLoader-Logs/Launch.log || echo "Launch.log not found"
-          echo "====================================================="
-          
-          mkdir -p ~/.local/share/Terraria/tModLoader/Mods
-          cp ../DataExporterMod/DataExporterMod.tmod ~/.local/share/Terraria/tModLoader/Mods/ || true
-          
-          # Generates the correctly formatted 1.4.4+ string array
-          echo '["DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
+          # Force an explicit, localized save directory inside the workspace
+          mkdir -p ./TMDSave/Mods
+          cp ../DataExporterMod/DataExporterMod.tmod ./TMDSave/Mods/
+          echo '["DataExporterMod"]' > ./TMDSave/Mods/enabled.json
 
       - name: 5. Execute C# Memory Extraction
         run: |
           cd tmodloader
-          ./start-tModLoaderServer.sh -server -autocreate 1 -world name.wld || true
-          
+          # Boot the server using the forced save directory
+          ./start-tModLoaderServer.sh -savedirectory ./TMDSave -autocreate 1 -world name.wld || true
+
       - name: 6. Move C# JSON Artifacts to Workspace
         run: |
-          # tModLoader saves logs to Main.SavePath. We move them to our frontend data folder.
-          cp ~/.local/share/Terraria/tModLoader/Terraria_Vanilla_1.4.4_Export.json ./
-          cp ~/.local/share/Terraria/tModLoader/Terraria_CalamityMod_1.4.4_Export.json ./ || true
-          cp ~/.local/share/Terraria/tModLoader/Terraria_FargowiltasSouls_1.4.4_Export.json ./ || true
+          # Copy the generated JSON files out of the forced save directory
+          cp tmodloader/TMDSave/Terraria_Vanilla_1.4.4_Export.json ./
+          cp tmodloader/TMDSave/Terraria_CalamityMod_1.4.4_Export.json ./ || true
+          cp tmodloader/TMDSave/Terraria_FargowiltasSouls_1.4.4_Export.json ./ || true
 
       - name: 7. Setup Python Environment
         uses: actions/setup-python@v5
