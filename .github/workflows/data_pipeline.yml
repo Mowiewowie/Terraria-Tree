@@ -35,19 +35,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lib32gcc-s1
           
-          mkdir -p steamcmd
-          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C steamcmd
+          mkdir -p $GITHUB_WORKSPACE/steamcmd
+          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C $GITHUB_WORKSPACE/steamcmd
           
-          # Download Calamity (2824688072) and FargowiltasSouls (2815540735)
-          mkdir -p steamcmd_downloads
-          ./steamcmd/steamcmd.sh +force_install_dir ./steamcmd_downloads +login anonymous \
+          # Force an absolute install directory so SteamCMD doesn't nest the folders
+          mkdir -p $GITHUB_WORKSPACE/steamcmd_downloads
+          $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/steamcmd_downloads +login anonymous \
             +workshop_download_item 1281930 2824688072 \
             +workshop_download_item 1281930 2815540735 \
             +quit
           
-          # Move workshop mods to the active server
+          # Move them from the absolute path directly to the server's mod directory
           mkdir -p ~/.local/share/Terraria/tModLoader/Mods/
-          cp -r steamcmd_downloads/steamapps/workshop/content/1281930/* ~/.local/share/Terraria/tModLoader/Mods/ || true
+          cp -r $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/* ~/.local/share/Terraria/tModLoader/Mods/ || true
 
       - name: 5. Build Custom Extraction Mod
         run: |
