@@ -83,7 +83,7 @@ async function loadVersionData(targetVersion) {
 
     try {
         // Attempt to load pristine C# auto-generated file
-        const res = await fetch(`Terraria_Vanilla_${targetVersion}_Final.json`);
+        const res = await fetch(`Terraria_Vanilla_${targetVersion}_Export.json`);
         if (!res.ok) throw new Error("Pristine schema not found on server.");
         
         const rawArray = await res.json();
