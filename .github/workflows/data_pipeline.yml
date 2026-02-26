@@ -48,9 +48,9 @@ jobs:
             +workshop_download_item 1281930 3222493606 \
             +quit
           
-          # Move them from the absolute path directly to the server's mod directory
+          # FIX: Extract the .tmod files from the nested workshop folders and flatten them into the Mods directory
           mkdir -p ~/.local/share/Terraria/tModLoader/Mods/
-          cp -r $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/* ~/.local/share/Terraria/tModLoader/Mods/ || true
+          find $GITHUB_WORKSPACE/steamcmd_downloads/steamapps/workshop/content/1281930/ -type f -name "*.tmod" -exec cp {} ~/.local/share/Terraria/tModLoader/Mods/ \;
 
       - name: 5. Build Custom Extraction Mod
         run: |
@@ -81,8 +81,8 @@ jobs:
         run: |
           find ~/.local/share/Terraria/ -name "*_Export.json" -exec cp {} ./ \;
           
-          # Install aiohttp instead of requests
-          pip install aiohttp beautifulsoup4
+          # Install cloudscraper to bypass Cloudflare
+          pip install cloudscraper beautifulsoup4
           python scripts/wiki-injector.py
 
       - name: 8. Commit & Push Final Databases
