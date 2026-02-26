@@ -28,17 +28,21 @@ jobs:
           unzip tModLoader.zip
           chmod +x start-tModLoaderServer.sh
           
-      - name: 4. Inject Custom Extraction Mod
+      - name: 4. Build and Inject Custom Extraction Mod
         run: |
+          cd tmodloader
+          # Instruct tModLoader to compile your raw C# folder into a .tmod file
+          ./start-tModLoaderServer.sh -build ../DataExporterMod -eac
+          
+          # Move the newly compiled mod into the active directory
           mkdir -p ~/.local/share/Terraria/tModLoader/Mods
-          # Assuming your C# mod is stored in a folder called 'DataExporterMod' in your repo
-          cp -r DataExporterMod ~/.local/share/Terraria/tModLoader/Mods/
+          cp ../DataExporterMod/DataExporterMod.tmod ~/.local/share/Terraria/tModLoader/Mods/
           echo '[{"name": "DataExporterMod", "enabled": true}]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
 
       - name: 5. Execute C# Memory Extraction
         run: |
           cd tmodloader
-          # Run the headless server. The C# script uses Environment.Exit(0) to shut it down once done.
+          # Boot the server. Our compiled mod will now hijack the boot process, extract the JSONs, and forcefully shut the server down.
           ./start-tModLoaderServer.sh -server -autocreate 1 -world name.wld || true
           
       - name: 6. Move C# JSON Artifacts to Workspace
