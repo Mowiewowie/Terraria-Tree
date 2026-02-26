@@ -26,18 +26,19 @@ jobs:
           cd tmodloader
           wget https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip
           unzip tModLoader.zip
-          # No chmod needed because we are using the dotnet command directly
+          chmod +x start-tModLoaderServer.sh
 
       - name: 4. Build Custom Extraction Mod
         run: |
+          # Generates the mandatory .csproj file required by the 1.4.4+ compiler
+          echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > ../DataExporterMod/DataExporterMod.csproj
+          
           cd tmodloader
           
-          # Directly invoke the .NET SDK to compile the mod
-          dotnet tModLoader.dll -server -build ../DataExporterMod -eac || true
+          # Compile the mod
+          ./start-tModLoaderServer.sh -build ../DataExporterMod -eac || true
           
           echo "================ COMPILER ERROR LOGS ================"
-          # Print the master logs so we can read any C# syntax errors
-          cat ~/.local/share/Terraria/tModLoader/Logs/server.log || echo "server.log not found"
           cat tModLoader-Logs/Launch.log || echo "Launch.log not found"
           echo "====================================================="
           
@@ -48,8 +49,7 @@ jobs:
       - name: 5. Execute C# Memory Extraction
         run: |
           cd tmodloader
-          # Boot the server directly using dotnet
-          dotnet tModLoader.dll -server -autocreate 1 -world name.wld || true
+          ./start-tModLoaderServer.sh -server -autocreate 1 -world name.wld || true
           
       - name: 6. Move C# JSON Artifacts to Workspace
         run: |
