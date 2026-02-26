@@ -32,22 +32,25 @@ jobs:
         run: |
           echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
           cd tmodloader
-          ./start-tModLoaderServer.sh -build ../DataExporterMod -eac || true
           
-          # Force an explicit, localized save directory inside the workspace
+          # 1. Create our explicit save directory first
           mkdir -p ./TMDSave/Mods
-          cp ../DataExporterMod/DataExporterMod.tmod ./TMDSave/Mods/
+          
+          # 2. Compile the mod AND force it to save the output directly to our custom directory
+          ./start-tModLoaderServer.sh -savedirectory ./TMDSave -build ../DataExporterMod -eac
+          
+          # 3. Enable the mod in the custom directory
           echo '["DataExporterMod"]' > ./TMDSave/Mods/enabled.json
 
       - name: 5. Execute C# Memory Extraction
         run: |
           cd tmodloader
-          # Boot the server using the forced save directory
+          # Boot the server using the forced save directory. The C# script will now trigger and auto-shutdown.
           ./start-tModLoaderServer.sh -savedirectory ./TMDSave -autocreate 1 -world name.wld || true
 
       - name: 6. Move C# JSON Artifacts to Workspace
         run: |
-          # Copy the generated JSON files out of the forced save directory
+          # Copy the generated JSON files out of the forced save directory so GitHub can commit them
           cp tmodloader/TMDSave/Terraria_Vanilla_1.4.4_Export.json ./
           cp tmodloader/TMDSave/Terraria_CalamityMod_1.4.4_Export.json ./ || true
           cp tmodloader/TMDSave/Terraria_FargowiltasSouls_1.4.4_Export.json ./ || true
