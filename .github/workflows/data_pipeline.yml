@@ -97,11 +97,16 @@ jobs:
 
       - name: 7. Commit & Push Final Databases
         run: |
-          # The JSON files are already perfect. Just grab them and commit!
+          # 1. Sweep the tModLoader save directory for ALL generated JSON environments
           find ~/.local/share/Terraria/ -name "*_Export.json" -exec cp {} ./ \;
           
+          # 2. Configure the GitHub Actions Bot
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          
+          # 3. Stage all 4 JSON files (Vanilla, Vanilla_Calamity, Vanilla_Fargowiltas, All)
           git add *_Export.json
+          
+          # 4. Commit and push (Safely aborts if the game hasn't updated and files are identical)
           git commit -m "[CI/CD] Automated Zero-Touch Database Update" || echo "No changes to commit"
           git push
