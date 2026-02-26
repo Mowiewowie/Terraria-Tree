@@ -42,7 +42,10 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/steamcmd_downloads
           $GITHUB_WORKSPACE/steamcmd/steamcmd.sh +force_install_dir $GITHUB_WORKSPACE/steamcmd_downloads +login anonymous \
             +workshop_download_item 1281930 2824688072 \
+            +workshop_download_item 1281930 2824688266 \
             +workshop_download_item 1281930 2815540735 \
+            +workshop_download_item 1281930 2570931073 \
+            +workshop_download_item 1281930 3222493606 \
             +quit
           
           # Move them from the absolute path directly to the server's mod directory
