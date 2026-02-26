@@ -11,7 +11,7 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 180 # Increased to 3 hours
 
     steps:
       - name: 1. Checkout Repository
@@ -29,46 +29,63 @@ jobs:
           wget -q https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip
           unzip -q tModLoader.zip
 
-      - name: 4. Build Custom Extraction Mod (Legacy Method)
+      - name: 4. Install SteamCMD & Download Target Mods
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y lib32gcc-s1
+          
+          mkdir -p steamcmd
+          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - -C steamcmd
+          
+          # Download Calamity (2824688072) and FargowiltasSouls (2815540735)
+          mkdir -p steamcmd_downloads
+          ./steamcmd/steamcmd.sh +force_install_dir ./steamcmd_downloads +login anonymous \
+            +workshop_download_item 1281930 2824688072 \
+            +workshop_download_item 1281930 2815540735 \
+            +quit
+          
+          # Move workshop mods to the active server
+          mkdir -p ~/.local/share/Terraria/tModLoader/Mods/
+          cp -r steamcmd_downloads/steamapps/workshop/content/1281930/* ~/.local/share/Terraria/tModLoader/Mods/ || true
+
+      - name: 5. Build Custom Extraction Mod
         run: |
           cd tmodloader
-          
-          # Clean old artifacts to trigger TML's automatic .csproj generation
           rm -f ../DataExporterMod/*.csproj
           
-          # Compile using the exact pathing from the legacy script
           dotnet tModLoader.dll -server -build ../DataExporterMod
           
-          # Use find to locate the output, just like the legacy script
-          mkdir -p ~/.local/share/Terraria/tModLoader/Mods/
           find ../DataExporterMod/ -name "DataExporterMod.tmod" -exec cp {} ~/.local/share/Terraria/tModLoader/Mods/ \;
           
-          echo '["DataExporterMod"]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
+          # Force TML to enable the mods in headless mode
+          echo '[
+            "CalamityMod",
+            "FargowiltasSouls",
+            "DataExporterMod"
+          ]' > ~/.local/share/Terraria/tModLoader/Mods/enabled.json
 
-      - name: 5. Execute C# Memory Extraction (Config File Method)
+      - name: 6. Execute C# Memory Extraction
         run: |
           cd tmodloader
-          
-          # Re-implement the legacy serverconfig.txt to permanently kill interactive prompts
           echo "autocreate=2" > serverconfig.txt
           echo "worldname=ExportWorld" >> serverconfig.txt
           echo "language=en-US" >> serverconfig.txt
           
-          # Boot the server using the config file
           dotnet tModLoader.dll -server -config serverconfig.txt || true
 
-      - name: 6. Move C# JSON Artifacts & Inject Wiki Data
+      - name: 7. Move C# JSON Artifacts & Inject Wiki Data
         run: |
-          # Extract the JSON using find, matching legacy behavior
-          find ~/.local/share/Terraria/ -name "Terraria_Vanilla_*_Export.json" -exec cp {} ./Terraria_Vanilla_1.4.4_Export.json \;
+          # Extract all generated JSON files
+          find ~/.local/share/Terraria/ -name "*_Export.json" -exec cp {} ./ \;
           
           pip install requests beautifulsoup4
-          python scripts/wiki-injector.py
+          python scripts/wiki-injector.py # Or pipeline.py depending on your file name
 
-      - name: 7. Commit & Push Final Databases
+      - name: 8. Commit & Push Final Databases
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add Terraria_Vanilla_1.4.4_Export.json
+          git add *_Export.json
           git commit -m "[CI/CD] Automated Terraria Database Update" || echo "No changes to commit"
           git push
