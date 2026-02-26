@@ -30,35 +30,25 @@ jobs:
 
       - name: 4. Build Custom Extraction Mod
         run: |
-          # 1. Clean up any leftover cached files that cause TML002 precompiled errors
+          # 1. Clean up cache and generate the mandatory C# project file
           rm -rf DataExporterMod/bin DataExporterMod/obj
-          
-          # 2. Generate the mandatory csproj
           echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
           
           cd tmodloader
           mkdir -p ./TMDSave/Mods
           
-          # 3. Boot the shell script once to force it to download the local .NET environment
-          ./start-tModLoaderServer.sh -help || true
+          # 2. Compile the mod using the global .NET engine (Bypasses the interactive prompt!)
+          dotnet tModLoader.dll -server -savedirectory ./TMDSave -build ../DataExporterMod -eac
           
-          # 4. Bypass the shell script and call the local .NET directly to prevent argument merging
-          ./dotnet/dotnet tModLoader.dll -server -savedirectory ./TMDSave -build ../DataExporterMod -eac || true
-          
-          # 5. Guaranteed recursive log extraction (Finds EVERY log file anywhere in the directory)
-          echo "================ COMPILER ERROR LOGS ================"
-          find . -type f -name "*.log" -exec echo "--- {} ---" \; -exec cat {} \;
-          echo "====================================================="
-          
-          # 6. Strict file copy that fails the pipeline if the .tmod isn't created
+          # 3. Enable the mod
           cp ./TMDSave/Mods/DataExporterMod.tmod ./TMDSave/Mods/ 2>/dev/null || cp ../DataExporterMod/DataExporterMod.tmod ./TMDSave/Mods/
           echo '["DataExporterMod"]' > ./TMDSave/Mods/enabled.json
 
       - name: 5. Execute C# Memory Extraction
         run: |
           cd tmodloader
-          # Run the server directly through the local dotnet executable
-          ./dotnet/dotnet tModLoader.dll -server -savedirectory ./TMDSave -autocreate 1 -world name.wld || true
+          # Boot the server explicitly with autocreate to prevent ANY keyboard prompts
+          dotnet tModLoader.dll -server -savedirectory ./TMDSave -autocreate 1 -world name.wld
 
       - name: 6. Move C# JSON Artifacts to Workspace
         run: |
