@@ -37,6 +37,7 @@ namespace DataExporterMod
             var dropMap = new Dictionary<int, List<object>>();
             var feed = new DropRateInfoChainFeed(1f);
 
+            // 1. GLOBAL ENEMY DROPS
             var allDropsForSlime = Main.ItemDropsDB.GetRulesForNPCID(1, includeGlobalDrops: true);
             var specificDropsForSlime = Main.ItemDropsDB.GetRulesForNPCID(1, includeGlobalDrops: false);
             
@@ -53,11 +54,12 @@ namespace DataExporterMod
                 dropMap[dropInfo.itemId].Add(new {
                     SourceNPC_ID = -1,
                     SourceNPC_Name = "Any Enemy",
-                    DropChance = dropInfo.dropRate,
-                    Conditions = dropInfo.conditions?.Select(c => c?.GetConditionDescription() ?? "").ToList()
+                    DropChance = Math.Round(dropInfo.dropRate * 100, 2) + "%", // Normalized to string percentage
+                    Conditions = dropInfo.conditions?.Select(c => c?.GetConditionDescription() ?? "").Where(c => !string.IsNullOrEmpty(c)).ToList()
                 });
             }
 
+            // 2. SPECIFIC NPC DROPS
             for (int npcId = -65; npcId < NPCLoader.NPCCount; npcId++)
             {
                 var rules = Main.ItemDropsDB.GetRulesForNPCID(npcId, includeGlobalDrops: false);
@@ -71,12 +73,69 @@ namespace DataExporterMod
                     if (!dropMap.ContainsKey(dropInfo.itemId)) dropMap[dropInfo.itemId] = new List<object>();
                     dropMap[dropInfo.itemId].Add(new {
                         SourceNPC_ID = npcId,
-                        SourceNPC_Name = Lang.GetNPCNameValue(npcId) ?? "Unknown Entity",
-                        DropChance = dropInfo.dropRate,
-                        Conditions = dropInfo.conditions?.Select(c => c?.GetConditionDescription() ?? "").ToList()
+                        SourceNPC_Name = "NPC: " + (Lang.GetNPCNameValue(npcId) ?? "Unknown Entity"),
+                        DropChance = Math.Round(dropInfo.dropRate * 100, 2) + "%",
+                        Conditions = dropInfo.conditions?.Select(c => c?.GetConditionDescription() ?? "").Where(c => !string.IsNullOrEmpty(c)).ToList()
                     });
                 }
             }
+
+            // 3. NPC SHOP DATABASE (Replaces "Sold By" Wiki scraping)
+            foreach (var shop in NPCShopDatabase.AllShops)
+            {
+                int npcId = shop.NpcType;
+                string npcName = Lang.GetNPCNameValue(npcId) ?? "Unknown NPC";
+
+                foreach (var entry in shop.ActiveEntries)
+                {
+                    int itemId = entry.Item.type;
+                    
+                    List<string> shopConditions = new List<string>();
+                    if (entry.Conditions != null)
+                    {
+                        foreach(var condition in entry.Conditions) 
+                        {
+                            if (!string.IsNullOrEmpty(condition.Description.Value))
+                            {
+                                shopConditions.Add(condition.Description.Value);
+                            }
+                        }
+                    }
+
+                    if (!dropMap.ContainsKey(itemId)) dropMap[itemId] = new List<object>();
+
+                    dropMap[itemId].Add(new {
+                        SourceNPC_ID = npcId,
+                        SourceNPC_Name = "Shop: " + npcName,
+                        DropChance = "100%", // Shops are always guaranteed when conditions are met
+                        Conditions = shopConditions
+                    });
+                }
+            }
+
+            // 4. ITEM DROPS (Replaces "Found In" Wiki scraping for Crates and Boss Bags)
+            for (int itemId = 1; itemId < ItemLoader.ItemCount; itemId++)
+            {
+                var rules = Main.ItemDropsDB.GetRulesForItemID(itemId);
+                if (rules == null || !rules.Any()) continue;
+
+                var dropRates = new List<DropRateInfo>();
+                foreach (var rule in rules) rule.ReportDroprates(dropRates, feed);
+
+                string containerName = Lang.GetItemNameValue(itemId) ?? "Unknown Container";
+
+                foreach (var dropInfo in dropRates)
+                {
+                    if (!dropMap.ContainsKey(dropInfo.itemId)) dropMap[dropInfo.itemId] = new List<object>();
+                    dropMap[dropInfo.itemId].Add(new {
+                        SourceNPC_ID = -1,
+                        SourceNPC_Name = "Chest/Crate/Bag: " + containerName,
+                        DropChance = Math.Round(dropInfo.dropRate * 100, 2) + "%",
+                        Conditions = dropInfo.conditions?.Select(c => c?.GetConditionDescription() ?? "").Where(c => !string.IsNullOrEmpty(c)).ToList()
+                    });
+                }
+            }
+
             return dropMap;
         }
 
@@ -126,13 +185,11 @@ namespace DataExporterMod
 
             var groupedItems = allExportedItems.GroupBy(item => (string)((dynamic)item).ModSource);
 
-            // Dynamically detect the Terraria engine version (e.g., maps "1.4.4.9" to "1.4.4")
             string baseVersion = Main.versionNumber.StartsWith("1.4.5") ? "1.4.5" : "1.4.4";
 
             foreach (var group in groupedItems)
             {
                 string modName = group.Key;
-                // Stamps the version directly into the filename
                 string path = Path.Combine(Main.SavePath, $"Terraria_{modName}_{baseVersion}_Export.json");
 
                 using (StreamWriter sw = new StreamWriter(path))
@@ -162,13 +219,13 @@ namespace DataExporterMod
             if (item.hammer > 0) return "Hammer";
             if (item.fishingPole > 0) return "Fishing Pole";
 
-            // 3. Weapons (Granular Damage Types)
+            // 3. Weapons
             if (item.damage > 0 && item.useStyle != 0)
             {
                 if (item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed)
                 {
                     if (ItemID.Sets.Yoyo[item.type]) return "Yoyo";
-                    if (item.shoot > 0 && item.noMelee) return "Melee Projectile"; // Flails, Boomerangs, Spears
+                    if (item.shoot > 0 && item.noMelee) return "Melee Projectile";
                     return "Sword";
                 }
                 if (item.DamageType == DamageClass.Ranged)
@@ -176,14 +233,13 @@ namespace DataExporterMod
                     if (item.useAmmo == AmmoID.Arrow) return "Bow";
                     if (item.useAmmo == AmmoID.Bullet) return "Gun";
                     if (item.useAmmo == AmmoID.Rocket) return "Launcher";
-                    if (item.consumable) return "Consumable Ranged"; // Throwing knives, shurikens
+                    if (item.consumable) return "Consumable Ranged";
                     return "Ranged Weapon";
                 }
                 if (item.DamageType == DamageClass.Magic) return "Magic Weapon";
                 if (item.DamageType == DamageClass.Summon || item.DamageType == DamageClass.SummonMeleeSpeed)
                 {
                     if (item.sentry) return "Sentry";
-                    // TML internally tracks whips via their projectile flags
                     if (item.shoot > 0 && ProjectileID.Sets.IsAWhip[item.shoot]) return "Whip";
                     return "Summon Weapon";
                 }

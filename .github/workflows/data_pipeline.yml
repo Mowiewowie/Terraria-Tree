@@ -75,19 +75,16 @@ jobs:
           echo "worldname=ExportWorld" >> serverconfig.txt
           echo "language=en-US" >> serverconfig.txt
           
+          # This boots the server, runs your C#, builds the JSON with the shop data, and exits.
           dotnet tModLoader.dll -server -config serverconfig.txt || true
 
-      - name: 7. Move C# JSON Artifacts & Inject Wiki Data
+      - name: 7. Commit & Push Final Databases
         run: |
+          # The JSON files are already perfect. Just grab them and commit!
           find ~/.local/share/Terraria/ -name "*_Export.json" -exec cp {} ./ \;
           
-          pip install aiohttp beautifulsoup4
-          python scripts/wiki-injector.py
-
-      - name: 8. Commit & Push Final Databases
-        run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add *_Export.json
-          git commit -m "[CI/CD] Automated Terraria Database Update" || echo "No changes to commit"
+          git commit -m "[CI/CD] Automated Zero-Touch Database Update" || echo "No changes to commit"
           git push
