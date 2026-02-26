@@ -33,16 +33,17 @@ jobs:
           echo '<Project Sdk="tModLoader.CodeAssist"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>' > DataExporterMod/DataExporterMod.csproj
           cd tmodloader
           
-          # Create our explicit save directory
           mkdir -p ./TMDSave/Mods
           
-          # Compile the mod. Using '|| true' so it doesn't kill the pipeline before printing our logs!
+          # Run the compiler (saving output to TMDSave)
           ./start-tModLoaderServer.sh -savedirectory ./TMDSave -build ../DataExporterMod -eac || true
           
           echo "================ COMPILER ERROR LOGS ================"
-          cat ./TMDSave/Logs/Launch.log || echo "Launch.log not found"
-          cat ./TMDSave/Logs/server.log || echo "server.log not found"
+          cat tModLoader-Logs/Launch.log || echo "Launch.log not found"
           echo "====================================================="
+          
+          # If the .tmod file was NOT created, this command will fail and stop the pipeline, preventing the hang!
+          cp ./TMDSave/Mods/DataExporterMod.tmod ./TMDSave/Mods/ 2>/dev/null || cp ../DataExporterMod/DataExporterMod.tmod ./TMDSave/Mods/
           
           echo '["DataExporterMod"]' > ./TMDSave/Mods/enabled.json
 
