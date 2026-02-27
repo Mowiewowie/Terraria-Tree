@@ -160,9 +160,18 @@ namespace DataExporterMod
                 // Extract the base tooltip (flavor text/description)
                 string tooltipText = "";
                 var tt = Lang.GetTooltip(i);
-                if (tt != null && !string.IsNullOrWhiteSpace(tt.Value)) 
+                
+                // Modern tModLoader tooltips are arrays of strings. We join them with a space.
+                if (tt != null && tt.Lines > 0) 
                 {
-                    tooltipText = tt.Value;
+                    string[] lines = new string[tt.Lines];
+                    for (int lineIndex = 0; lineIndex < tt.Lines; lineIndex++)
+                    {
+                        lines[lineIndex] = tt.GetLine(lineIndex);
+                    }
+                    
+                    // Join the array into a single clean string and trim any excess whitespace
+                    tooltipText = string.Join(" ", lines).Trim();
                 }
 
                 var itemData = new {
