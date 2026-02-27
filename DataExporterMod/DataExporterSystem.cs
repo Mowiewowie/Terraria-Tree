@@ -157,24 +157,50 @@ namespace DataExporterMod
 
                 string displayName = Lang.GetItemNameValue(i) ?? item.Name;
 
+                // Extract the base tooltip (flavor text/description)
+                string tooltipText = "";
+                var tt = Lang.GetTooltip(i);
+                if (tt != null && !string.IsNullOrWhiteSpace(tt.Value)) 
+                {
+                    tooltipText = tt.Value;
+                }
+
                 var itemData = new {
                     ID = deterministicID,
                     InternalName = item.ModItem?.Name ?? item.Name,
                     DisplayName = displayName,
                     ModSource = modSourceName,
                     Category = DetermineCategory(item),
+                    Tooltip = tooltipText,
                     WikiUrl = GenerateWikiUrl(modSourceName, displayName),
                     IconUrl = GenerateIconUrl(modSourceName, displayName),
+                    
+                    // Difficulty & Progression Flags
+                    IsHardmode = item.rare >= ItemRarityID.LightRed,
+                    IsExpert = item.expert || item.expertOnly,
+                    IsMaster = item.master,
+                    
                     Stats = new {
-                        Damage = item.damage, // This will now accurately reflect the active mod's balance changes!
+                        MaxStack = item.maxStack,
+                        Damage = item.damage,
                         DamageClass = item.DamageType?.DisplayName?.Value ?? item.DamageType?.Name ?? "Default",
                         Knockback = item.knockBack,
                         CritChance = item.crit,
                         UseTime = item.useTime,
+                        Velocity = item.shootSpeed,
+                        ManaCost = item.mana,
+                        AutoReuse = item.autoReuse,
+                        Consumable = item.consumable,
                         Defense = item.defense,
                         Value = item.value,
                         Rarity = item.rare,
-                        IsHardmode = item.rare >= ItemRarityID.LightRed
+                        
+                        // Tool Powers
+                        ToolPower = new {
+                            Pickaxe = item.pick,
+                            Axe = item.axe * 5, // The UI multiplies internal axe power by 5
+                            Hammer = item.hammer
+                        }
                     },
                     Recipes = GetRecipesForItem(i),
                     ObtainedFromDrops = drops ?? new List<object>(),
