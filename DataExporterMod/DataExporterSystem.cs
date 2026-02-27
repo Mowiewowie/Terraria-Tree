@@ -201,7 +201,13 @@ namespace DataExporterMod
                         AutoReuse = item.autoReuse,
                         Consumable = item.consumable,
                         Defense = item.defense,
-                        Value = item.value,
+                        Value = new {
+                            Raw = item.value,
+                            Platinum = item.value / 1000000,
+                            Gold = item.value / 10000 % 100,
+                            Silver = item.value / 100 % 100,
+                            Copper = item.value % 100
+                        },
                         Rarity = item.rare,
                         
                         // Tool Powers
