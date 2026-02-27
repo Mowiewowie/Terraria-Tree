@@ -1,0 +1,419 @@
+{
+    "1": {
+        "id": 1,
+        "name": "Iron Pickaxe",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Iron_Pickaxe",
+        "image_url": "https://terraria.wiki.gg/wiki/Special:FilePath/Iron_Pickaxe.png",
+        "generic_types": [
+            "Tool"
+        ],
+        "specific_type": "Pickaxe",
+        "damage_class": "Melee",
+        "stats": {
+            "damage": 5.0,
+            "knockback": 2.0,
+            "usetime": 20.0,
+            "sell": 4.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Any Wood",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Iron Bar",
+                            "amount": 10
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "22": {
+        "id": 22,
+        "name": "Iron Bar",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Iron_Bar",
+        "image_url": "https://terraria.wiki.gg/wiki/Special:FilePath/Iron_Bar.png",
+        "generic_types": [
+            "Bar",
+            "Crafting material"
+        ],
+        "specific_type": "Bar",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 3.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Chlorophyte Extractinator",
+                    "ingredients": [
+                        {
+                            "name": "Lead Bar",
+                            "amount": 1
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": true
+                },
+                {
+                    "station": "Furnace",
+                    "ingredients": [
+                        {
+                            "name": "Iron Ore",
+                            "amount": 3
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                },
+                {
+                    "station": "Heavy Assembler",
+                    "ingredients": [
+                        {
+                            "name": "Wrought Iron Fence",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                },
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Iron Fence",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": [
+            {
+                "type": "drop",
+                "source": "Azure Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Boreal Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Bramble Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Chest",
+                "rate": "1/4 (25%)"
+            },
+            {
+                "type": "drop",
+                "source": "Corrupt Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Crimson Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Defiled Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Divine Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Dungeon Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Frozen Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Gold Chest",
+                "rate": "1/4 (25%)   (Underground)"
+            },
+            {
+                "type": "drop",
+                "source": "Hallowed Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Hematic Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Iron Crate",
+                "rate": "5/144 (3.47%)"
+            },
+            {
+                "type": "drop",
+                "source": "Jungle Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Mirage Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Mythril Crate       (Desktop, Console and Mobile versions)",
+                "rate": "5/432 (1.16%)"
+            },
+            {
+                "type": "drop",
+                "source": "Oasis Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Ocean Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Pearlwood Crate       (Desktop, Console and Mobile versions)",
+                "rate": "3/224 (1.34%)"
+            },
+            {
+                "type": "drop",
+                "source": "Seaside Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Sky Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/24 (4.17%)"
+            },
+            {
+                "type": "drop",
+                "source": "Stockade Crate       (Desktop, Console and Mobile versions)",
+                "rate": "1/72 (1.39%)"
+            },
+            {
+                "type": "drop",
+                "source": "Wooden Crate",
+                "rate": "3/112 (2.68%)"
+            }
+        ]
+    },
+    "98": {
+        "id": 98,
+        "name": "Minishark",
+        "description": "33% chance to save ammo 'Half shark, half gun, completely awesome.'",
+        "url": "https://terraria.wiki.gg/wiki/Minishark",
+        "image_url": "https://terraria.wiki.gg/wiki/Special:FilePath/Minishark.png",
+        "generic_types": [
+            "Weapon",
+            "Crafting material"
+        ],
+        "specific_type": "Gun",
+        "damage_class": "Ranged",
+        "stats": {
+            "damage": 6.0,
+            "knockback": 0.0,
+            "usetime": 8.0,
+            "velocity": 7.0,
+            "buy": 35.0,
+            "sell": 7.0,
+            "rarity": 2
+        },
+        "crafting": {
+            "is_craftable": false,
+            "recipes": []
+        },
+        "acquisition": []
+    },
+    "579": {
+        "id": 579,
+        "name": "Drax",
+        "description": "'Not to be confused with a picksaw'",
+        "url": "https://terraria.wiki.gg/wiki/Drax",
+        "image_url": "https://terraria.wiki.gg/wiki/Special:FilePath/Drax.png",
+        "generic_types": [
+            "Tool"
+        ],
+        "specific_type": "Drill",
+        "damage_class": "Melee",
+        "stats": {
+            "damage": 35.0,
+            "knockback": 4.75,
+            "usetime": 15.0,
+            "velocity": 36.0,
+            "sell": 4.0,
+            "axe": 110.0,
+            "rarity": 4
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Mythril Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Hallowed Bar",
+                            "amount": 18
+                        },
+                        {
+                            "name": "Soul of Fright",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Soul of Might",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Soul of Sight",
+                            "amount": 1
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": [],
+        "hardmode": true
+    },
+    "3097": {
+        "id": 3097,
+        "name": "Shield of Cthulhu",
+        "description": "Allows the player to dash into the enemy Double tap a direction",
+        "url": "https://terraria.wiki.gg/wiki/Shield_of_Cthulhu",
+        "image_url": "https://terraria.wiki.gg/wiki/Special:FilePath/Shield_of_Cthulhu.png",
+        "generic_types": [
+            "Shield",
+            "Accessory"
+        ],
+        "specific_type": "Accessory",
+        "damage_class": "Melee",
+        "stats": {
+            "damage": 30.0,
+            "knockback": 9.0,
+            "defense": 2.0,
+            "sell": 2.0,
+            "rarity": -12
+        },
+        "crafting": {
+            "is_craftable": false,
+            "recipes": []
+        },
+        "acquisition": [
+            {
+                "type": "drop",
+                "source": "Treasure Bag       (Desktop, Console and Mobile versions)     (Eye of Cthulhu)",
+                "rate": "100%"
+            }
+        ]
+    },
+    "3476": {
+        "id": 3476,
+        "name": "Nebula Arcanum",
+        "description": "'Conjure masses of astral energy to chase down your foes'",
+        "url": "https://terraria.wiki.gg/wiki/Nebula_Arcanum",
+        "image_url": "https://terraria.wiki.gg/wiki/Special:FilePath/Nebula_Arcanum.png",
+        "generic_types": [
+            "Weapon"
+        ],
+        "specific_type": "Magic Weapon",
+        "damage_class": "Magic",
+        "stats": {
+            "damage": 70.0,
+            "knockback": 5.0,
+            "usetime": 30.0,
+            "velocity": 7.0,
+            "sell": 10.0,
+            "rarity": 10
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Ancient Manipulator",
+                    "ingredients": [
+                        {
+                            "name": "Nebula Fragment",
+                            "amount": 18
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": [],
+        "hardmode": true
+    },
+    "3781": {
+        "id": 3781,
+        "name": "Pocket Mirror",
+        "description": "Grants immunity to Stoned",
+        "url": "https://terraria.wiki.gg/wiki/Pocket_Mirror",
+        "image_url": "https://terraria.wiki.gg/wiki/Special:FilePath/Pocket_Mirror.png",
+        "generic_types": [
+            "Accessory",
+            "Crafting material"
+        ],
+        "specific_type": "Accessory",
+        "damage_class": "",
+        "stats": {
+            "sell": 2.0,
+            "rarity": 3
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Shimmer",
+                    "ingredients": [
+                        {
+                            "name": "Blindfold",
+                            "amount": 1
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": true
+                }
+            ]
+        },
+        "acquisition": [
+            {
+                "type": "drop",
+                "source": "Medusa       (Desktop, Console and Mobile versions)",
+                "rate": "2.5%   5%"
+            }
+        ],
+        "hardmode": true
+    }
+}

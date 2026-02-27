@@ -392,19 +392,21 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                 const newVis = new Set(visited).add(id);
                 if (treeMode === 'recipe') {
                     childrenData.forEach(ing => {
-                        const ingLower = ing.name.toLowerCase();
+                        const ingName = ing.Name || ing.name;
+                        const ingAmount = ing.Amount || ing.amount;
+                        const ingLower = ingName.toLowerCase();
                         const isGroup = Object.keys(RECIPE_GROUPS).some(k => k.toLowerCase() === ingLower) || ingLower.startsWith("any ");
                         
                         let childNode;
                         if (isGroup) {
-                            childNode = createFlashingGroupNode(ing.name, ing.amount);
+                            childNode = createFlashingGroupNode(ingName, ingAmount);
                         } else {
-                            const cid = itemIndex.find(i => i.name === ing.name)?.id;
-                            childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
+                            const cid = ing.ID || itemIndex.find(i => i.name === ingName)?.id;
+                            childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ingName, ingAmount);
                             if(cid) {
                                 const b = document.createElement('span');
                                 b.className = 'absolute -top-2 -right-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 text-slate-700 dark:text-slate-300 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
-                                b.textContent = `x${ing.amount}`;
+                                b.textContent = `x${ingAmount}`;
                                 childNode.querySelector('.item-card').appendChild(b);
                             }
                         }
@@ -420,7 +422,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                         const childNode = createTreeNode(usage.id, false, newVis, usage.recipe, isDeep);
                         const b = document.createElement('span');
                         b.className = 'absolute -top-2 -right-2 bg-purple-100 dark:bg-purple-900 border border-purple-300 dark:border-purple-500 text-purple-800 dark:text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
-                        b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
+                        b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount || usage.Amount}`;
                         childNode.querySelector('.item-card').appendChild(b);
                         
                         const hLine = document.createElement('div'); hLine.className = 'line-h'; attachLineEvents(hLine);

@@ -2,3 +2,6 @@ UI-design.txt
 diagnostics.py
 generate_sitemap.py
 DataExporterMod/obj
+.repomixignore
+repomix-output.xml
+Terraria-Tree.sln

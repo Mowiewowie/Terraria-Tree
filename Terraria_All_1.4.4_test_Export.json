@@ -1,0 +1,643 @@
+[
+    {
+    "ID": "1",
+    "InternalName": "Iron Pickaxe",
+    "DisplayName": "Iron Pickaxe",
+    "ModSource": "Vanilla",
+    "Category": "Pickaxe",
+    "Tooltip": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Iron_Pickaxe",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Iron_Pickaxe.png",
+    "IsHardmode": false,
+    "IsExpert": false,
+    "IsMaster": false,
+    "Stats": {
+      "MaxStack": 1,
+      "Damage": 5,
+      "DamageClass": "true melee damage",
+      "Knockback": 2.0,
+      "CritChance": 0,
+      "UseTime": 8,
+      "Velocity": 0.0,
+      "ManaCost": 0,
+      "AutoReuse": true,
+      "Consumable": false,
+      "Defense": 0,
+      "Value": {
+        "Raw": 2000,
+        "Platinum": 0,
+        "Gold": 0,
+        "Silver": 20,
+        "Copper": 0
+      },
+      "Rarity": 0,
+      "ToolPower": {
+        "Pickaxe": 40,
+        "Axe": 0,
+        "Hammer": 0
+      }
+    },
+    "Recipes": [
+      {
+        "Stations": [
+          "Anvils"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "22",
+            "Name": "Iron Bar",
+            "Amount": 10
+          },
+          {
+            "ID": "9",
+            "Name": "Wood",
+            "Amount": 3
+          }
+        ]
+      }
+    ],
+    "ObtainedFromDrops": [],
+    "ShimmerDecraft": null
+  },
+  {
+    "ID": "22",
+    "InternalName": "Iron Bar",
+    "DisplayName": "Iron Bar",
+    "ModSource": "Vanilla",
+    "Category": "Block / Furniture",
+    "Tooltip": "",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Iron_Bar",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Iron_Bar.png",
+    "IsHardmode": false,
+    "IsExpert": false,
+    "IsMaster": false,
+    "Stats": {
+      "MaxStack": 9999,
+      "Damage": -1,
+      "DamageClass": " damage",
+      "Knockback": 0.0,
+      "CritChance": 0,
+      "UseTime": 10,
+      "Velocity": 0.0,
+      "ManaCost": 0,
+      "AutoReuse": true,
+      "Consumable": true,
+      "Defense": 0,
+      "Value": {
+        "Raw": 1500,
+        "Platinum": 0,
+        "Gold": 0,
+        "Silver": 15,
+        "Copper": 0
+      },
+      "Rarity": 0,
+      "ToolPower": {
+        "Pickaxe": 0,
+        "Axe": 0,
+        "Hammer": 0
+      }
+    },
+    "Recipes": [
+      {
+        "Stations": [
+          "Anvils"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "2333",
+            "Name": "Iron Fence",
+            "Amount": 4
+          }
+        ]
+      },
+      {
+        "Stations": [
+          "HeavyWorkBench"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "4424",
+            "Name": "Wrought Iron Fence",
+            "Amount": 4
+          }
+        ]
+      },
+      {
+        "Stations": [
+          "Furnaces"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "11",
+            "Name": "Iron Ore",
+            "Amount": 3
+          }
+        ]
+      },
+      {
+        "Stations": [
+          "DemonAltar"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "704",
+            "Name": "Lead Bar",
+            "Amount": 1
+          }
+        ]
+      }
+    ],
+    "ObtainedFromDrops": [
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Wooden Crate",
+        "DropChance": "2.68%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Iron Crate",
+        "DropChance": "3.47%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Corrupt Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Crimson Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Dungeon Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Sky Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Hallowed Crate",
+        "DropChance": "6.53%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Jungle Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Pearlwood Crate",
+        "DropChance": "1.34%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Mythril Crate",
+        "DropChance": "1.16%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Defiled Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Hematic Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Stockade Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Azure Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
+        "DropChance": "1.53%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Bramble Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Frozen Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Boreal Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Oasis Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Mirage Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Obsidian Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Hellstone Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Ocean Crate",
+        "DropChance": "4.17%",
+        "Conditions": null
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Seaside Crate",
+        "DropChance": "1.39%",
+        "Conditions": null
+      }
+    ],
+    "ShimmerDecraft": null
+  },
+  {
+    "ID": "98",
+    "InternalName": "Minishark",
+    "DisplayName": "Minishark",
+    "ModSource": "Vanilla",
+    "Category": "Gun",
+    "Tooltip": "33% chance to save ammo 'Half shark, half gun, completely awesome.'",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Minishark",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Minishark.png",
+    "IsHardmode": false,
+    "IsExpert": false,
+    "IsMaster": false,
+    "Stats": {
+      "MaxStack": 1,
+      "Damage": 4,
+      "DamageClass": " ranged damage",
+      "Knockback": 0.0,
+      "CritChance": 0,
+      "UseTime": 8,
+      "Velocity": 7.0,
+      "ManaCost": 0,
+      "AutoReuse": true,
+      "Consumable": false,
+      "Defense": 0,
+      "Value": {
+        "Raw": 350000,
+        "Platinum": 0,
+        "Gold": 35,
+        "Silver": 0,
+        "Copper": 0
+      },
+      "Rarity": 2,
+      "ToolPower": {
+        "Pickaxe": 0,
+        "Axe": 0,
+        "Hammer": 0
+      }
+    },
+    "Recipes": [],
+    "ObtainedFromDrops": [
+      {
+        "SourceNPC_ID": 19,
+        "SourceNPC_Name": "Shop: Arms Dealer",
+        "DropChance": "100%",
+        "Conditions": []
+      }
+    ],
+    "ShimmerDecraft": null
+  },
+  {
+    "ID": "579",
+    "InternalName": "Drax",
+    "DisplayName": "Drax",
+    "ModSource": "Vanilla",
+    "Category": "Pickaxe",
+    "Tooltip": "'Not to be confused with a picksaw'",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Drax",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Drax.png",
+    "IsHardmode": true,
+    "IsExpert": false,
+    "IsMaster": false,
+    "Stats": {
+      "MaxStack": 1,
+      "Damage": 80,
+      "DamageClass": "true melee damage",
+      "Knockback": 4.75,
+      "CritChance": 0,
+      "UseTime": 4,
+      "Velocity": 36.0,
+      "ManaCost": 0,
+      "AutoReuse": false,
+      "Consumable": false,
+      "Defense": 0,
+      "Value": {
+        "Raw": 220000,
+        "Platinum": 0,
+        "Gold": 22,
+        "Silver": 0,
+        "Copper": 0
+      },
+      "Rarity": 4,
+      "ToolPower": {
+        "Pickaxe": 200,
+        "Axe": 110,
+        "Hammer": 0
+      }
+    },
+    "Recipes": [
+      {
+        "Stations": [
+          "MythrilAnvil"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "1225",
+            "Name": "Hallowed Bar",
+            "Amount": 18
+          },
+          {
+            "ID": "547",
+            "Name": "Soul of Fright",
+            "Amount": 1
+          },
+          {
+            "ID": "548",
+            "Name": "Soul of Might",
+            "Amount": 1
+          },
+          {
+            "ID": "549",
+            "Name": "Soul of Sight",
+            "Amount": 1
+          }
+        ]
+      }
+    ],
+    "ObtainedFromDrops": [],
+    "ShimmerDecraft": null
+  },
+  {
+    "ID": "3097",
+    "InternalName": "Shield of Cthulhu",
+    "DisplayName": "Shield of Cthulhu",
+    "ModSource": "Vanilla",
+    "Category": "Accessory",
+    "Tooltip": "Allows the player to dash into the enemy Double tap a direction",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Shield_of_Cthulhu",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Shield_of_Cthulhu.png",
+    "IsHardmode": false,
+    "IsExpert": false,
+    "IsMaster": false,
+    "Stats": {
+      "MaxStack": 1,
+      "Damage": 30,
+      "DamageClass": "true melee damage",
+      "Knockback": 9.0,
+      "CritChance": 0,
+      "UseTime": 100,
+      "Velocity": 0.0,
+      "ManaCost": 0,
+      "AutoReuse": false,
+      "Consumable": false,
+      "Defense": 3,
+      "Value": {
+        "Raw": 100000,
+        "Platinum": 0,
+        "Gold": 10,
+        "Silver": 0,
+        "Copper": 0
+      },
+      "Rarity": 1,
+      "ToolPower": {
+        "Pickaxe": 0,
+        "Axe": 0,
+        "Hammer": 0
+      }
+    },
+    "Recipes": [],
+    "ObtainedFromDrops": [
+      {
+        "SourceNPC_ID": 4,
+        "SourceNPC_Name": "NPC: Eye of Cthulhu",
+        "DropChance": "100%",
+        "Conditions": []
+      },
+      {
+        "SourceNPC_ID": -1,
+        "SourceNPC_Name": "Chest/Crate/Bag: Treasure Bag (Eye of Cthulhu)",
+        "DropChance": "100%",
+        "Conditions": null
+      }
+    ],
+    "ShimmerDecraft": null
+  },
+  {
+    "ID": "3476",
+    "InternalName": "Nebula Arcanum",
+    "DisplayName": "Nebula Arcanum",
+    "ModSource": "Vanilla",
+    "Category": "Magic Weapon",
+    "Tooltip": "'Conjure masses of astral energy to chase down your foes'",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Nebula_Arcanum",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Nebula_Arcanum.png",
+    "IsHardmode": true,
+    "IsExpert": false,
+    "IsMaster": false,
+    "Stats": {
+      "MaxStack": 1,
+      "Damage": 70,
+      "DamageClass": " magic damage",
+      "Knockback": 5.0,
+      "CritChance": 0,
+      "UseTime": 30,
+      "Velocity": 7.0,
+      "ManaCost": 30,
+      "AutoReuse": true,
+      "Consumable": false,
+      "Defense": 0,
+      "Value": {
+        "Raw": 500000,
+        "Platinum": 0,
+        "Gold": 50,
+        "Silver": 0,
+        "Copper": 0
+      },
+      "Rarity": 10,
+      "ToolPower": {
+        "Pickaxe": 0,
+        "Axe": 0,
+        "Hammer": 0
+      }
+    },
+    "Recipes": [
+      {
+        "Stations": [
+          "LunarCraftingStation"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "3457",
+            "Name": "Nebula Fragment",
+            "Amount": 18
+          }
+        ]
+      }
+    ],
+    "ObtainedFromDrops": [],
+    "ShimmerDecraft": null
+  },
+  {
+    "ID": "3781",
+    "InternalName": "Pocket Mirror",
+    "DisplayName": "Pocket Mirror",
+    "ModSource": "Vanilla",
+    "Category": "Accessory",
+    "Tooltip": "Immunity to Petrification",
+    "WikiUrl": "https://terraria.wiki.gg/wiki/Pocket_Mirror",
+    "IconUrl": "https://terraria.wiki.gg/wiki/Special:FilePath/Pocket_Mirror.png",
+    "IsHardmode": false,
+    "IsExpert": false,
+    "IsMaster": false,
+    "Stats": {
+      "MaxStack": 1,
+      "Damage": -1,
+      "DamageClass": " damage",
+      "Knockback": 0.0,
+      "CritChance": 0,
+      "UseTime": 100,
+      "Velocity": 0.0,
+      "ManaCost": 0,
+      "AutoReuse": false,
+      "Consumable": false,
+      "Defense": 0,
+      "Value": {
+        "Raw": 100000,
+        "Platinum": 0,
+        "Gold": 10,
+        "Silver": 0,
+        "Copper": 0
+      },
+      "Rarity": 3,
+      "ToolPower": {
+        "Pickaxe": 0,
+        "Axe": 0,
+        "Hammer": 0
+      }
+    },
+    "Recipes": [
+      {
+        "Stations": [
+          "Anvils"
+        ],
+        "Conditions": [],
+        "Ingredients": [
+          {
+            "ID": "170",
+            "Name": "Glass",
+            "Amount": 5
+          },
+          {
+            "ID": "19",
+            "Name": "Gold Bar",
+            "Amount": 3
+          },
+          {
+            "ID": "502",
+            "Name": "Crystal Shard",
+            "Amount": 2
+          },
+          {
+            "ID": "521",
+            "Name": "Soul of Night",
+            "Amount": 2
+          }
+        ]
+      },
+      {
+        "Stations": [
+          "Solidifier"
+        ],
+        "Conditions": [
+          "In hardmode"
+        ],
+        "Ingredients": [
+          {
+            "ID": "3405",
+            "Name": "Medusa Banner",
+            "Amount": 1
+          }
+        ]
+      }
+    ],
+    "ObtainedFromDrops": [
+      {
+        "SourceNPC_ID": 480,
+        "SourceNPC_Name": "NPC: Medusa",
+        "DropChance": "5%",
+        "Conditions": [
+          "This is an Expert Mode drop rate"
+        ]
+      },
+      {
+        "SourceNPC_ID": 480,
+        "SourceNPC_Name": "NPC: Medusa",
+        "DropChance": "2.5%",
+        "Conditions": []
+      },
+      {
+        "SourceNPC_ID": 532,
+        "SourceNPC_Name": "NPC: Basilisk",
+        "DropChance": "2%",
+        "Conditions": [
+          "[i:FargowiltasSouls/Masochist] Eternity Mode drop rate"
+        ]
+      }
+    ],
+    "ShimmerDecraft": "Blindfold"
+  }
+]

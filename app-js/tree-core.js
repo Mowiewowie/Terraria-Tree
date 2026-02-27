@@ -5,10 +5,10 @@
 function createItemCardElement(data, sizeClasses, contextRecipe = null, customClickHandler = null) {
     const card = document.createElement('div');
     card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${sizeClasses}`;
-    card.dataset.id = data.id; 
+    card.dataset.id = data.ID || data.id; 
     
     const img = document.createElement('img');
-    img.src = createDirectImageUrl(data.DisplayName || data.name);
+    img.src = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
     img.draggable = false; 
     img.ondragstart = (e) => e.preventDefault(); // Strict JS block
     img.className = sizeClasses.includes('w-32') ? 'w-14 h-14 object-contain mb-2' : 'w-10 h-10 object-contain mb-1';
@@ -70,9 +70,9 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
                 const radio = document.querySelector(`input[name="treeMode"][value="recipe"]`);
                 if (radio) radio.checked = true;
             }
-            transitionToNewItem(card, data.id);
+            transitionToNewItem(card, data.ID || data.id);
         } else {
-            viewItem(data.id, true);
+            viewItem(data.ID || data.id, true);
         }
     };
     
@@ -116,7 +116,7 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
                 if (dmgA !== dmgB) {
                     return dmgB - dmgA; 
                 }
-                return (a.DisplayName || "").localeCompare(b.DisplayName || "");
+                return (a.DisplayName || a.name || "").localeCompare(b.DisplayName || b.name || "");
             });
 
             const box = document.createElement('div');

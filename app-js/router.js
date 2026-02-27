@@ -481,19 +481,20 @@ function updateSEOState(viewType, idOrCategory) {
 
     if (viewType === 'tree' && itemsDatabase[idOrCategory]) {
         const item = itemsDatabase[idOrCategory];
-        title = `How to Craft ${item.name} | Terraria Crafting Tree`;
-        desc = item.description || `Interactive crafting tree and recipe guide for the ${item.name} in Terraria. View base ingredients, workstations, and total resources required.`;
+        const itemName = item.DisplayName || item.name;
+        title = `How to Craft ${itemName} | Terraria Crafting Tree`;
+        desc = item.Tooltip || item.description || `Interactive crafting tree and recipe guide for the ${itemName} in Terraria. View base ingredients, workstations, and total resources required.`;
         
         // Generate JSON-LD Structured Data
-        if (item.crafting && item.crafting.recipes && item.crafting.recipes.length > 0) {
+        if (item.Recipes && item.Recipes.length > 0) {
             schema = {
                 "@context": "https://schema.org/",
                 "@type": "HowTo",
-                "name": `How to craft ${item.name} in Terraria`,
-                "image": createDirectImageUrl(item.name),
-                "step": item.crafting.recipes[0].ingredients.map(ing => ({
+                "name": `How to craft ${itemName} in Terraria`,
+                "image": item.IconUrl || createDirectImageUrl(itemName),
+                "step": item.Recipes[0].Ingredients.map(ing => ({
                     "@type": "HowToStep",
-                    "text": `Obtain ${ing.amount}x ${ing.name}`
+                    "text": `Obtain ${ing.Amount || ing.amount}x ${ing.Name || ing.name}`
                 }))
             };
         }

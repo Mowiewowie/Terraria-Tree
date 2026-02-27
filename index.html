@@ -250,14 +250,8 @@
             // Re-fetch base game version (defined in data.js)
             await loadVersionData(targetVersion);
             
-            // Conditionally fetch mods
-            if (targetVersion === '1.4.4') {
-                if (document.getElementById('modCalamity').checked) await loadModData('CalamityMod');
-                if (document.getElementById('modFargos').checked) await loadModData('FargowiltasSouls');
-            }
-            
             // Redirect home to ensure clean UI state
-            if (typeof goHome === 'function') goHome();
+            if (typeof restoreHomeMode === 'function') restoreHomeMode();
         });
     </script>
 
