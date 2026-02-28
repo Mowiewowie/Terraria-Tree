@@ -163,6 +163,17 @@ const imageObserver = new IntersectionObserver((entries, observer) => {
 
 function createDirectImageUrl(name) {
     if (!name) return FALLBACK_ICON;
-    const f = name.replace(/ /g, '_') + '.png';
-    return `/sprites/${f}`;
+    
+    // 1. Replace spaces with underscores
+    let rawName = name.replace(/ /g, '_') + '.png';
+    
+    // 2. Replicate the Python safe_chars whitelist
+    let sanitized = rawName.replace(/[^a-zA-Z0-9_\-\. ]/g, '');
+    
+    // 3. Fallback
+    if (!sanitized || sanitized === ".png") {
+        sanitized = "unknown_file.png";
+    }
+        
+    return `/sprites/${sanitized}`;
 }

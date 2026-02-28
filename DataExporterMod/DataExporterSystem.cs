@@ -322,10 +322,19 @@ namespace DataExporterMod
 
         private string GenerateIconUrl(string modSource, string displayName)
         {
-            // Replace spaces with underscores to match your downloaded local filenames
-            string fileName = displayName.Replace(" ", "_") + ".png";
+            // 1. Replace spaces with underscores like the original wiki URLs
+            string rawName = displayName.Replace(" ", "_") + ".png";
             
-            // Route everything to your web application's root sprites folder
+            // 2. Replicate the Python safe_chars whitelist using Regex
+            // This strips out ', (, ), and any other special symbols
+            string fileName = System.Text.RegularExpressions.Regex.Replace(rawName, @"[^a-zA-Z0-9_\-\. ]", "");
+            
+            // 3. Replicate the Python fallback for completely stripped names
+            if (string.IsNullOrEmpty(fileName) || fileName == ".png") 
+            {
+                fileName = "unknown_file.png";
+            }
+            
             return $"/sprites/{fileName}";
         }
 
