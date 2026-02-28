@@ -322,14 +322,11 @@ namespace DataExporterMod
 
         private string GenerateIconUrl(string modSource, string displayName)
         {
-            // MediaWiki requires spaces to be replaced by underscores, and a file extension
+            // Replace spaces with underscores to match your downloaded local filenames
             string fileName = displayName.Replace(" ", "_") + ".png";
             
-            if (modSource == "Vanilla" || modSource == "ModLoader") return $"https://terraria.wiki.gg/wiki/Special:FilePath/{fileName}";
-            if (modSource == "CalamityMod" || modSource == "CalamityModMusic") return $"https://calamitymod.wiki.gg/wiki/Special:FilePath/{fileName}";
-            if (modSource == "FargowiltasSouls" || modSource == "Fargowiltas") return $"https://fargosmods.wiki.gg/wiki/Special:FilePath/{fileName}";
-            
-            return ""; 
+            // Route everything to your web application's root sprites folder
+            return $"/sprites/{fileName}";
         }
 
         private string GetShimmerResult(int itemId)

@@ -163,7 +163,7 @@ const imageObserver = new IntersectionObserver((entries, observer) => {
 
 function createDirectImageUrl(name) {
     if (!name) return FALLBACK_ICON;
+    // Replace spaces with underscores and point to the local sprites folder
     const f = name.replace(/ /g, '_') + '.png';
-    const h = md5(f);
-    return `https://terraria.wiki.gg/images/${h[0]}/${h.substring(0, 2)}/${f}`;
+    return `/sprites/${f}`;
 }
