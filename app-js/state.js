@@ -142,9 +142,24 @@ function getFriendlyUseTime(value) {
 function getMinScale() {
     const w = window.innerWidth;
     if (w < 600) return 0.40; 
-    if (w < 1024) return 0.25; 
-    return 0.15; 
+    if (w < 1024) return 0.35; 
+    return 0.30; 
 }
+
+const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+            }
+            observer.unobserve(img);
+        }
+    });
+}, {
+    rootMargin: '200px' // Load slightly beyond viewport
+});
 
 function createDirectImageUrl(name) {
     if (!name) return FALLBACK_ICON;

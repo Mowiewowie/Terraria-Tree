@@ -12,16 +12,17 @@ document.body.addEventListener('drop', e => { e.preventDefault(); if(e.dataTrans
 function processFile(file) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => initializeData(convertArrayToDict(JSON.parse(e.target.result), false));
+    reader.onload = e => initializeData(convertArrayToDict(JSON.parse(e.target.result)));
     reader.readAsText(file);
 }
 
-function convertArrayToDict(data, isLegacySchema = false) {
+function convertArrayToDict(data) {
     const db = {};
     
     const items = Array.isArray(data) ? data : Object.values(data);
 
     items.forEach(item => { 
+        const isLegacySchema = item.ID === undefined && item.id !== undefined;
         if (isLegacySchema) {
             db[item.id] = {
                 ID: item.id.toString(),
@@ -48,7 +49,7 @@ function convertArrayToDict(data, isLegacySchema = false) {
                     Stations: r.station ? [r.station] : [],
                     Conditions: [],
                     Ingredients: (r.ingredients || []).map(ing => ({
-                        ID: ing.id ? ing.id.toString() : ing.name, 
+                        ID: ing.id !== undefined ? ing.id.toString() : undefined, 
                         Name: ing.name,
                         Amount: ing.amount
                     })),
@@ -94,8 +95,12 @@ async function loadVersionData(targetVersion) {
         if (targetVersion === '1.4.5') {
             const res = await fetch(`terraria_items.json`);
             if (!res.ok) throw new Error("terraria_items.json not found.");
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") === -1) {
+                throw new Error("terraria_items.json returned non-JSON content.");
+            }
             const rawData = await res.json();
-            initializeData(convertArrayToDict(rawData, true));
+            initializeData(convertArrayToDict(rawData));
             LOADED_MODS.add('Vanilla');
             console.log(`[Engine] Success: Legacy Schema loaded for v1.4.5`);
         } else {
@@ -111,15 +116,19 @@ async function loadVersionData(targetVersion) {
             const fileName = `Terraria_${envName}_1.4.4_Export.json`;
             const res = await fetch(fileName);
             if (!res.ok) throw new Error(`${fileName} not found.`);
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") === -1) {
+                throw new Error(`${fileName} returned non-JSON content.`);
+            }
             const rawArray = await res.json();
-            initializeData(convertArrayToDict(rawArray, false));
+            initializeData(convertArrayToDict(rawArray));
             LOADED_MODS.add('Vanilla');
             if (modCalamity) LOADED_MODS.add('CalamityMod');
             if (modFargos) LOADED_MODS.add('FargowiltasSouls');
             console.log(`[Engine] Success: Pristine C# Schema loaded for v1.4.4 (${envName})`);
         }
     } catch (e) {
-        console.error("Critical Data Load Failure:", e);
+        console.warn("Auto-load failed, falling back to manual upload:", e.message);
         dom.uploadSection.classList.remove('hidden');
         dom.autoLoadStatus.classList.add('hidden');
         dom.manualUpload.classList.remove('hidden');
@@ -157,11 +166,11 @@ function buildUsageIndex() {
 function initializeData(data) {
     itemsDatabase = data;
     itemIndex = Object.values(itemsDatabase).map(i => ({ 
-        id: i.ID, 
-        name: i.DisplayName, 
-        type: (i.Category || i.ModSource || "").toLowerCase(),
-        icon_url: i.IconUrl || "",
-        fallback_image: i.WikiUrl || "" // Fallback mapping based on the new schema
+        id: i.ID || i.id, 
+        name: i.DisplayName || i.name || "Unknown", 
+        type: (i.Category || i.specific_type || i.ModSource || "").toLowerCase(),
+        icon_url: i.IconUrl || i.image_url || "",
+        fallback_image: i.WikiUrl || i.url || "" // Fallback mapping based on the new schema
     }));
     
     buildUsageIndex(); 

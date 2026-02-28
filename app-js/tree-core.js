@@ -8,11 +8,13 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
     card.dataset.id = data.ID || data.id; 
     
     const img = document.createElement('img');
-    img.src = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
+    img.src = FALLBACK_ICON;
+    img.dataset.src = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
     img.draggable = false; 
     img.ondragstart = (e) => e.preventDefault(); // Strict JS block
     img.className = sizeClasses.includes('w-32') ? 'w-14 h-14 object-contain mb-2' : 'w-10 h-10 object-contain mb-1';
     img.onerror = () => { img.src = FALLBACK_ICON; };
+    imageObserver.observe(img);
     
     const name = document.createElement('span');
     name.textContent = data.DisplayName || data.name;

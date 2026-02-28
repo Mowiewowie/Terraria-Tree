@@ -44,7 +44,11 @@ function getDiscoverableItems() {
     }
     
     const uniqueUsages = Array.from(uniqueUsagesMap.values());
-    uniqueUsages.sort((a,b) => itemsDatabase[a.id]?.name.localeCompare(itemsDatabase[b.id]?.name));
+    uniqueUsages.sort((a,b) => {
+        const nameA = itemsDatabase[a.id]?.DisplayName || itemsDatabase[a.id]?.name || "";
+        const nameB = itemsDatabase[b.id]?.DisplayName || itemsDatabase[b.id]?.name || "";
+        return nameA.localeCompare(nameB);
+    });
     return uniqueUsages;
 }
 
@@ -217,7 +221,7 @@ function createDiscoverRootNode() {
 
 function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null, forceDeepExpand = false) {
     const data = itemsDatabase[id];
-    if (!data) return document.createElement('div');
+    if (!data) return createGenericNode("Unknown Item", 0);
 
     const node = document.createElement('div');
     node.className = 'tree-node';
@@ -274,7 +278,11 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         });
         
         const uniqueUsages = Array.from(uniqueUsagesMap.values());
-        uniqueUsages.sort((a,b) => itemsDatabase[a.id]?.name.localeCompare(itemsDatabase[b.id]?.name));
+        uniqueUsages.sort((a,b) => {
+            const nameA = itemsDatabase[a.id]?.DisplayName || itemsDatabase[a.id]?.name || "";
+            const nameB = itemsDatabase[b.id]?.DisplayName || itemsDatabase[b.id]?.name || "";
+            return nameA.localeCompare(nameB);
+        });
 
         if (uniqueUsages.length > 0 && !visited.has(id)) {
             hasValidChildren = true;
@@ -401,7 +409,11 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                         if (isGroup) {
                             childNode = createFlashingGroupNode(ingName, ingAmount);
                         } else {
-                            const cid = ing.ID || itemIndex.find(i => i.name === ingName)?.id;
+                            let cid = ing.ID;
+                            if (!cid || !itemsDatabase[cid]) {
+                                const found = itemIndex.find(i => i.name.toLowerCase() === ingName.toLowerCase());
+                                if (found) cid = found.id.toString();
+                            }
                             childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ingName, ingAmount);
                             if(cid) {
                                 const b = document.createElement('span');
@@ -458,7 +470,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                 setTimeout(() => {
                     if (isDeepExpandMode) {
                         focusSubtree(node, container);
-                    } else if (!isExpandedAll) {
+                    } else {
                         const vizRect = dom.vizArea.getBoundingClientRect();
                         const nRect = node.getBoundingClientRect();
                         const cRect = container.getBoundingClientRect();
@@ -534,17 +546,11 @@ function createFlashingGroupNode(groupName, amount) {
     card.className = 'item-card relative flex flex-col items-center justify-center rounded-lg w-24 h-24 bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 shadow-sm transition-transform hover:scale-105';
     
     const img = document.createElement('img');
-    // Start explicitly with the safe, offline-ready fallback to prevent native browser flashing
     img.src = FALLBACK_ICON; 
     img.alt = `Any ${groupItems[0]} Terraria Crafting Alternative`; // SEO Addition
     img.draggable = false;
     img.ondragstart = (e) => e.preventDefault();
     img.className = 'w-10 h-10 object-contain mb-1 transition-opacity duration-300';
-    
-    // Asynchronously upgrade to the actual image if it successfully resolves from cache or network
-    const initialPreloader = new Image();
-    initialPreloader.onload = () => { img.src = initialPreloader.src; };
-    initialPreloader.src = createDirectImageUrl(groupItems[0]);
     
     const nameSpan = document.createElement('span');
     nameSpan.textContent = groupItems[0];
@@ -560,33 +566,48 @@ function createFlashingGroupNode(groupName, amount) {
 
     card.append(img, nameSpan, badge, groupLabel);
 
-    if (groupItems.length > 1) {
-        let idx = 0;
-        setInterval(() => {
-            idx = (idx + 1) % groupItems.length;
-            const nextItem = groupItems[idx];
-            const nextUrl = createDirectImageUrl(nextItem);
-            
-            // Preload the image in memory to mathematically prevent the browser from flashing a broken UI
-            const preloader = new Image();
-            
-            const swapContent = (safeUrl) => {
-                img.style.opacity = '0';
-                nameSpan.style.opacity = '0';
-                setTimeout(() => {
-                    img.src = safeUrl;
-                    nameSpan.textContent = nextItem;
-                    img.style.opacity = '1';
-                    nameSpan.style.opacity = '1';
-                }, 150);
-            };
+    let intervalId = null;
+    
+    // We use a custom observer for flashing nodes to start the interval only when visible
+    const flashingObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Load initial image
+                const initialPreloader = new Image();
+                initialPreloader.onload = () => { img.src = initialPreloader.src; };
+                initialPreloader.src = createDirectImageUrl(groupItems[0]);
+                
+                // Start interval if multiple items
+                if (groupItems.length > 1 && !intervalId) {
+                    let idx = 0;
+                    intervalId = setInterval(() => {
+                        idx = (idx + 1) % groupItems.length;
+                        const nextItem = groupItems[idx];
+                        const nextUrl = createDirectImageUrl(nextItem);
+                        
+                        const preloader = new Image();
+                        const swapContent = (safeUrl) => {
+                            img.style.opacity = '0';
+                            nameSpan.style.opacity = '0';
+                            setTimeout(() => {
+                                img.src = safeUrl;
+                                nameSpan.textContent = nextItem;
+                                img.style.opacity = '1';
+                                nameSpan.style.opacity = '1';
+                            }, 150);
+                        };
 
-            preloader.onload = () => swapContent(nextUrl);
-            preloader.onerror = () => swapContent(FALLBACK_ICON);
-            preloader.src = nextUrl;
-            
-        }, 1500); 
-    }
+                        preloader.onload = () => swapContent(nextUrl);
+                        preloader.onerror = () => swapContent(FALLBACK_ICON);
+                        preloader.src = nextUrl;
+                    }, 1500);
+                }
+                observer.unobserve(card);
+            }
+        });
+    }, { rootMargin: '200px' });
+    
+    flashingObserver.observe(card);
 
     card.onclick = (e) => {
         e.stopPropagation();

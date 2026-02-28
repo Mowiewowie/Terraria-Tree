@@ -257,16 +257,18 @@
 
 <script>
         // Only register if supported AND we are not running directly from the local hard drive
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && window.isSecureContext) {
             if (window.location.protocol === 'file:') {
                 console.info('Service Worker bypassed: Running locally via file:// protocol.');
             } else {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('/sw.js').catch(error => {
-                        console.error('ServiceWorker registration failed:', error);
+                        console.warn('ServiceWorker registration failed:', error.message);
                     });
                 });
             }
+        } else if ('serviceWorker' in navigator && !window.isSecureContext) {
+            console.info('Service Worker bypassed: Insecure context.');
         }
     </script>
 </body>

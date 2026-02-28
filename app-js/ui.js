@@ -419,7 +419,11 @@ function showTooltip(e, data, extraRecipe = null) {
                 const ingAmount = ing.Amount || ing.amount;
                 const img = document.createElement('img');
                 img.onerror = () => { img.src = FALLBACK_ICON; };
-                const ingId = ing.ID || Object.keys(itemsDatabase).find(id => itemsDatabase[id].DisplayName === ingName || itemsDatabase[id].name === ingName);
+                let ingId = ing.ID;
+                if (!ingId || !itemsDatabase[ingId]) {
+                    const found = itemIndex.find(i => i.name.toLowerCase() === ingName.toLowerCase());
+                    if (found) ingId = found.id.toString();
+                }
                 img.src = (ingId && itemsDatabase[ingId].IconUrl) ? itemsDatabase[ingId].IconUrl : createDirectImageUrl(ingName);
                 img.className = 'w-6 h-6 object-contain rounded bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-300 dark:border-slate-600 shadow-sm';
                 img.title = `${ingName} (x${ingAmount})`;
