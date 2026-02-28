@@ -163,7 +163,6 @@ const imageObserver = new IntersectionObserver((entries, observer) => {
 
 function createDirectImageUrl(name) {
     if (!name) return FALLBACK_ICON;
-    // Replace spaces with underscores and point to the local sprites folder
     const f = name.replace(/ /g, '_') + '.png';
     return `/sprites/${f}`;
 }
