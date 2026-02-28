@@ -174,6 +174,5 @@ function createDirectImageUrl(name) {
     if (!sanitized || sanitized === ".png") {
         sanitized = "unknown_file.png";
     }
-        
     return `/sprites/${sanitized}`;
 }
