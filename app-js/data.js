@@ -101,7 +101,7 @@ async function loadVersionData(targetVersion) {
     const modFargos = document.getElementById('modFargos')?.checked;
     
     let envName = "Vanilla";
-    if (modCalamity && modFargos) envName = "All"; // Matches your C# string: Terraria_All_...
+    if (modCalamity && modFargos) envName = "All"; 
     else if (modCalamity) envName = "Vanilla_Calamity";
     else if (modFargos) envName = "Vanilla_Fargowiltas";
 
@@ -109,44 +109,51 @@ async function loadVersionData(targetVersion) {
     let usedLegacy = false;
 
     try {
-        // First try to load the new C# dynamic export file structure
-        // (This will work for 1.4.4 now, and 1.4.5 in the future automatically!)
-        const fileName = `Terraria_${envName}_${targetVersion}_Export.json`;
-        const res = await fetch(fileName);
+        // --- PHASE 1: Try the exact requested environment ---
+        let res = await fetch(`Terraria_${envName}_${targetVersion}_Export.json`);
         
+        // --- PHASE 2: Fallback to Modern Vanilla ---
+        if (!res.ok && envName !== "Vanilla") {
+            console.warn(`[Engine] ${envName} not found. Gracefully falling back to Modern Vanilla...`);
+            res = await fetch(`Terraria_Vanilla_${targetVersion}_Export.json`);
+            if (res.ok) {
+                loadedEnv = "Vanilla";
+                // Silently uncheck the mods in the UI since we fell back to Vanilla
+                if (document.getElementById('modCalamity')) document.getElementById('modCalamity').checked = false;
+                if (document.getElementById('modFargos')) document.getElementById('modFargos').checked = false;
+            }
+        }
+
+        // --- PHASE 3: Fallback to Legacy Python Data ---
         if (!res.ok) {
-            // If the modern file doesn't exist, check if we are requesting 1.4.5
             if (targetVersion === '1.4.5') {
-                console.warn(`${fileName} not found. Attempting legacy terraria_items.json fallback...`);
-                const legacyRes = await fetch('terraria_items.json');
-                if (!legacyRes.ok) throw new Error("No data files found for this version.");
-                
-                const rawData = await legacyRes.json();
-                initializeData(convertArrayToDict(rawData));
+                console.warn(`[Engine] Modern exports not found. Falling back to Legacy Python...`);
+                res = await fetch('terraria_items.json');
+                if (!res.ok) throw new Error("No data files found for this version.");
                 loadedEnv = "Vanilla";
                 usedLegacy = true;
-                
-                // Reset UI checkboxes because legacy is vanilla-only
                 if (document.getElementById('modCalamity')) document.getElementById('modCalamity').checked = false;
                 if (document.getElementById('modFargos')) document.getElementById('modFargos').checked = false;
             } else {
-                throw new Error(`${fileName} not found.`);
+                throw new Error(`Data for ${targetVersion} not found.`);
             }
-        } else {
-            const rawArray = await res.json();
-            initializeData(convertArrayToDict(rawArray));
         }
+
+        // --- LOAD DATA ---
+        const rawArray = await res.json();
+        initializeData(convertArrayToDict(rawArray));
         
-        // --- Dynamic UI State Management ---
-        const selectEl = document.getElementById('engineVersionSelect');
+        // --- DYNAMIC UI STATE MANAGEMENT ---
         if (selectEl) {
-            const opt145 = Array.from(selectEl.options).find(o => o.value === '1.4.5');
-            // Dynamically deprecate the "Vanilla Only" text if the modern export file exists!
-            if (opt145) opt145.text = usedLegacy ? "1.4.5 (Vanilla Only)" : "1.4.5";
+            const optCurrent = Array.from(selectEl.options).find(o => o.value === targetVersion);
+            // Dynamically add/remove the "(Vanilla Only)" tag depending on what actually loaded
+            if (optCurrent) {
+                optCurrent.text = usedLegacy ? `${targetVersion} (Vanilla Only)` : targetVersion;
+            }
             
             const modsContainer = document.getElementById('modsContainer');
             if (modsContainer) {
-                // Lock the mod options ONLY if we fell back to the legacy file
+                // Lock the mod options ONLY if we crashed all the way down to the Python legacy file
                 if (usedLegacy) {
                     modsContainer.classList.add('opacity-50', 'pointer-events-none');
                 } else {
@@ -155,7 +162,7 @@ async function loadVersionData(targetVersion) {
             }
         }
 
-        // Format the loaded mods into a clean display string for the bottom status
+        // --- INJECT STATUS BAR TEXT ---
         let displayModsDesktop = "Vanilla";
         let displayModsMobile = "V";
         
@@ -170,7 +177,6 @@ async function loadVersionData(targetVersion) {
             displayModsMobile = "V, C, F";
         }
 
-        // Inject the final string with the item count using responsive Tailwind classes
         const itemCount = Object.keys(itemsDatabase).length.toLocaleString();
         dom.dbStatus.innerHTML = `
             <span class="hidden md:inline">v${currentEngineVersion} (${displayModsDesktop})</span>
