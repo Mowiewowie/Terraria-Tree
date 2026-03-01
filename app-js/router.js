@@ -25,7 +25,7 @@ function toggleHomeMode(isGoingHome, isHistoryPop = false) {
     const els = [
         document.getElementById('logoContainer'),
         document.getElementById('searchWrapper'),
-        document.getElementById('dbStatus') 
+        document.getElementById('statusWrapper') 
     ];
 
     const firstRects = els.map(el => el.getBoundingClientRect());

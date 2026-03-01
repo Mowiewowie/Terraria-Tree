@@ -2,7 +2,8 @@
 
 // --- Data Fetching & Initialization Engine ---
 
-let currentEngineVersion = '1.4.4'; 
+let currentEngineVersion = '1.4.4';
+let currentStatusText = "";
 const LOADED_MODS = new Set(['Vanilla']);
 
 dom.fileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
@@ -177,7 +178,18 @@ function initializeData(data) {
 
     dom.uploadSection.classList.add('hidden');
     dom.searchInput.disabled = false;
-    dom.dbStatus.innerText = `${Object.keys(itemsDatabase).length.toLocaleString()} Items`;
+    
+    // Format the loaded mods into a clean display string
+    const modNames = Array.from(LOADED_MODS).map(m => {
+        if (m === 'CalamityMod') return 'Calamity';
+        if (m === 'FargowiltasSouls') return "Fargo's";
+        return m;
+    }).join(', ');
+    
+    // Stitch the version, mods, and item count together
+    const itemCount = Object.keys(itemsDatabase).length.toLocaleString();
+    dom.dbStatus.innerText = `v${currentEngineVersion} (${modNames}) • ${itemCount} Items`;
+    
     dom.dbStatus.classList.add('text-green-500');
     dom.dbStatus.classList.remove('text-slate-500');
     dom.searchInput.focus();
