@@ -1,6 +1,6 @@
 // sw.js - Service Worker for Terraria App
-const CACHE_NAME = 'terraria-app-cache-v3';
-const TRACKER_CACHE = 'terraria-icons-tracker-v3';
+const CACHE_NAME = 'terraria-app-cache-v4';
+const TRACKER_CACHE = 'terraria-icons-tracker-v4';
 const EXPIRY_DAYS = 7;
 const EXPIRY_MS = EXPIRY_DAYS * 24 * 60 * 60 * 1000;
 

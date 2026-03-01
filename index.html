@@ -233,26 +233,41 @@
         btnSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
         btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
 
-        // Dynamically probe the server to see if the modern C# export exists for the selected version
+        // Dynamically probe the server to see if ANY modern C# export exists for the selected version
         versionSelect.addEventListener('change', async (e) => {
             const targetVersion = e.target.value;
-            try {
-                // A HEAD request is extremely fast: it only fetches the headers (checking if the file exists) without downloading the JSON.
-                // Because our sw.js only caches GET requests, this HEAD request perfectly bypasses the cache to check the live Azure server!
-                const res = await fetch(`Terraria_Vanilla_${targetVersion}_Export.json`, { method: 'HEAD' });
-                
-                if (res.ok) {
-                    // The modern _Export.json file exists! Unlock the mod options.
-                    modsContainer.classList.remove('opacity-50', 'pointer-events-none');
-                } else {
-                    throw new Error("Modern export not found");
-                }
-            } catch (err) {
-                // If the file doesn't exist, we know it will fall back to the legacy Vanilla-only JSON.
-                // Instantly grey out the container and uncheck the boxes.
+            const optSelected = Array.from(versionSelect.options).find(o => o.value === targetVersion);
+            
+            const possibleFiles = [
+                `Terraria_Vanilla_${targetVersion}_Export.json`,
+                `Terraria_All_${targetVersion}_Export.json`,
+                `Terraria_Vanilla_Calamity_${targetVersion}_Export.json`,
+                `Terraria_Vanilla_Fargowiltas_${targetVersion}_Export.json`
+            ];
+            
+            let foundModern = false;
+            
+            // Ping the server. The moment one file returns 200 OK, we break the loop.
+            for (const file of possibleFiles) {
+                try {
+                    const res = await fetch(file, { method: 'HEAD' });
+                    if (res.ok) { 
+                        foundModern = true; 
+                        break; 
+                    }
+                } catch (err) { }
+            }
+
+            if (foundModern) {
+                // Modern file exists: Unlock checkboxes and remove "(Vanilla Only)"
+                modsContainer.classList.remove('opacity-50', 'pointer-events-none');
+                if (optSelected) optSelected.text = targetVersion; 
+            } else {
+                // Modern file missing: Lock checkboxes, uncheck them, and append "(Vanilla Only)"
                 modsContainer.classList.add('opacity-50', 'pointer-events-none');
                 document.getElementById('modCalamity').checked = false;
                 document.getElementById('modFargos').checked = false;
+                if (optSelected) optSelected.text = `${targetVersion} (Vanilla Only)`; 
             }
         });
 
