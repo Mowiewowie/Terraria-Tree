@@ -106,6 +106,7 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
     dom.toolFilters.classList.add('hidden');
     dom.expandAllBtn.classList.add('hidden');
     dom.expandTierBtn.classList.add('hidden');
+    dom.collapseAllBtn.classList.add('hidden');
 
     performIKTransition(
         () => false, 
@@ -162,9 +163,11 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     if (treeMode === 'discover') {
         dom.expandAllBtn.classList.add('hidden');
         dom.expandTierBtn.classList.add('hidden');
+        dom.collapseAllBtn.classList.add('hidden');
     } else {
         dom.expandAllBtn.classList.remove('hidden');
         dom.expandTierBtn.classList.remove('hidden');
+        dom.collapseAllBtn.classList.remove('hidden');
     }
 
     let isFirstLoad = !preserveState;
@@ -366,22 +369,15 @@ function estimateTreeSize(rootId, mode) {
 function syncExpandAllButton() {
     const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
     if (expandBtns.length === 0) {
-        isExpandedAll = false;
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i> Expand All';
+        dom.expandAllBtn.classList.add('opacity-50', 'pointer-events-none');
         dom.expandTierBtn.classList.add('opacity-50', 'pointer-events-none');
+        dom.collapseAllBtn.classList.add('opacity-50', 'pointer-events-none');
         return;
     }
     
-    const allExpanded = expandBtns.every(btn => btn.innerHTML.includes('fa-minus'));
-    isExpandedAll = allExpanded;
-    
-    if (allExpanded) {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-up"></i> Collapse All';
-        dom.expandTierBtn.classList.add('opacity-50', 'pointer-events-none');
-    } else {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i> Expand All';
-        dom.expandTierBtn.classList.remove('opacity-50', 'pointer-events-none');
-    }
+    dom.expandAllBtn.classList.remove('opacity-50', 'pointer-events-none');
+    dom.expandTierBtn.classList.remove('opacity-50', 'pointer-events-none');
+    dom.collapseAllBtn.classList.remove('opacity-50', 'pointer-events-none');
 }
 
 async function executeExpandAll(targetState) {
@@ -399,6 +395,7 @@ async function executeExpandAll(targetState) {
         d++;
     }
     
+    dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i> Expand All';
     syncExpandAllButton();
     setTimeout(() => resetView(), 100);
 }
@@ -421,28 +418,42 @@ dom.expandTierBtn.onclick = () => {
 };
 
 dom.expandAllBtn.onclick = async () => {
-    const targetState = !isExpandedAll ? 'open' : 'close';
+    const estimatedNodes = estimateTreeSize(currentTreeItemId, treeMode);
+    if (estimatedNodes > 200) {
+        dom.lagWarningCount.innerText = "~" + estimatedNodes;
+        dom.lagWarningModal.classList.remove('hidden');
+        
+        dom.btnCancelExpand.onclick = () => {
+            dom.lagWarningModal.classList.add('hidden');
+        };
+        dom.btnConfirmExpand.onclick = () => {
+            dom.lagWarningModal.classList.add('hidden');
+            executeExpandAll('open');
+        };
+        return; 
+    }
+    executeExpandAll('open');
+};
+
+dom.collapseAllBtn.onclick = async () => {
+    const originalHtml = dom.collapseAllBtn.innerHTML;
+    dom.collapseAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
+    await new Promise(r => requestAnimationFrame(r));
     
-    if (targetState === 'open') {
-        const estimatedNodes = estimateTreeSize(currentTreeItemId, treeMode);
-        if (estimatedNodes > 200) {
-            dom.lagWarningCount.innerText = "~" + estimatedNodes;
-            dom.lagWarningModal.classList.remove('hidden');
-            
-            dom.btnCancelExpand.onclick = () => {
-                dom.lagWarningModal.classList.add('hidden');
-            };
-            dom.btnConfirmExpand.onclick = () => {
-                dom.lagWarningModal.classList.add('hidden');
-                isExpandedAll = true;
-                executeExpandAll(targetState);
-            };
-            return; // Halt execution until user confirms
+    // Instantly wipe memory of all deeply expanded nodes to reset the entire tree state
+    expandedNodes.clear();
+    
+    const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
+    for (const btn of expandBtns) {
+        // Target only currently open buttons
+        if (btn.innerHTML.includes('fa-minus')) {
+            btn.toggle('close');
         }
     }
     
-    isExpandedAll = !isExpandedAll;
-    executeExpandAll(targetState);
+    dom.collapseAllBtn.innerHTML = originalHtml;
+    syncExpandAllButton();
+    setTimeout(() => resetView(), 100);
 };
 
 function focusSubtree(nodeEl, containerEl) {
