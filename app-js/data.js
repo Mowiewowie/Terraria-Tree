@@ -179,8 +179,8 @@ async function loadVersionData(targetVersion) {
 
         const itemCount = Object.keys(itemsDatabase).length.toLocaleString();
         dom.dbStatus.innerHTML = `
-            <span class="hidden md:inline">v${currentEngineVersion} (${displayModsDesktop})</span>
-            <span class="md:hidden">v${currentEngineVersion} (${displayModsMobile})</span>
+            <span class="hidden lg:inline">v${currentEngineVersion} (${displayModsDesktop})</span>
+            <span class="lg:hidden">v${currentEngineVersion} (${displayModsMobile})</span>
             <span class="hidden sm:inline"><span class="opacity-50 mx-1.5">•</span>${itemCount} Items</span>
         `;
         dom.dbStatus.classList.add('text-green-500');
@@ -240,15 +240,26 @@ function initializeData(data) {
     dom.searchInput.focus();
     
     // Format the loaded mods into a clean display string
-    const modNames = Array.from(LOADED_MODS).map(m => {
+    const displayModsDesktop = Array.from(LOADED_MODS).map(m => {
         if (m === 'CalamityMod') return 'Calamity';
         if (m === 'FargowiltasSouls') return "Fargo's";
         return m;
     }).join(', ');
     
-    // Stitch the version, mods, and item count together
+    const displayModsMobile = Array.from(LOADED_MODS).map(m => {
+        if (m === 'CalamityMod') return 'C';
+        if (m === 'FargowiltasSouls') return "F";
+        if (m === 'Vanilla') return "V";
+        return m.charAt(0);
+    }).join(', ');
+
+    // Stitch the version, mods, and item count together using staggered responsive spans
     const itemCount = Object.keys(itemsDatabase).length.toLocaleString();
-    dom.dbStatus.innerText = `v${currentEngineVersion} (${modNames}) • ${itemCount} Items`;
+    dom.dbStatus.innerHTML = `
+        <span class="hidden lg:inline">v${currentEngineVersion} (${displayModsDesktop})</span>
+        <span class="lg:hidden">v${currentEngineVersion} (${displayModsMobile})</span>
+        <span class="hidden sm:inline"><span class="opacity-50 mx-1.5">•</span>${itemCount} Items</span>
+    `;
     
     dom.dbStatus.classList.add('text-green-500');
     dom.dbStatus.classList.remove('text-slate-500');
