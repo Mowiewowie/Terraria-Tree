@@ -51,7 +51,8 @@ dom.vizArea.addEventListener('wheel', e => {
     const localY = (mouseY - targetY) / targetScale;
     const zoomDelta = -e.deltaY * 0.0015; 
     
-    targetScale = Math.max(getMinScale(), Math.min(targetScale + zoomDelta, 4));
+    // Allowed manual zoom down to 2% (0.02) overriding the getMinScale() reset limit
+    targetScale = Math.max(0.02, Math.min(targetScale + zoomDelta, 4));
     targetX = mouseX - localX * targetScale;
     targetY = mouseY - localY * targetScale;
     triggerAnimation();
@@ -141,7 +142,8 @@ dom.vizArea.addEventListener('touchmove', e => {
         const localX = (mouseX - targetX) / targetScale;
         const localY = (mouseY - targetY) / targetScale;
 
-        const newScale = Math.max(getMinScale(), Math.min(initialScale * zoomDelta, 4));
+        // Allowed manual zoom down to 2% (0.02) overriding the getMinScale() reset limit
+        const newScale = Math.max(0.02, Math.min(initialScale * zoomDelta, 4));
         if (Number.isFinite(newScale)) {
             targetScale = newScale;
             targetX = mouseX - localX * targetScale;

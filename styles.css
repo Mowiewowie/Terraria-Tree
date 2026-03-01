@@ -172,7 +172,7 @@ body.home-mode #statusWrapper {
     width: 30px; height: 24px; z-index: 20; background: transparent; border: none; cursor: pointer; outline: none; padding: 0;
 }
 .tree-line-btn::after {
-    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
+    content: ''; position: absolute; top: 0; left: 50%; transform: translate3d(-50%, 0, 0); 
     width: 2px; height: 100%; background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
@@ -182,14 +182,15 @@ body.home-mode #statusWrapper {
 .line-h::after {
     content: ''; position: absolute; top: 14px; left: 0; width: 100%; height: 2px; 
     background-color: var(--line-normal); transition: all 0.2s ease;
+    transform: translateZ(0); /* Hint browser to preserve sub-pixel rendering */
 }
 
 .line-v {
-    position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
+    position: absolute; top: 0; left: 50%; transform: translate3d(-50%, 0, 0); 
     width: 30px; height: 24px; cursor: pointer; z-index: 10;
 }
 .line-v::after {
-    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
+    content: ''; position: absolute; top: 0; left: 50%; transform: translate3d(-50%, 0, 0); 
     width: 2px; height: 100%; background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
@@ -246,7 +247,7 @@ body.home-mode #statusWrapper {
     /* Strict Containment & Rendering Optimization for Massive DOMs */
     contain: layout style;
     content-visibility: auto;
-    contain-intrinsic-size: 96px 96px; /* Tells the browser the height so the tree doesn't visually collapse off-screen */
+    contain-intrinsic-size: auto 96px; /* 'auto' remembers the exact rendered size to prevent layout shifting/flickering when scrolling */
 }
 .item-card:hover:not(.hero-active) { 
     transform: translateY(-4px); border-color: var(--card-border-hover); 
