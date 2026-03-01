@@ -150,11 +150,11 @@ const pendingImages = new Map();
 const imageObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         const img = entry.target;
-        const card = img.closest('.item-card'); // Target the physical card for culling
+        const node = img.closest('.tree-node'); // Target the whole node to hide lines too!
         
         if (entry.isIntersecting) {
-            // NATIVE GPU CULLING: Make the card paintable again
-            if (card) card.style.visibility = 'visible';
+            // NATIVE GPU CULLING: Make the node paintable again
+            if (node) node.style.visibility = 'visible';
             
             // DEBOUNCED LAZY LOADING
             if (img.dataset.src && !pendingImages.has(img)) {
@@ -168,8 +168,8 @@ const imageObserver = new IntersectionObserver((entries) => {
                 pendingImages.set(img, timeoutId);
             }
         } else {
-            // NATIVE GPU CULLING: Tell the browser to completely ignore this card during paint cycles
-            if (card) card.style.visibility = 'hidden';
+            // NATIVE GPU CULLING: Tell the browser to completely ignore this node during paint cycles
+            if (node) node.style.visibility = 'hidden';
             
             // Cancel pending image downloads if we are just sweeping past
             if (pendingImages.has(img)) {
