@@ -220,6 +220,7 @@ function performIKTransition(preAnimationSetup, buildDOM, postDOMAlign, skipFade
                 setTimeout(() => {
                     if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
                     dom.treeContainer.style.transition = '';
+                    if (typeof window.calculateCullingBounds === 'function') window.calculateCullingBounds();
                 }, 450);
             });
         });

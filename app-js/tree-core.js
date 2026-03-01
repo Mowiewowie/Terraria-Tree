@@ -355,7 +355,10 @@ dom.expandAllBtn.onclick = async () => {
     }
     
     syncExpandAllButton();
-    setTimeout(() => resetView(), 100);
+    setTimeout(() => {
+        resetView();
+        if (typeof window.calculateCullingBounds === 'function') window.calculateCullingBounds();
+    }, 150);
 };
 
 function focusSubtree(nodeEl, containerEl) {
