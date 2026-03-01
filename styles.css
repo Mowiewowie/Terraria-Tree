@@ -330,6 +330,13 @@ button.no-pan {
     pointer-events: auto !important; 
 }
 
+/* Force flex display on mobile menu when JS toggles visibility */
+@media (max-width: 767px) {
+    #toolbarTools:not(.hidden) {
+        display: flex !important;
+    }
+}
+
 /* --- Mobile GPU Performance Mode --- */
 /* Strips expensive shadowing and transitions while panning to maintain 60 FPS on massive trees */
 .fast-panning .item-card {
