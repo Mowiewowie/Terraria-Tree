@@ -146,19 +146,31 @@ function getMinScale() {
     return 0.30; 
 }
 
+const pendingImages = new Map();
 const imageObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
+        const img = entry.target;
         if (entry.isIntersecting) {
-            const img = entry.target;
-            if (img.dataset.src) {
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
+            // Debounce: Wait 300ms. If we are just sweeping past it, the timer will be cancelled.
+            const timeoutId = setTimeout(() => {
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+                observer.unobserve(img);
+                pendingImages.delete(img);
+            }, 300);
+            pendingImages.set(img, timeoutId);
+        } else {
+            // If the camera sweeps past and it leaves the viewport, cancel the download
+            if (pendingImages.has(img)) {
+                clearTimeout(pendingImages.get(img));
+                pendingImages.delete(img);
             }
-            observer.unobserve(img);
         }
     });
 }, {
-    rootMargin: '200px' // Load slightly beyond viewport
+    rootMargin: '100px' // Tighter margin to prevent off-screen sweep loading
 });
 
 function createDirectImageUrl(name) {
