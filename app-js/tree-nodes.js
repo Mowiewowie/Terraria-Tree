@@ -489,21 +489,20 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                         if (top < vizRect.top + padding) dy = (vizRect.top + padding) - top;
                         else if (bottom > vizRect.bottom - padding) dy = (vizRect.bottom - padding) - bottom;
 
-                            if (dx !== 0 || dy !== 0) {
+                        if (dx !== 0 || dy !== 0) {
                             targetX += dx;
                             targetY += dy;
                             triggerAnimation();
-                            }
                         }
-                        saveCurrentState();
-                    }, 100);
-                } else { // Item was just COLLAPSED
-                    if (isDeepExpandMode) {
-                        resetView(); // Matches user expectation: pulls the camera out to view the entire remaining tree
                     }
                     saveCurrentState();
+                }, 100);
+            } else { // Item was just COLLAPSED
+                if (isDeepExpandMode) {
+                    resetView(); // Matches user expectation: pulls the camera out to view the entire remaining tree
                 }
-            };
+                saveCurrentState();
+            }
         };
         
         node.append(btn, container);
