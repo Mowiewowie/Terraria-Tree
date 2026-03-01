@@ -78,6 +78,8 @@ window.addEventListener('mouseup', () => {
     if (isPanning) {
         isPanning = false; 
         dom.vizArea.classList.remove('grabbing'); 
+        dom.treeContainer.style.pointerEvents = ''; // Force unlock clicks
+        triggerAnimation(); // Ensure physics loop settles gracefully
         saveCurrentState();
     }
 });
@@ -154,6 +156,8 @@ dom.vizArea.addEventListener('touchend', e => {
         isPanning = false;
         initialPinchDist = null;
         dom.vizArea.classList.remove('grabbing');
+        dom.treeContainer.style.pointerEvents = ''; // Force unlock taps
+        triggerAnimation(); // Ensure physics loop settles gracefully
         saveCurrentState();
     } else if (e.touches.length === 1) {
         initialPinchDist = null;

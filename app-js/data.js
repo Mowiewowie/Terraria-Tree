@@ -175,7 +175,7 @@ async function loadVersionData(targetVersion) {
         dom.dbStatus.innerHTML = `
             <span class="hidden md:inline">v${currentEngineVersion} (${displayModsDesktop})</span>
             <span class="md:hidden">v${currentEngineVersion} (${displayModsMobile})</span>
-            <span class="opacity-50 mx-1.5">•</span>${itemCount} <span class="hidden sm:inline">Items</span>
+            <span class="hidden sm:inline"><span class="opacity-50 mx-1.5">•</span>${itemCount} Items</span>
         `;
         dom.dbStatus.classList.add('text-green-500');
         dom.dbStatus.classList.remove('text-slate-500');
