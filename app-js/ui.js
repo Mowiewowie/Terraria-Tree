@@ -219,8 +219,13 @@ function showTooltip(e, data, extraRecipe = null) {
         dom.tooltip.desc.classList.remove('hidden');
         
         const primaryItemId = Object.keys(itemsDatabase).find(id => itemsDatabase[id].DisplayName === data.groupItems[0] || itemsDatabase[id].name === data.groupItems[0]);
-        dom.tooltip.image.src = (primaryItemId && itemsDatabase[primaryItemId].IconUrl) ? itemsDatabase[primaryItemId].IconUrl : createDirectImageUrl(data.groupItems[0]); 
-        dom.tooltip.image.onerror = () => { dom.tooltip.image.src = FALLBACK_ICON; };
+        const targetSrc = (primaryItemId && itemsDatabase[primaryItemId].IconUrl) ? itemsDatabase[primaryItemId].IconUrl : createDirectImageUrl(data.groupItems[0]); 
+        
+        // Prevent redundant DOM updates to stop browser from re-evaluating the image cache
+        if (dom.tooltip.image.getAttribute('src') !== targetSrc) {
+            dom.tooltip.image.src = targetSrc;
+        }
+        dom.tooltip.image.onerror = () => { if (dom.tooltip.image.getAttribute('src') !== FALLBACK_ICON) dom.tooltip.image.src = FALLBACK_ICON; };
         
         // Restore exact DOM consistency for the shortcuts under the title
         if (!isMobileUX()) {
@@ -294,8 +299,12 @@ function showTooltip(e, data, extraRecipe = null) {
         dom.tooltip.desc.classList.remove('hidden');
     }
     
-    dom.tooltip.image.src = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
-    dom.tooltip.image.onerror = () => { dom.tooltip.image.src = FALLBACK_ICON; };
+    const targetSrcNormal = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
+    // Prevent redundant DOM updates to stop browser from re-evaluating the image cache
+    if (dom.tooltip.image.getAttribute('src') !== targetSrcNormal) {
+        dom.tooltip.image.src = targetSrcNormal;
+    }
+    dom.tooltip.image.onerror = () => { if (dom.tooltip.image.getAttribute('src') !== FALLBACK_ICON) dom.tooltip.image.src = FALLBACK_ICON; };
     
     const usingMobileUX = isMobileUX();
 

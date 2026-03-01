@@ -89,6 +89,11 @@ async function loadVersionData(targetVersion) {
     // Reset RAM to prevent cross-contamination
     itemsDatabase = {};
     currentEngineVersion = targetVersion;
+    
+    // Force UI dropdown to match the target version (defeats browser form state restoration on refresh)
+    const selectEl = document.getElementById('engineVersionSelect');
+    if (selectEl) selectEl.value = targetVersion;
+    
     dom.dbStatus.innerText = `Loading v${targetVersion}...`;
 
     // Determine requested environment from checkboxes
@@ -151,14 +156,27 @@ async function loadVersionData(targetVersion) {
         }
 
         // Format the loaded mods into a clean display string for the bottom status
-        let displayMods = "Vanilla";
-        if (loadedEnv === "Vanilla_Calamity") displayMods = "Vanilla, Calamity";
-        else if (loadedEnv === "Vanilla_Fargowiltas") displayMods = "Vanilla, Fargo's";
-        else if (loadedEnv === "All" || loadedEnv === "Vanilla_All") displayMods = "Vanilla, Calamity, Fargo's";
+        let displayModsDesktop = "Vanilla";
+        let displayModsMobile = "V";
+        
+        if (loadedEnv === "Vanilla_Calamity") {
+            displayModsDesktop = "Vanilla, Calamity";
+            displayModsMobile = "V, C";
+        } else if (loadedEnv === "Vanilla_Fargowiltas") {
+            displayModsDesktop = "Vanilla, Fargo's";
+            displayModsMobile = "V, F";
+        } else if (loadedEnv === "All" || loadedEnv === "Vanilla_All") {
+            displayModsDesktop = "Vanilla, Calamity, Fargo's";
+            displayModsMobile = "V, C, F";
+        }
 
-        // Inject the final string with the item count
+        // Inject the final string with the item count using responsive Tailwind classes
         const itemCount = Object.keys(itemsDatabase).length.toLocaleString();
-        dom.dbStatus.innerText = `v${currentEngineVersion} (${displayMods}) • ${itemCount} Items`;
+        dom.dbStatus.innerHTML = `
+            <span class="hidden md:inline">v${currentEngineVersion} (${displayModsDesktop})</span>
+            <span class="md:hidden">v${currentEngineVersion} (${displayModsMobile})</span>
+            <span class="opacity-50 mx-1.5">•</span>${itemCount} <span class="hidden sm:inline">Items</span>
+        `;
         dom.dbStatus.classList.add('text-green-500');
         dom.dbStatus.classList.remove('text-slate-500');
 
