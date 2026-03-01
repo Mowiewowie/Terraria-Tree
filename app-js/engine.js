@@ -31,6 +31,23 @@ function renderLoop() {
         requestAnimationFrame(renderLoop);
     }
 }
+    // Keep them disabled during fast travel or physical dragging to maintain CPU performance.
+    if (isPanning || initialPinchDist || diff > 1.5) {
+        dom.treeContainer.style.pointerEvents = 'none';
+    } else {
+        dom.treeContainer.style.pointerEvents = '';
+    }
+
+    if (diff < 0.001 && !isPanning && !initialPinchDist) {
+        currentX = targetX;
+        currentY = targetY;
+        currentScale = targetScale;
+        dom.treeContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
+        isAnimating = false;
+    } else {
+        requestAnimationFrame(renderLoop);
+    }
+}
 
 function triggerAnimation() {
     if (!isAnimating) {
