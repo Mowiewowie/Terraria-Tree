@@ -87,6 +87,7 @@ const dom = {
     toolFilters: document.getElementById('toolFilters'),
     expandTierBtn: document.getElementById('expandTierBtn'),
     expandAllBtn: document.getElementById('expandAllBtn'),
+    collapseAllBtn: document.getElementById('collapseAllBtn'),
     resetViewBtn: document.getElementById('resetViewBtn'),
     lagWarningModal: document.getElementById('lagWarningModal'),
     lagWarningCount: document.getElementById('lagWarningCount'),

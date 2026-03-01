@@ -348,6 +348,14 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
 
             if (!isClosed) {
                 container.classList.add('hidden');
+                
+                // Recursive Memory Wipe: Remove this node AND all its currently loaded children from the expanded set!
+                const childCards = container.querySelectorAll('.item-card, .discover-box-container');
+                childCards.forEach(c => {
+                    if (c.dataset.id) expandedNodes.delete(c.dataset.id);
+                });
+                expandedNodes.delete(id); 
+                
                 if (isDeepExpandMode) {
                     btn.innerHTML = '<i class="fa-solid fa-code-branch mr-1"></i> Expand Path';
                     btn.classList.replace('bg-indigo-700', 'bg-indigo-600');
@@ -355,7 +363,6 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
                     btn.classList.remove(btnColor);
                 }
-                expandedNodes.delete(id); 
             } else {
                 container.innerHTML = '';
                 container.classList.remove('hidden');
