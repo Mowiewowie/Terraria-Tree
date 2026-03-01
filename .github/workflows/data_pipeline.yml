@@ -2,7 +2,7 @@ name: TerrariTree Automated Data Extraction
 
 on:
   schedule:
-    - cron: '15 2 27 * *'
+    - cron: '00 2 27 * *'
   workflow_dispatch:
 
 permissions:
