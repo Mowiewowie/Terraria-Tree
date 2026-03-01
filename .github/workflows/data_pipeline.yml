@@ -106,7 +106,7 @@ jobs:
           
           # 3. Stage all 4 JSON files (Vanilla, Vanilla_Calamity, Vanilla_Fargowiltas, All)
           git add *_Export.json
-          
+
           # 4. Commit and push (Safely aborts if the game hasn't updated and files are identical)
           git commit -m "[CI/CD] Automated Zero-Touch Database Update" || echo "No changes to commit"
           git push
