@@ -105,6 +105,7 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
     dom.toolMode.classList.add('hidden');
     dom.toolFilters.classList.add('hidden');
     dom.expandAllBtn.classList.add('hidden');
+    dom.expandTierBtn.classList.add('hidden');
 
     performIKTransition(
         () => false, 
@@ -160,8 +161,10 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     
     if (treeMode === 'discover') {
         dom.expandAllBtn.classList.add('hidden');
+        dom.expandTierBtn.classList.add('hidden');
     } else {
         dom.expandAllBtn.classList.remove('hidden');
+        dom.expandTierBtn.classList.remove('hidden');
     }
 
     let isFirstLoad = !preserveState;
@@ -319,28 +322,70 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     }, postAlign, isInstant);
 }
 
+function estimateTreeSize(rootId, mode) {
+    let count = 0;
+    let visited = new Set();
+    let queue = [rootId];
+    if (mode === 'discover') queue = [...discoverBoxItems];
+
+    while(queue.length > 0 && count < 5000) {
+        let curr = queue.shift();
+        count++;
+        let data = itemsDatabase[curr];
+        if(!data) continue;
+        
+        if (mode === 'recipe') {
+            if (data.Recipes && data.Recipes.length > 0 && !visited.has(curr)) {
+                visited.add(curr);
+                let rIndex = selectedRecipeIndices[curr] || 0;
+                if (rIndex >= data.Recipes.length) rIndex = 0;
+                let recipe = data.Recipes[rIndex];
+                if (recipe && recipe.Ingredients) {
+                    recipe.Ingredients.forEach(ing => {
+                        let cid = ing.ID;
+                        if (!cid) {
+                            let found = itemIndex.find(i => i.name.toLowerCase() === (ing.Name||"").toLowerCase());
+                            if (found) cid = found.id?.toString();
+                        }
+                        if(cid) queue.push(cid);
+                    });
+                }
+            }
+        } else if (mode === 'usage' || mode === 'discover') {
+            if (!visited.has(curr)) {
+                visited.add(curr);
+                let usages = usageIndex[(data.DisplayName || data.name || "").toLowerCase()] || [];
+                let uSet = new Set(usages.map(u => u.id));
+                uSet.forEach(id => queue.push(id));
+            }
+        }
+    }
+    return count;
+}
+
 function syncExpandAllButton() {
     const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
     if (expandBtns.length === 0) {
         isExpandedAll = false;
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand';
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i> Expand All';
+        dom.expandTierBtn.classList.add('opacity-50', 'pointer-events-none');
         return;
     }
+    
     const allExpanded = expandBtns.every(btn => btn.innerHTML.includes('fa-minus'));
     isExpandedAll = allExpanded;
     
     if (allExpanded) {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-compress"></i> Collapse';
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-up"></i> Collapse All';
+        dom.expandTierBtn.classList.add('opacity-50', 'pointer-events-none');
     } else {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand';
+        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i> Expand All';
+        dom.expandTierBtn.classList.remove('opacity-50', 'pointer-events-none');
     }
 }
 
-dom.expandAllBtn.onclick = async () => {
-    isExpandedAll = !isExpandedAll;
-    const targetState = isExpandedAll ? 'open' : 'close';
+async function executeExpandAll(targetState) {
     dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
-    
     await new Promise(r => requestAnimationFrame(r));
     
     let unstable = true, d = 0;
@@ -356,6 +401,48 @@ dom.expandAllBtn.onclick = async () => {
     
     syncExpandAllButton();
     setTimeout(() => resetView(), 100);
+}
+
+dom.expandTierBtn.onclick = () => {
+    const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
+    let changed = false;
+    
+    // Specifically target only closed buttons (pluses) on the current visible layer
+    for (const btn of expandBtns) {
+        if (btn.innerHTML.includes('fa-plus')) {
+            btn.toggle('open');
+            changed = true;
+        }
+    }
+    if (changed) {
+        syncExpandAllButton();
+        setTimeout(() => resetView(), 100);
+    }
+};
+
+dom.expandAllBtn.onclick = async () => {
+    const targetState = !isExpandedAll ? 'open' : 'close';
+    
+    if (targetState === 'open') {
+        const estimatedNodes = estimateTreeSize(currentTreeItemId, treeMode);
+        if (estimatedNodes > 200) {
+            dom.lagWarningCount.innerText = "~" + estimatedNodes;
+            dom.lagWarningModal.classList.remove('hidden');
+            
+            dom.btnCancelExpand.onclick = () => {
+                dom.lagWarningModal.classList.add('hidden');
+            };
+            dom.btnConfirmExpand.onclick = () => {
+                dom.lagWarningModal.classList.add('hidden');
+                isExpandedAll = true;
+                executeExpandAll(targetState);
+            };
+            return; // Halt execution until user confirms
+        }
+    }
+    
+    isExpandedAll = !isExpandedAll;
+    executeExpandAll(targetState);
 };
 
 function focusSubtree(nodeEl, containerEl) {

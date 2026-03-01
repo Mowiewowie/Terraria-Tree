@@ -126,8 +126,11 @@
                     </label>
                 </div>
                 
+                <button id="expandTierBtn" class="controls-panel px-4 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 dark:hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-12">
+                    <i class="fa-solid fa-angle-down"></i> Expand Tier
+                </button>
                 <button id="expandAllBtn" class="controls-panel px-4 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 dark:hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-12">
-                    <i class="fa-solid fa-layer-group"></i> Expand
+                    <i class="fa-solid fa-angles-down"></i> Expand All
                 </button>
                 <button id="resetViewBtn" class="controls-panel px-4 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 dark:hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-12">
                     <i class="fa-solid fa-compress-arrows-alt"></i> Reset
@@ -177,6 +180,25 @@
         <div id="ttExtraIngredients" class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 hidden">
             <div class="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold mb-2">Also Requires:</div>
             <div id="ttExtraIngredientsList" class="flex flex-wrap gap-1.5"></div>
+        </div>
+    </div>
+
+    <div id="lagWarningModal" class="hidden fixed inset-0 bg-white/80 dark:bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+            <div class="p-6 flex flex-col items-center text-center space-y-4">
+                <i class="fa-solid fa-triangle-exclamation text-5xl text-amber-500"></i>
+                <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Massive Tree Detected</h2>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    This expansion contains <span id="lagWarningCount" class="font-bold text-amber-600 dark:text-amber-500"></span> nodes. Expanding all at once may cause severe lag on mobile devices.
+                </p>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    We highly recommend using the <strong class="text-slate-800 dark:text-slate-200"><i class="fa-solid fa-angle-down"></i> Expand Tier</strong> button instead to load it layer by layer.
+                </p>
+            </div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between gap-3">
+                <button id="btnCancelExpand" class="flex-1 px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-medium rounded-lg transition-colors">Cancel</button>
+                <button id="btnConfirmExpand" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg shadow transition-colors">Expand Anyway</button>
+            </div>
         </div>
     </div>
 
