@@ -43,6 +43,15 @@ body {
 
 .tree-children.hidden { display: none !important; }
 
+/* --- Industry Standard Safe Area Handlers --- */
+.safe-area-header {
+    /* Adds the Dynamic Island height + 0.75rem (12px) of visual breathing room */
+    padding-top: calc(env(safe-area-inset-top) + 0.75rem);
+    padding-bottom: 0.75rem;
+    padding-left: calc(env(safe-area-inset-left) + 1.5rem);
+    padding-right: calc(env(safe-area-inset-right) + 1.5rem);
+}
+
 /* --- Home Mode CSS Override --- */
 body.home-mode #mainHeader {
     height: 100vh;
