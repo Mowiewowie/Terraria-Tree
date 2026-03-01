@@ -302,7 +302,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
             e.stopPropagation();
             selectedRecipeIndices[id] = (selectedRecipeIndices[id] - 1 + validRecipes.length) % validRecipes.length;
             saveCurrentState();
-            loadTree(currentTreeItemId, true); // Instantly rebuilds the tree below this item
+            loadTree(currentTreeItemId, true); // Instantly rebuilds the tree below this item 
         };
 
         const label = document.createElement('span');
