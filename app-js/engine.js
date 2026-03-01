@@ -1,5 +1,64 @@
 // --- Function: Custom 2D infinite canvas physics, framerate math, and all mobile/desktop drag-pan events ---
 
+// --- Custom 2D Frustum Culling Engine (Virtualization) ---
+let cullingBounds = [];
+let isCullingActive = false;
+let lastCullX = null, lastCullY = null, lastCullScale = null;
+
+window.calculateCullingBounds = function() {
+    cullingBounds = [];
+    const targets = dom.treeContainer.querySelectorAll('.item-card, .discover-box-container');
+    const treeRect = dom.treeContainer.getBoundingClientRect();
+    
+    targets.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        // Store absolute local coordinates relative to the tree root, invariant of zoom
+        const localLeft = (rect.left - treeRect.left) / currentScale;
+        const localTop = (rect.top - treeRect.top) / currentScale;
+        
+        cullingBounds.push({
+            el: el,
+            left: localLeft,
+            top: localTop,
+            right: localLeft + (rect.width / currentScale),
+            bottom: localTop + (rect.height / currentScale),
+            isHidden: false
+        });
+    });
+    isCullingActive = true;
+    lastCullX = null; // Force immediate cull
+    applyCulling();
+};
+
+function applyCulling() {
+    if (!isCullingActive || cullingBounds.length === 0) return;
+    
+    // Optimization: Only recalculate if the camera moved significantly
+    if (lastCullX !== null && Math.abs(currentX - lastCullX) < 20 && Math.abs(currentY - lastCullY) < 20 && Math.abs(currentScale - lastCullScale) < 0.02) return;
+    
+    lastCullX = currentX; lastCullY = currentY; lastCullScale = currentScale;
+
+    // Viewport mapped to local coordinates + 1000px safety padding so images load before entering screen
+    const pad = 1000 / currentScale; 
+    const vLeft = -currentX / currentScale - pad;
+    const vTop = -currentY / currentScale - pad;
+    const vRight = (window.innerWidth - currentX) / currentScale + pad;
+    const vBottom = (window.innerHeight - currentY) / currentScale + pad;
+
+    for (let i = 0; i < cullingBounds.length; i++) {
+        const b = cullingBounds[i];
+        const isVisible = !(b.right < vLeft || b.left > vRight || b.bottom < vTop || b.top > vBottom);
+        
+        if (isVisible && b.isHidden) {
+            b.el.style.visibility = 'visible';
+            b.isHidden = false;
+        } else if (!isVisible && !b.isHidden) {
+            b.el.style.visibility = 'hidden';
+            b.isHidden = true;
+        }
+    }
+}
+
 // --- Animation Loop & Canvas Physics Engine ---
 
 function renderLoop() {
@@ -13,6 +72,8 @@ function renderLoop() {
 
     const diff = Math.abs(targetX - currentX) + Math.abs(targetY - currentY) + Math.abs(targetScale - currentScale);
     
+    applyCulling(); // Dynamically hide off-screen items while panning/zooming
+
     // Restore pointer events early (when movement is visually negligible) to completely eliminate perceived lag.
     // Keep them disabled during fast travel or physical dragging to maintain CPU performance.
     if (isPanning || initialPinchDist || diff > 1.5) {
