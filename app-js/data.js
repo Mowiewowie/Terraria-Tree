@@ -88,48 +88,82 @@ async function loadVersionData(targetVersion) {
 
     // Reset RAM to prevent cross-contamination
     itemsDatabase = {};
-    LOADED_MODS.clear();
     currentEngineVersion = targetVersion;
     dom.dbStatus.innerText = `Loading v${targetVersion}...`;
 
-    try {
-        if (targetVersion === '1.4.5') {
-            const res = await fetch(`terraria_items.json`);
-            if (!res.ok) throw new Error("terraria_items.json not found.");
-            const contentType = res.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") === -1) {
-                throw new Error("terraria_items.json returned non-JSON content.");
-            }
-            const rawData = await res.json();
-            initializeData(convertArrayToDict(rawData));
-            LOADED_MODS.add('Vanilla');
-            console.log(`[Engine] Success: Legacy Schema loaded for v1.4.5`);
-        } else {
-            // Determine which mods are selected
-            const modCalamity = document.getElementById('modCalamity')?.checked;
-            const modFargos = document.getElementById('modFargos')?.checked;
-            
-            let envName = "Vanilla";
-            if (modCalamity && modFargos) envName = "All";
-            else if (modCalamity) envName = "Vanilla_Calamity";
-            else if (modFargos) envName = "Vanilla_Fargowiltas";
+    // Determine requested environment from checkboxes
+    const modCalamity = document.getElementById('modCalamity')?.checked;
+    const modFargos = document.getElementById('modFargos')?.checked;
+    
+    let envName = "Vanilla";
+    if (modCalamity && modFargos) envName = "All"; // Matches your C# string: Terraria_All_...
+    else if (modCalamity) envName = "Vanilla_Calamity";
+    else if (modFargos) envName = "Vanilla_Fargowiltas";
 
-            const fileName = `Terraria_${envName}_1.4.4_Export.json`;
-            const res = await fetch(fileName);
-            if (!res.ok) throw new Error(`${fileName} not found.`);
-            const contentType = res.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") === -1) {
-                throw new Error(`${fileName} returned non-JSON content.`);
+    let loadedEnv = envName; 
+    let usedLegacy = false;
+
+    try {
+        // First try to load the new C# dynamic export file structure
+        // (This will work for 1.4.4 now, and 1.4.5 in the future automatically!)
+        const fileName = `Terraria_${envName}_${targetVersion}_Export.json`;
+        const res = await fetch(fileName);
+        
+        if (!res.ok) {
+            // If the modern file doesn't exist, check if we are requesting 1.4.5
+            if (targetVersion === '1.4.5') {
+                console.warn(`${fileName} not found. Attempting legacy terraria_items.json fallback...`);
+                const legacyRes = await fetch('terraria_items.json');
+                if (!legacyRes.ok) throw new Error("No data files found for this version.");
+                
+                const rawData = await legacyRes.json();
+                initializeData(convertArrayToDict(rawData));
+                loadedEnv = "Vanilla";
+                usedLegacy = true;
+                
+                // Reset UI checkboxes because legacy is vanilla-only
+                if (document.getElementById('modCalamity')) document.getElementById('modCalamity').checked = false;
+                if (document.getElementById('modFargos')) document.getElementById('modFargos').checked = false;
+            } else {
+                throw new Error(`${fileName} not found.`);
             }
+        } else {
             const rawArray = await res.json();
             initializeData(convertArrayToDict(rawArray));
-            LOADED_MODS.add('Vanilla');
-            if (modCalamity) LOADED_MODS.add('CalamityMod');
-            if (modFargos) LOADED_MODS.add('FargowiltasSouls');
-            console.log(`[Engine] Success: Pristine C# Schema loaded for v1.4.4 (${envName})`);
         }
+        
+        // --- Dynamic UI State Management ---
+        const selectEl = document.getElementById('engineVersionSelect');
+        if (selectEl) {
+            const opt145 = Array.from(selectEl.options).find(o => o.value === '1.4.5');
+            // Dynamically deprecate the "Vanilla Only" text if the modern export file exists!
+            if (opt145) opt145.text = usedLegacy ? "1.4.5 (Vanilla Only)" : "1.4.5";
+            
+            const modsContainer = document.getElementById('modsContainer');
+            if (modsContainer) {
+                // Lock the mod options ONLY if we fell back to the legacy file
+                if (usedLegacy) {
+                    modsContainer.classList.add('opacity-50', 'pointer-events-none');
+                } else {
+                    modsContainer.classList.remove('opacity-50', 'pointer-events-none');
+                }
+            }
+        }
+
+        // Format the loaded mods into a clean display string for the bottom status
+        let displayMods = "Vanilla";
+        if (loadedEnv === "Vanilla_Calamity") displayMods = "Vanilla, Calamity";
+        else if (loadedEnv === "Vanilla_Fargowiltas") displayMods = "Vanilla, Fargo's";
+        else if (loadedEnv === "All" || loadedEnv === "Vanilla_All") displayMods = "Vanilla, Calamity, Fargo's";
+
+        // Inject the final string with the item count
+        const itemCount = Object.keys(itemsDatabase).length.toLocaleString();
+        dom.dbStatus.innerText = `v${currentEngineVersion} (${displayMods}) • ${itemCount} Items`;
+        dom.dbStatus.classList.add('text-green-500');
+        dom.dbStatus.classList.remove('text-slate-500');
+
     } catch (e) {
-        console.warn("Auto-load failed, falling back to manual upload:", e.message);
+        console.warn("Auto-load failed:", e.message);
         dom.uploadSection.classList.remove('hidden');
         dom.autoLoadStatus.classList.add('hidden');
         dom.manualUpload.classList.remove('hidden');
@@ -178,6 +212,8 @@ function initializeData(data) {
 
     dom.uploadSection.classList.add('hidden');
     dom.searchInput.disabled = false;
+    // Note: dom.dbStatus text formatting is now handled directly by loadVersionData()
+    dom.searchInput.focus();
     
     // Format the loaded mods into a clean display string
     const modNames = Array.from(LOADED_MODS).map(m => {

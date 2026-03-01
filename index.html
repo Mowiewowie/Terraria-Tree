@@ -231,15 +231,10 @@
         btnSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
         btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
 
-        // Lock Mod checkboxes if not on 1.4.4
-        versionSelect.addEventListener('change', (e) => {
-            if (e.target.value === '1.4.4') {
-                modsContainer.classList.remove('opacity-50', 'pointer-events-none');
-            } else {
-                modsContainer.classList.add('opacity-50', 'pointer-events-none');
-                document.getElementById('modCalamity').checked = false;
-                document.getElementById('modFargos').checked = false;
-            }
+        // Visually unlock mods for all versions by default. 
+        // (The loadVersionData() function in data.js will dynamically lock them if a version falls back to Legacy)
+        versionSelect.addEventListener('change', () => {
+            modsContainer.classList.remove('opacity-50', 'pointer-events-none');
         });
 
         // Trigger Data Layer Reload
