@@ -147,22 +147,31 @@ function getMinScale() {
 }
 
 const pendingImages = new Map();
-const imageObserver = new IntersectionObserver((entries, observer) => {
+const imageObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         const img = entry.target;
+        const card = img.closest('.item-card'); // Target the physical card for culling
+        
         if (entry.isIntersecting) {
-            // Debounce: Wait 300ms. If we are just sweeping past it, the timer will be cancelled.
-            const timeoutId = setTimeout(() => {
-                if (img.dataset.src) {
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
-                }
-                observer.unobserve(img);
-                pendingImages.delete(img);
-            }, 300);
-            pendingImages.set(img, timeoutId);
+            // NATIVE GPU CULLING: Make the card paintable again
+            if (card) card.style.visibility = 'visible';
+            
+            // DEBOUNCED LAZY LOADING
+            if (img.dataset.src && !pendingImages.has(img)) {
+                const timeoutId = setTimeout(() => {
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    pendingImages.delete(img);
+                }, 300);
+                pendingImages.set(img, timeoutId);
+            }
         } else {
-            // If the camera sweeps past and it leaves the viewport, cancel the download
+            // NATIVE GPU CULLING: Tell the browser to completely ignore this card during paint cycles
+            if (card) card.style.visibility = 'hidden';
+            
+            // Cancel pending image downloads if we are just sweeping past
             if (pendingImages.has(img)) {
                 clearTimeout(pendingImages.get(img));
                 pendingImages.delete(img);
@@ -170,7 +179,7 @@ const imageObserver = new IntersectionObserver((entries, observer) => {
         }
     });
 }, {
-    rootMargin: '100px' // Tighter margin to prevent off-screen sweep loading
+    rootMargin: '500px' // Keep a healthy margin so cards render just before they slide onto the screen
 });
 
 function createDirectImageUrl(name) {

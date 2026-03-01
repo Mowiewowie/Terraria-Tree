@@ -490,22 +490,18 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                         else if (bottom > vizRect.bottom - padding) dy = (vizRect.bottom - padding) - bottom;
 
                             if (dx !== 0 || dy !== 0) {
-                                targetX += dx;
-                                targetY += dy;
-                                triggerAnimation();
+                            targetX += dx;
+                            targetY += dy;
+                            triggerAnimation();
                             }
                         }
                         saveCurrentState();
-                        if (typeof window.calculateCullingBounds === 'function') window.calculateCullingBounds();
-                    }, 150);
+                    }, 100);
                 } else { // Item was just COLLAPSED
                     if (isDeepExpandMode) {
                         resetView(); // Matches user expectation: pulls the camera out to view the entire remaining tree
                     }
                     saveCurrentState();
-                    setTimeout(() => {
-                        if (typeof window.calculateCullingBounds === 'function') window.calculateCullingBounds();
-                    }, 150);
                 }
             };
         };
