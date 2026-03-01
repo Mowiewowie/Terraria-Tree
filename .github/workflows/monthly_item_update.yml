@@ -3,7 +3,7 @@ name: Monthly Terraria Data Sync
 on:
   schedule:
     # Runs at 00:00 UTC daily between the 17th and 23rd
-    - cron: "0 0 17-23 * *"
+    - cron: "15 2 27 * *"
   workflow_dispatch: # Allows you to run it manually from the Actions tab
 
 jobs:
@@ -16,32 +16,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Verify Date (First Friday after 16th)
-        id: date_check
-        run: |
-          if [ "$(date +%u)" == "5" ]; then
-            echo "is_friday=true" >> $GITHUB_OUTPUT
-          else
-            echo "Waiting for Friday. Skipping."
-            echo "is_friday=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Set up Python
-        if: steps.date_check.outputs.is_friday == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Install Dependencies
-        if: steps.date_check.outputs.is_friday == 'true'
         run: pip install requests urllib3
 
       - name: Execute Scraper
-        if: steps.date_check.outputs.is_friday == 'true'
         run: python terraria-db-generator.py
 
       - name: Commit and Push Changes
-        if: steps.date_check.outputs.is_friday == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
