@@ -147,15 +147,11 @@ function getMinScale() {
 }
 
 const pendingImages = new Map();
-const imageObserver = new IntersectionObserver((entries) => {
+const imageObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
         const img = entry.target;
-        const node = img.closest('.tree-node'); // Target the whole node to hide lines too!
         
         if (entry.isIntersecting) {
-            // NATIVE GPU CULLING: Make the node paintable again
-            if (node) node.style.visibility = 'visible';
-            
             // DEBOUNCED LAZY LOADING
             if (img.dataset.src && !pendingImages.has(img)) {
                 const timeoutId = setTimeout(() => {
@@ -163,14 +159,12 @@ const imageObserver = new IntersectionObserver((entries) => {
                         img.src = img.dataset.src;
                         img.removeAttribute('data-src');
                     }
+                    observer.unobserve(img); // INSTANT CPU RELIEF: Stop tracking this node!
                     pendingImages.delete(img);
-                }, 300);
+                }, 150); // Lowered to 150ms for snappier loads while still preventing sweep-loading
                 pendingImages.set(img, timeoutId);
             }
         } else {
-            // NATIVE GPU CULLING: Tell the browser to completely ignore this node during paint cycles
-            if (node) node.style.visibility = 'hidden';
-            
             // Cancel pending image downloads if we are just sweeping past
             if (pendingImages.has(img)) {
                 clearTimeout(pendingImages.get(img));
@@ -179,7 +173,7 @@ const imageObserver = new IntersectionObserver((entries) => {
         }
     });
 }, {
-    rootMargin: '500px' // Keep a healthy margin so cards render just before they slide onto the screen
+    rootMargin: '300px' // Optimized margin
 });
 
 function createDirectImageUrl(name) {

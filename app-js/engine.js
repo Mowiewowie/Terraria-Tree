@@ -17,8 +17,10 @@ function renderLoop() {
     // Keep them disabled during fast travel or physical dragging to maintain CPU performance.
     if (isPanning || initialPinchDist || diff > 1.5) {
         dom.treeContainer.style.pointerEvents = 'none';
+        dom.treeContainer.classList.add('fast-panning'); // Triggers GPU performance mode
     } else {
         dom.treeContainer.style.pointerEvents = '';
+        dom.treeContainer.classList.remove('fast-panning');
     }
 
     if (diff < 0.001 && !isPanning && !initialPinchDist) {

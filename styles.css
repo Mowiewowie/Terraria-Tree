@@ -329,3 +329,17 @@ button.no-pan {
     opacity: 1 !important; 
     pointer-events: auto !important; 
 }
+
+/* --- Mobile GPU Performance Mode --- */
+/* Strips expensive shadowing and transitions while panning to maintain 60 FPS on massive trees */
+.fast-panning .item-card {
+    box-shadow: none !important;
+    transition: none !important;
+}
+.fast-panning .item-card span {
+    box-shadow: none !important;
+}
+.fast-panning .discover-box-container {
+    box-shadow: none !important;
+    transition: none !important;
+}
