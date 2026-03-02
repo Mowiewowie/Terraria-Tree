@@ -67,7 +67,59 @@ function convertArrayToDict(data) {
             db[item.ID] = item; 
         }
     });
-    
+
+    // --- Post-process: Detect transmutation in 1.4.4 data & synthesize ShimmerDecraft recipes ---
+    const TRANSMUTATION_STATIONS = ['shimmer', 'chlorophyteextractinator'];
+
+    for (const id in db) {
+        const item = db[id];
+        if (!item.Recipes) continue;
+        item.Recipes.forEach(recipe => {
+            if (recipe.IsTransmutation !== undefined) return; // Already marked (1.4.5 data)
+            const stations = (recipe.Stations || []).map(s => s.toLowerCase());
+            const isTransmutationStation = stations.some(s =>
+                TRANSMUTATION_STATIONS.some(ts => s.includes(ts))
+            );
+            // DemonAltar/CrimsonAltar with a single ingredient at amount 1 = ore swap
+            const isDemonAltarSwap = stations.some(s => s.includes('demonaltar') || s.includes('crimsonaltar'))
+                && recipe.Ingredients?.length === 1
+                && (recipe.Ingredients[0].Amount || recipe.Ingredients[0].amount) === 1;
+            recipe.IsTransmutation = isTransmutationStation || isDemonAltarSwap;
+        });
+    }
+
+    // Build reverse ShimmerDecraft map: if item A decrafts into item B,
+    // then item B has a Shimmer recipe using item A as an ingredient.
+    const shimmerReverseMap = {};
+    for (const id in db) {
+        const item = db[id];
+        if (item.ShimmerDecraft) {
+            const targetName = item.ShimmerDecraft.toLowerCase();
+            if (!shimmerReverseMap[targetName]) shimmerReverseMap[targetName] = [];
+            shimmerReverseMap[targetName].push(id);
+        }
+    }
+    for (const id in db) {
+        const item = db[id];
+        const itemName = (item.DisplayName || item.name || "").toLowerCase();
+        if (shimmerReverseMap[itemName]) {
+            if (!item.Recipes) item.Recipes = [];
+            shimmerReverseMap[itemName].forEach(sourceId => {
+                const sourceItem = db[sourceId];
+                item.Recipes.push({
+                    Stations: ["Shimmer"],
+                    Conditions: [],
+                    Ingredients: [{
+                        ID: sourceId,
+                        Name: sourceItem.DisplayName || sourceItem.name,
+                        Amount: 1
+                    }],
+                    IsTransmutation: true
+                });
+            });
+        }
+    }
+
     return db;
 }
 

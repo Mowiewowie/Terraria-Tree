@@ -117,6 +117,7 @@ function saveCurrentState(skipBrowserState = false) {
     // --- LocalStorage Persistence ---
     localStorage.setItem('terraria_discoverBox', JSON.stringify(discoverBoxItems));
     localStorage.setItem('terraria_expandedNodes', JSON.stringify(Array.from(expandedNodes)));
+    localStorage.setItem('terraria_collectedItems', JSON.stringify(Array.from(collectedItems)));
 
     if (historyIdx >= 0 && appHistory[historyIdx]) {
         appHistory[historyIdx].x = targetX; 

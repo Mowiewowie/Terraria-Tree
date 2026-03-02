@@ -13,6 +13,7 @@ function getDiscoverableItems() {
         if (!item.Recipes || item.Recipes.length === 0) continue;
         
         for (const recipe of item.Recipes) {
+            if (!showTransmutations && recipe.IsTransmutation) continue;
             let recipeMatchesAll = true;
             for (const boxName of boxItemNames) {
                 let hasBoxItem = false;
@@ -260,7 +261,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
 
     if (treeMode === 'recipe') {
         if (data.Recipes && data.Recipes.length > 0 && !visited.has(id)) {
-            validRecipes = data.Recipes;
+            validRecipes = data.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
             if (validRecipes.length > 0) {
                 hasValidChildren = true;
                 if (selectedRecipeIndices[id] === undefined) selectedRecipeIndices[id] = 0;
@@ -270,7 +271,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         }
     } else if (treeMode === 'usage' || treeMode === 'discover') {
         const allUsages = usageIndex[(data.DisplayName || "").toLowerCase()] || [];
-        const validUsages = allUsages;
+        const validUsages = allUsages.filter(u => showTransmutations || !u.recipe?.IsTransmutation);
         
         const uniqueUsagesMap = new Map();
         validUsages.forEach(u => {
@@ -290,11 +291,12 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         }
     }
 
-    // Inject the Multiple-Recipe UI Toggle Pill
+    // Inject the Multiple-Recipe UI Toggle Pill (built here, appended to node later so it sits between card and expand btn)
+    let recipeSelector = null;
     if (treeMode === 'recipe' && validRecipes.length > 1) {
-        const selector = document.createElement('div');
-        selector.className = 'absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center bg-slate-800 dark:bg-slate-900 text-white rounded-full px-2 py-0.5 shadow-lg border border-slate-600 dark:border-slate-500 z-30 text-[10px] font-bold whitespace-nowrap cursor-default no-pan';
-        
+        recipeSelector = document.createElement('div');
+        recipeSelector.className = 'flex items-center justify-center bg-slate-800 dark:bg-slate-900 text-white rounded-full px-2 py-0.5 shadow-lg border border-slate-600 dark:border-slate-500 z-30 text-[10px] font-bold whitespace-nowrap cursor-default no-pan mt-1';
+
         const btnPrev = document.createElement('button');
         btnPrev.className = 'hover:text-emerald-400 px-1.5 py-0.5 cursor-pointer no-pan transition-colors';
         btnPrev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
@@ -302,7 +304,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
             e.stopPropagation();
             selectedRecipeIndices[id] = (selectedRecipeIndices[id] - 1 + validRecipes.length) % validRecipes.length;
             saveCurrentState();
-            loadTree(currentTreeItemId, true); // Instantly rebuilds the tree below this item 
+            loadTree(currentTreeItemId, true); // Instantly rebuilds the tree below this item
         };
 
         const label = document.createElement('span');
@@ -319,8 +321,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
             loadTree(currentTreeItemId, true);
         };
 
-        selector.append(btnPrev, label, btnNext);
-        card.appendChild(selector);
+        recipeSelector.append(btnPrev, label, btnNext);
     }
 
     if (hasValidChildren) {
@@ -512,6 +513,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
             }
         };
         
+        if (recipeSelector) node.appendChild(recipeSelector);
         node.append(btn, container);
         if(isRoot || expandedNodes.has(id) || forceDeepExpand) btn.toggle('open', forceDeepExpand);
     }

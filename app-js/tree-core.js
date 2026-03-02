@@ -2,11 +2,93 @@
 
 // --- Core Tree & Category View Generation ---
 
+function syncAllCollectedCards() {
+    document.querySelectorAll('.item-card[data-id]').forEach(c => {
+        const id = c.dataset.id;
+        const isCollected = collectedItems.has(id);
+        const btn = c.querySelector('.collected-check');
+        if (btn) {
+            btn.innerHTML = isCollected
+                ? '<i class="fa-solid fa-circle-check"></i>'
+                : '<i class="fa-regular fa-circle"></i>';
+            btn.classList.toggle('collected-active', isCollected);
+            btn.title = isCollected ? 'Mark as not collected' : 'Mark as collected';
+        }
+        c.classList.toggle('item-card-collected', isCollected);
+    });
+}
+
+function resolveIngredientId(ing) {
+    let id = ing.ID;
+    if (!id || !itemsDatabase[id]) {
+        const found = itemIndex.find(i => i.name.toLowerCase() === (ing.Name || ing.name || "").toLowerCase());
+        if (found) id = found.id?.toString();
+    }
+    return id ? String(id) : null;
+}
+
+function cascadeCollectedDown(id, collected, visited = new Set()) {
+    if (treeMode !== 'recipe' || visited.has(id)) return;
+    visited.add(id);
+    const itemData = itemsDatabase[id];
+    if (!itemData?.Recipes) return;
+    let validRecipes = itemData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
+    let rIdx = selectedRecipeIndices[id] || 0;
+    if (rIdx >= validRecipes.length) rIdx = 0;
+    const recipe = validRecipes[rIdx];
+    if (!recipe?.Ingredients) return;
+    recipe.Ingredients.forEach(ing => {
+        const ingId = resolveIngredientId(ing);
+        if (ingId) {
+            if (collected) collectedItems.add(ingId);
+            else collectedItems.delete(ingId);
+            cascadeCollectedDown(ingId, collected, visited);
+        }
+    });
+}
+
+function cascadeCollectedUp(startNode) {
+    let node = startNode;
+    while (node) {
+        const parentNode = node.parentElement?.closest('.tree-node');
+        if (!parentNode) break;
+        const parentCard = parentNode.querySelector(':scope > .item-card');
+        const parentId = parentCard?.dataset?.id;
+        if (!parentId) break;
+        const parentData = itemsDatabase[parentId];
+        if (!parentData?.Recipes) break;
+        const parentValid = parentData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
+        const anySatisfied = parentValid.some(recipe => {
+            if (!recipe.Ingredients?.length) return false;
+            return recipe.Ingredients.every(ing => {
+                const ingId = resolveIngredientId(ing);
+                return ingId && collectedItems.has(ingId);
+            });
+        });
+        if (anySatisfied && !collectedItems.has(parentId)) {
+            collectedItems.add(parentId);
+        } else if (!anySatisfied && collectedItems.has(parentId)) {
+            collectedItems.delete(parentId);
+        } else {
+            break; // No change at this level, stop propagating
+        }
+        node = parentNode;
+    }
+}
+
 function createItemCardElement(data, sizeClasses, contextRecipe = null, customClickHandler = null) {
     const card = document.createElement('div');
     card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${sizeClasses}`;
-    card.dataset.id = data.ID || data.id; 
-    
+    card.dataset.id = data.ID || data.id;
+
+    // Mod-source background tint
+    const modSource = (data.ModSource || '').toLowerCase();
+    if (modSource === 'calamitymod' || modSource === 'calamitymodmusic') {
+        card.style.background = '#cd6155';
+    } else if (modSource === 'fargowiltas' || modSource === 'fargowiltassouls') {
+        card.style.background = '#a569bd';
+    }
+
     const img = document.createElement('img');
     img.src = FALLBACK_ICON;
     img.dataset.src = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
@@ -30,11 +112,46 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
         card.appendChild(hmBadge);
     }
 
+    // --- Collected Item Checkmark ---
+    const itemId = String(data.ID || data.id);
+    const isCollected = collectedItems.has(itemId);
+
+    const checkBtn = document.createElement('button');
+    checkBtn.className = `collected-check absolute bottom-0.5 left-0.5 w-5 h-5 flex items-center justify-center rounded-full z-20 cursor-pointer no-pan ${isCollected ? 'collected-active' : ''}`;
+    checkBtn.innerHTML = isCollected
+        ? '<i class="fa-solid fa-circle-check"></i>'
+        : '<i class="fa-regular fa-circle"></i>';
+    checkBtn.title = isCollected ? 'Mark as not collected' : 'Mark as collected';
+
+    checkBtn.onclick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const id = String(data.ID || data.id);
+        const nowCollected = !collectedItems.has(id);
+
+        if (nowCollected) collectedItems.add(id);
+        else collectedItems.delete(id);
+
+        // Recursive downward cascade through all descendants
+        cascadeCollectedDown(id, nowCollected);
+
+        // Upward cascade: auto-check/uncheck ancestors based on recipe satisfaction
+        if (treeMode === 'recipe') {
+            cascadeCollectedUp(card.closest('.tree-node'));
+        }
+
+        syncAllCollectedCards();
+        saveCurrentState();
+    };
+
+    card.appendChild(checkBtn);
+    if (isCollected) card.classList.add('item-card-collected');
+
     card.append(img, name);
-    
-    card.onclick = (e) => { 
-        e.stopPropagation(); 
-        
+
+    card.onclick = (e) => {
+        e.stopPropagation();
+
         if (isDraggingThresholdMet) {
             isDraggingThresholdMet = false;
             return;
@@ -342,9 +459,12 @@ function estimateTreeSize(rootId, mode) {
         if (mode === 'recipe') {
             if (data.Recipes && data.Recipes.length > 0 && !visited.has(curr)) {
                 visited.add(curr);
+                let validRecipes = data.Recipes;
+                if (!showTransmutations) validRecipes = validRecipes.filter(r => !r.IsTransmutation);
+                if (validRecipes.length === 0) continue;
                 let rIndex = selectedRecipeIndices[curr] || 0;
-                if (rIndex >= data.Recipes.length) rIndex = 0;
-                let recipe = data.Recipes[rIndex];
+                if (rIndex >= validRecipes.length) rIndex = 0;
+                let recipe = validRecipes[rIndex];
                 if (recipe && recipe.Ingredients) {
                     recipe.Ingredients.forEach(ing => {
                         let cid = ing.ID;
@@ -360,6 +480,7 @@ function estimateTreeSize(rootId, mode) {
             if (!visited.has(curr)) {
                 visited.add(curr);
                 let usages = usageIndex[(data.DisplayName || data.name || "").toLowerCase()] || [];
+                if (!showTransmutations) usages = usages.filter(u => !u.recipe?.IsTransmutation);
                 let uSet = new Set(usages.map(u => u.id));
                 uSet.forEach(id => queue.push(id));
             }
