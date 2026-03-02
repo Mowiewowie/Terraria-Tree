@@ -84,9 +84,9 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
     // Mod-source background tint
     const modSource = (data.ModSource || '').toLowerCase();
     if (modSource === 'calamitymod' || modSource === 'calamitymodmusic') {
-        card.style.background = '#cd6155';
+        card.style.background = 'linear-gradient(rgba(205, 97, 85, 0.3), rgba(205, 97, 85, 0.3)), var(--card-bg)';
     } else if (modSource === 'fargowiltas' || modSource === 'fargowiltassouls') {
-        card.style.background = '#a569bd';
+        card.style.background = 'linear-gradient(rgba(165, 105, 189, 0.3), rgba(165, 105, 189, 0.3)), var(--card-bg)';
     }
 
     const img = document.createElement('img');
