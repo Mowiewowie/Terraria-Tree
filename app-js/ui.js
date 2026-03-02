@@ -62,6 +62,14 @@ dom.transmuteCheck.addEventListener('change', (e) => {
     }
 });
 
+dom.totalQtyCheck.addEventListener('change', (e) => {
+    showTotalQuantity = e.target.checked;
+    if (currentViewType === 'tree' && currentTreeItemId) {
+        saveCurrentState();
+        loadTree(currentTreeItemId, true);
+    }
+});
+
 document.querySelectorAll('input[name="treeMode"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
         if (treeMode !== e.target.value) {

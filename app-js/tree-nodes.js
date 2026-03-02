@@ -220,7 +220,7 @@ function createDiscoverRootNode() {
 }
 
 
-function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null, forceDeepExpand = false) {
+function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null, forceDeepExpand = false, parentQuantity = 1) {
     const data = itemsDatabase[id];
     if (!data) return createGenericNode("Unknown Item", 0);
 
@@ -412,23 +412,24 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                     childrenData.forEach(ing => {
                         const ingName = ing.Name || ing.name;
                         const ingAmount = ing.Amount || ing.amount;
+                        const displayAmount = showTotalQuantity ? ingAmount * parentQuantity : ingAmount;
                         const ingLower = ingName.toLowerCase();
                         const isGroup = Object.keys(RECIPE_GROUPS).some(k => k.toLowerCase() === ingLower) || ingLower.startsWith("any ");
-                        
+
                         let childNode;
                         if (isGroup) {
-                            childNode = createFlashingGroupNode(ingName, ingAmount);
+                            childNode = createFlashingGroupNode(ingName, displayAmount);
                         } else {
                             let cid = ing.ID;
                             if (!cid || !itemsDatabase[cid]) {
                                 const found = itemIndex.find(i => i.name.toLowerCase() === ingName.toLowerCase());
                                 if (found) cid = found.id.toString();
                             }
-                            childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ingName, ingAmount);
+                            childNode = cid ? createTreeNode(cid, false, newVis, null, false, displayAmount) : createGenericNode(ingName, displayAmount);
                             if(cid) {
                                 const b = document.createElement('span');
                                 b.className = 'absolute -top-2 -right-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 text-slate-700 dark:text-slate-300 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
-                                b.textContent = `x${ingAmount}`;
+                                b.textContent = `x${displayAmount}`;
                                 childNode.querySelector('.item-card').appendChild(b);
                             }
                         }

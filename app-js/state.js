@@ -10,6 +10,7 @@ let isAnimating = false;
 
 let isPanning = false, startX = 0, startY = 0;
 let showTransmutations = false;
+let showTotalQuantity = false;
 
 let isDraggingThresholdMet = false;
 let dragStartX = 0, dragStartY = 0;
@@ -95,6 +96,7 @@ const dom = {
     btnCancelExpand: document.getElementById('btnCancelExpand'),
     btnConfirmExpand: document.getElementById('btnConfirmExpand'),
     transmuteCheck: document.getElementById('showTransmutations'),
+    totalQtyCheck: document.getElementById('showTotalQuantity'),
     dbStatus: document.getElementById('dbStatus'),
     navBack: document.getElementById('navBack'),
     navForward: document.getElementById('navForward'),
