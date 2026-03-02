@@ -3,36 +3,43 @@
 // --- Intelligent Search & UI Events ---
 
 let isToolbarDragging = false;
+let toolbarDragMoved = false;
 let toolbarStartX;
 let toolbarScrollLeft;
 
 dom.toolbarTools.addEventListener('mousedown', (e) => {
     isToolbarDragging = true;
-    toolbarStartX = e.pageX - dom.toolbarTools.offsetLeft;
+    toolbarDragMoved = false;
+    toolbarStartX = e.pageX;
     toolbarScrollLeft = dom.toolbarTools.scrollLeft;
     dom.toolbarTools.style.cursor = 'grabbing';
 });
 
-dom.toolbarTools.addEventListener('mouseleave', () => {
-    isToolbarDragging = false;
-    dom.toolbarTools.style.cursor = '';
-    dom.toolbarTools.style.pointerEvents = '';
-});
-
-dom.toolbarTools.addEventListener('mouseup', () => {
-    isToolbarDragging = false;
-    dom.toolbarTools.style.cursor = '';
-    setTimeout(() => { dom.toolbarTools.style.pointerEvents = ''; }, 10);
-});
-
-dom.toolbarTools.addEventListener('mousemove', (e) => {
+// Listen on window so the drag continues even when the mouse leaves the toolbar
+window.addEventListener('mousemove', (e) => {
     if (!isToolbarDragging) return;
     e.preventDefault();
-    const x = e.pageX - dom.toolbarTools.offsetLeft;
-    const walk = (x - toolbarStartX) * 1.5; 
-    if (Math.abs(walk) > 5) dom.toolbarTools.style.pointerEvents = 'none';
+    const walk = (e.pageX - toolbarStartX) * 1.5;
+    if (Math.abs(walk) > 5) toolbarDragMoved = true;
     dom.toolbarTools.scrollLeft = toolbarScrollLeft - walk;
 });
+
+window.addEventListener('mouseup', () => {
+    if (!isToolbarDragging) return;
+    isToolbarDragging = false;
+    dom.toolbarTools.style.cursor = '';
+    // Reset after current event cycle so the click handler below can check it first
+    setTimeout(() => { toolbarDragMoved = false; }, 0);
+});
+
+// Swallow accidental button clicks when the user was drag-scrolling
+dom.toolbarTools.addEventListener('click', (e) => {
+    if (toolbarDragMoved) {
+        e.stopPropagation();
+        e.preventDefault();
+        toolbarDragMoved = false;
+    }
+}, true);
 
 dom.mobileMenuBtn.addEventListener('click', (e) => {
     e.stopPropagation();

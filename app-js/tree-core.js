@@ -20,11 +20,13 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
     name.textContent = data.DisplayName || data.name;
     name.className = `text-center font-semibold leading-tight px-1 line-clamp-2 text-slate-800 dark:text-slate-200 ${sizeClasses.includes('w-32') ? 'text-sm' : 'text-[10px]'}`;
     
-    if (data.Stats && data.Stats.IsHardmode) {
-        const hmBadge = document.createElement('div');
-        hmBadge.className = 'absolute top-1 left-1 flex items-center justify-center w-4 h-4 bg-gradient-to-br from-pink-500 to-purple-600 rounded-sm shadow-md border border-purple-800/50 text-[9px] font-bold text-white z-20 cursor-help';
-        hmBadge.title = "Hardmode Item";
-        hmBadge.textContent = "H";
+    if (data.IsHardmode || data.hardmode) {
+        const hmBadge = document.createElement('img');
+        hmBadge.src = '/sprites/Hardmode_Icon.png';
+        hmBadge.alt = 'Hardmode Icon';
+        hmBadge.title = 'Hardmode Item';
+        hmBadge.draggable = false;
+        hmBadge.className = 'absolute top-0.5 left-0.5 w-4 h-4 z-20 cursor-help drop-shadow';
         card.appendChild(hmBadge);
     }
 
