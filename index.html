@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>TerrariTree</title>
     
     <link rel="icon" type="image/png" href="icons/favicon-96x96.png" sizes="96x96" />
@@ -27,17 +29,17 @@
     <script src="app-js/tree-core.js" defer></script>
     <script src="app-js/tree-nodes.js" defer></script>
 </head>
-<body class="home-mode h-screen flex flex-col transition-colors duration-300">
+<body class="home-mode h-[100dvh] overscroll-none flex flex-col transition-colors duration-300">
 
-    <header id="mainHeader" class="w-full bg-white dark:bg-slate-800 border-b border-slate-300 dark:border-slate-700 py-3 px-6 z-50 flex-none relative">
+    <header id="mainHeader" class="w-full bg-white dark:bg-slate-800 border-b border-slate-300 dark:border-slate-700 z-50 flex-none relative" style="padding-top: max(0.75rem, env(safe-area-inset-top)); padding-bottom: 0.75rem; padding-left: max(1.5rem, env(safe-area-inset-left)); padding-right: max(1.5rem, env(safe-area-inset-right));">
         <div id="headerContent" class="max-w-7xl mx-auto flex items-center justify-between gap-4 w-full">
             
             <div id="logoContainer" onclick="restoreHomeMode()" class="flex items-center gap-3 z-50 pointer-events-auto shrink-0 cursor-pointer">
                 <i id="logoIcon" class="fa-solid fa-tree text-green-500 dark:text-green-400 text-2xl transition-all"></i>
-                <h1 id="logoText" class="text-2xl font-bold text-slate-800 dark:text-white hidden md:block transition-all">Terrari<span class="text-green-500 dark:text-green-400">Tree</span></h1>
+                <h1 id="logoText" class="text-2xl font-bold text-slate-800 dark:text-white hidden lg:block transition-all">Terrari<span class="text-green-500 dark:text-green-400">Tree</span></h1>
             </div>
             
-            <div id="searchWrapper" class="relative w-full max-w-xl flex gap-2 z-50 pointer-events-auto origin-center">
+            <div id="searchWrapper" class="relative w-full max-w-xl flex gap-2 z-50 pointer-events-auto origin-center min-w-[150px] sm:min-w-[250px]">
                 <div class="relative flex-grow w-full">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fa-solid fa-search text-slate-400"></i>
@@ -49,8 +51,11 @@
                 </div>
             </div>
 
-            <div id="statusWrapper" class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap z-50 pointer-events-auto shrink-0 flex items-center">
+            <div id="statusWrapper" class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap z-50 pointer-events-auto shrink-0 flex items-center gap-3">
                 <span id="dbStatus">Initializing...</span>
+                <button id="btnSettings" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none" title="Data Sources & Mods">
+                    <i class="fa-solid fa-gear text-xl"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -96,35 +101,45 @@
                 </button>
             </div>
 
-            <div id="toolbarTools" class="pointer-events-auto hidden flex-col md:flex md:flex-row gap-2 absolute md:static top-[3.5rem] left-0 right-0 md:right-auto bg-white/95 dark:bg-slate-900/95 md:bg-transparent dark:md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none border border-slate-300 dark:border-slate-700 md:border-none shadow-2xl md:shadow-none backdrop-blur-md md:backdrop-blur-none max-w-[calc(100vw-3rem)] flex-1 min-w-0 overflow-x-auto hide-scrollbar pb-1 z-50">
+            <div id="toolbarTools" class="pointer-events-auto hidden md:flex flex-row flex-wrap md:flex-nowrap gap-2 absolute md:static top-[3.5rem] left-0 right-0 md:right-auto bg-white/95 dark:bg-slate-900/95 md:bg-transparent dark:md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none border border-slate-300 dark:border-slate-700 md:border-none shadow-2xl md:shadow-none backdrop-blur-md md:backdrop-blur-none max-w-[calc(100vw-3rem)] overflow-x-auto hide-scrollbar pb-1 select-none z-50">
                 
-                <div id="toolMode" class="controls-panel rounded-lg px-2 sm:px-4 flex items-center gap-1.5 sm:gap-3 shadow-lg shrink-0 h-12 overflow-x-auto hide-scrollbar">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-r border-slate-300 dark:border-slate-700 pr-2 sm:pr-3">Mode</span>
-                    <label class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
+                <div id="toolMode" class="controls-panel rounded-lg px-2 sm:px-3 flex items-center gap-1.5 shadow-lg shrink-0 h-10 md:h-12 overflow-x-auto hide-scrollbar">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-r border-slate-300 dark:border-slate-700 pr-2">Mode</span>
+                    <label class="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
                         <input type="radio" name="treeMode" value="recipe" checked class="text-blue-600 focus:ring-blue-500 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 cursor-pointer">
                         <i class="fa-solid fa-hammer text-slate-400 text-xs"></i> Recipe
                     </label>
-                    <label class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
+                    <label class="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
                         <input type="radio" name="treeMode" value="usage" class="text-purple-600 dark:text-purple-500 focus:ring-purple-500 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 cursor-pointer">
                         <i class="fa-solid fa-code-branch text-slate-400 text-xs"></i> Used In
                     </label>
-                    <label class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
+                    <label class="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
                         <input type="radio" name="treeMode" value="discover" class="text-emerald-600 dark:text-emerald-500 focus:ring-emerald-500 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 cursor-pointer">
                         <i class="fa-solid fa-compass text-slate-400 text-xs"></i> Discover
                     </label>
                 </div>
 
-                <div id="toolFilters" class="controls-panel rounded-lg shadow-lg shrink-0 h-12 flex">
-                    <label class="w-full h-full px-4 flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
+                <div id="toolFilters" class="controls-panel rounded-lg shadow-lg shrink-0 h-10 md:h-12 flex">
+                    <label class="w-auto h-full px-3 flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap">
                         <input type="checkbox" id="showTransmutations" class="rounded w-4 h-4 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
                         Transmutations
                     </label>
+                    <label class="w-auto h-full px-3 flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap border-l border-slate-300 dark:border-slate-600">
+                        <input type="checkbox" id="showTotalQuantity" class="rounded w-4 h-4 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-0 cursor-pointer">
+                        Totals
+                    </label>
                 </div>
                 
-                <button id="expandAllBtn" class="controls-panel px-4 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 dark:hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-12">
-                    <i class="fa-solid fa-layer-group"></i> Expand
+                <button id="expandTierBtn" class="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
+                    <i class="fa-solid fa-angle-down"></i> Expand Tier
                 </button>
-                <button id="resetViewBtn" class="controls-panel px-4 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 dark:hover:border-blue-500 shadow-lg flex items-center justify-center gap-2 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-12">
+                <button id="expandAllBtn" class="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
+                    <i class="fa-solid fa-angles-down"></i> Expand All
+                </button>
+                <button id="collapseAllBtn" class="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
+                    <i class="fa-solid fa-angles-up"></i> Collapse All
+                </button>
+                <button id="resetViewBtn" class="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
                     <i class="fa-solid fa-compress-arrows-alt"></i> Reset
                 </button>
             </div>
@@ -175,18 +190,143 @@
         </div>
     </div>
 
+    <div id="lagWarningModal" class="hidden fixed inset-0 bg-white/80 dark:bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+            <div class="p-6 flex flex-col items-center text-center space-y-4">
+                <i class="fa-solid fa-triangle-exclamation text-5xl text-amber-500"></i>
+                <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Massive Tree Detected</h2>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    This expansion contains <span id="lagWarningCount" class="font-bold text-amber-600 dark:text-amber-500"></span> nodes. Expanding all at once may cause severe lag on mobile devices.
+                </p>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    We highly recommend using the <strong class="text-slate-800 dark:text-slate-200"><i class="fa-solid fa-angle-down"></i> Expand Tier</strong> button instead to load it layer by layer.
+                </p>
+            </div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between gap-3">
+                <button id="btnCancelExpand" class="flex-1 px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-medium rounded-lg transition-colors">Cancel</button>
+                <button id="btnConfirmExpand" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg shadow transition-colors">Expand Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="hidden fixed inset-0 bg-white/80 dark:bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">Data Sources & Mods</h2>
+                <button id="btnCloseSettings" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none rounded-md">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+                
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Game Version</label>
+                    <select id="engineVersionSelect" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none shadow-inner">
+                        <option value="1.4.5" selected>1.4.5 (Vanilla Only)</option>
+                        <option value="1.4.4">1.4.4</option>
+                    </select>
+                    <p class="text-xs text-slate-500 mt-1">Modded items are currently only compatible with 1.4.4.</p>
+                </div>
+                
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Mods</label>
+                    <div id="modsContainer" class="space-y-2 opacity-50 pointer-events-none transition-opacity duration-300">
+                        <label class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors shadow-sm" style="border-color: #cd6155; background: linear-gradient(rgba(205, 97, 85, 0.3), rgba(205, 97, 85, 0.3)), var(--card-bg);">
+                            <input type="checkbox" id="modCalamity" value="CalamityMod" class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500" style="background: linear-gradient(rgba(205, 97, 85, 0.3), rgba(205, 97, 85, 0.3)), var(--card-bg);">
+                            <span class="font-medium text-slate-800 dark:text-slate-200">Calamity Mod</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors shadow-sm" style="border-color: #a569bd; background: linear-gradient(rgba(165, 105, 189, 0.3), rgba(165, 105, 189, 0.3)), var(--card-bg);">
+                            <input type="checkbox" id="modFargos" value="FargowiltasSouls" class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500" style="background: linear-gradient(rgba(165, 105, 189, 0.3), rgba(165, 105, 189, 0.3)), var(--card-bg);">
+                            <span class="font-medium text-slate-800 dark:text-slate-200">Fargo's Souls</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-end">
+                <button id="btnApplySettings" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg shadow-blue-500/30 dark:shadow-blue-900/20 transition-all focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    Apply & Reload
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btnSettings = document.getElementById('btnSettings');
+        const settingsModal = document.getElementById('settingsModal');
+        const btnCloseSettings = document.getElementById('btnCloseSettings');
+        const versionSelect = document.getElementById('engineVersionSelect');
+        const modsContainer = document.getElementById('modsContainer');
+        const btnApplySettings = document.getElementById('btnApplySettings');
+
+        // Toggle Modal Visibility
+        btnSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+        btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+        // Dynamically probe the server to see if ANY modern C# export exists for the selected version
+        versionSelect.addEventListener('change', async (e) => {
+            const targetVersion = e.target.value;
+            const optSelected = Array.from(versionSelect.options).find(o => o.value === targetVersion);
+            
+            const possibleFiles = [
+                `Terraria_Vanilla_${targetVersion}_Export.json`,
+                `Terraria_All_${targetVersion}_Export.json`,
+                `Terraria_Vanilla_Calamity_${targetVersion}_Export.json`,
+                `Terraria_Vanilla_Fargowiltas_${targetVersion}_Export.json`
+            ];
+            
+            let foundModern = false;
+            
+            // Ping the server. The moment one file returns 200 OK, we break the loop.
+            for (const file of possibleFiles) {
+                try {
+                    const res = await fetch(file, { method: 'HEAD' });
+                    if (res.ok) { 
+                        foundModern = true; 
+                        break; 
+                    }
+                } catch (err) { }
+            }
+
+            if (foundModern) {
+                // Modern file exists: Unlock checkboxes and remove "(Vanilla Only)"
+                modsContainer.classList.remove('opacity-50', 'pointer-events-none');
+                if (optSelected) optSelected.text = targetVersion; 
+            } else {
+                // Modern file missing: Lock checkboxes, uncheck them, and append "(Vanilla Only)"
+                modsContainer.classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('modCalamity').checked = false;
+                document.getElementById('modFargos').checked = false;
+                if (optSelected) optSelected.text = `${targetVersion} (Vanilla Only)`; 
+            }
+        });
+
+        // Trigger Data Layer Reload
+        btnApplySettings.addEventListener('click', async () => {
+            settingsModal.classList.add('hidden');
+            const targetVersion = versionSelect.value;
+            
+            // Re-fetch base game version (defined in data.js)
+            await loadVersionData(targetVersion);
+            
+            // Redirect home to ensure clean UI state
+            if (typeof restoreHomeMode === 'function') restoreHomeMode();
+        });
+    </script>
+
 <script>
         // Only register if supported AND we are not running directly from the local hard drive
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && window.isSecureContext) {
             if (window.location.protocol === 'file:') {
                 console.info('Service Worker bypassed: Running locally via file:// protocol.');
             } else {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('/sw.js').catch(error => {
-                        console.error('ServiceWorker registration failed:', error);
+                        console.warn('ServiceWorker registration failed:', error.message);
                     });
                 });
             }
+        } else if ('serviceWorker' in navigator && !window.isSecureContext) {
+            console.info('Service Worker bypassed: Insecure context.');
         }
     </script>
 </body>

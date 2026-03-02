@@ -43,6 +43,15 @@ body {
 
 .tree-children.hidden { display: none !important; }
 
+/* --- Industry Standard Safe Area Handlers --- */
+.safe-area-header {
+    /* Adds the Dynamic Island height + 0.75rem (12px) of visual breathing room */
+    padding-top: calc(env(safe-area-inset-top) + 0.75rem);
+    padding-bottom: 0.75rem;
+    padding-left: calc(env(safe-area-inset-left) + 1.5rem);
+    padding-right: calc(env(safe-area-inset-right) + 1.5rem);
+}
+
 /* --- Home Mode CSS Override --- */
 body.home-mode #mainHeader {
     height: 100vh;
@@ -163,7 +172,7 @@ body.home-mode #statusWrapper {
     width: 30px; height: 24px; z-index: 20; background: transparent; border: none; cursor: pointer; outline: none; padding: 0;
 }
 .tree-line-btn::after {
-    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
+    content: ''; position: absolute; top: 0; left: 50%; transform: translate3d(-50%, 0, 0); 
     width: 2px; height: 100%; background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
@@ -173,14 +182,15 @@ body.home-mode #statusWrapper {
 .line-h::after {
     content: ''; position: absolute; top: 14px; left: 0; width: 100%; height: 2px; 
     background-color: var(--line-normal); transition: all 0.2s ease;
+    transform: translateZ(0); /* Hint browser to preserve sub-pixel rendering */
 }
 
 .line-v {
-    position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
+    position: absolute; top: 0; left: 50%; transform: translate3d(-50%, 0, 0); 
     width: 30px; height: 24px; cursor: pointer; z-index: 10;
 }
 .line-v::after {
-    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
+    content: ''; position: absolute; top: 0; left: 50%; transform: translate3d(-50%, 0, 0); 
     width: 2px; height: 100%; background-color: var(--line-normal); transition: all 0.2s ease;
 }
 
@@ -233,14 +243,6 @@ body.home-mode #statusWrapper {
     cursor: pointer; user-select: none; z-index: 10;
     background: var(--card-bg); border: 2px solid var(--card-border);
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1); 
-    /* Containment stops internal text/images from triggering global reflows */
-    contain: layout style;
-}.item-card { 
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.3s ease, filter 0.3s ease; 
-    cursor: pointer; user-select: none; z-index: 10;
-    background: var(--card-bg); border: 2px solid var(--card-border);
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1); 
-    /* Containment stops internal text/images from triggering global reflows */
     contain: layout style;
 }
 .item-card:hover:not(.hero-active) { 
@@ -306,7 +308,9 @@ body.home-mode #statusWrapper {
     justify-content: center; 
     min-width: 100%; 
     padding: 60px; 
-    will-change: transform; 
+    
+    /* Removed will-change: transform. For massive trees, this forces the browser to attempt 
+       to allocate a giant GPU texture, crashing VRAM and destroying framerates. */
 }
 
 /* Prevent pan interactions from colliding with inline elements */
@@ -324,4 +328,77 @@ button.no-pan {
 .mobile-active + button { 
     opacity: 1 !important; 
     pointer-events: auto !important; 
+}
+
+/* Force flex display on mobile menu when JS toggles visibility */
+@media (max-width: 767px) {
+    #toolbarTools:not(.hidden) {
+        display: flex !important;
+    }
+}
+
+/* --- Mobile GPU Performance Mode --- */
+/* Strips expensive shadowing and transitions while panning to maintain 60 FPS on massive trees */
+.fast-panning .item-card {
+    box-shadow: none !important;
+    transition: none !important;
+}
+.fast-panning .item-card span {
+    box-shadow: none !important;
+}
+.fast-panning .discover-box-container {
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+/* --- Collected Item Checkmark --- */
+.collected-check {
+    color: rgba(148, 163, 184, 0.65);
+    font-size: 14px;
+    line-height: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    outline: none;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+    transition: color 0.15s ease;
+}
+.item-card:hover .collected-check:not(.collected-active) {
+    color: rgba(148, 163, 184, 0.8);
+}
+.collected-check.collected-active {
+    color: #22c55e;
+}
+.collected-check.collected-active:hover {
+    color: #16a34a;
+}
+.item-card.item-card-collected {
+    border-color: rgba(34, 197, 94, 0.5) !important;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1), 0 0 8px rgba(34, 197, 94, 0.2) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    .collected-check {
+        color: rgba(100, 116, 139, 0.65);
+    }
+    .item-card:hover .collected-check:not(.collected-active) {
+        color: rgba(148, 163, 184, 0.7);
+    }
+    .collected-check.collected-active {
+        color: #4ade80;
+    }
+    .collected-check.collected-active:hover {
+        color: #22c55e;
+    }
+    .item-card.item-card-collected {
+        border-color: rgba(74, 222, 128, 0.4) !important;
+        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1), 0 0 8px rgba(74, 222, 128, 0.15) !important;
+    }
+}
+
+.fast-panning .collected-check {
+    transition: none !important;
+}
+.fade-unfocused .collected-check {
+    pointer-events: none;
 }

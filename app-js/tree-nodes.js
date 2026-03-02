@@ -5,21 +5,21 @@
 function getDiscoverableItems() {
     if (discoverBoxItems.length === 0) return [];
     
-    const boxItemNames = discoverBoxItems.map(id => itemsDatabase[id].name.toLowerCase());
+    const boxItemNames = discoverBoxItems.map(id => (itemsDatabase[id].DisplayName || "").toLowerCase());
     const uniqueUsagesMap = new Map();
 
     for (const itemId in itemsDatabase) {
         const item = itemsDatabase[itemId];
-        if (!item.crafting || !item.crafting.is_craftable) continue;
+        if (!item.Recipes || item.Recipes.length === 0) continue;
         
-        for (const recipe of item.crafting.recipes) {
-            if (!showTransmutations && recipe.transmutation) continue;
-            
+        for (const recipe of item.Recipes) {
+            if (!showTransmutations && recipe.IsTransmutation) continue;
             let recipeMatchesAll = true;
             for (const boxName of boxItemNames) {
                 let hasBoxItem = false;
-                for (const ing of recipe.ingredients) {
-                    const ingLower = ing.name.toLowerCase();
+                if (!recipe.Ingredients) continue;
+                for (const ing of recipe.Ingredients) {
+                    const ingLower = (ing.Name || "").toLowerCase();
                     if (ingLower === boxName) {
                         hasBoxItem = true; break;
                     }
@@ -45,7 +45,11 @@ function getDiscoverableItems() {
     }
     
     const uniqueUsages = Array.from(uniqueUsagesMap.values());
-    uniqueUsages.sort((a,b) => itemsDatabase[a.id]?.name.localeCompare(itemsDatabase[b.id]?.name));
+    uniqueUsages.sort((a,b) => {
+        const nameA = itemsDatabase[a.id]?.DisplayName || itemsDatabase[a.id]?.name || "";
+        const nameB = itemsDatabase[b.id]?.DisplayName || itemsDatabase[b.id]?.name || "";
+        return nameA.localeCompare(nameB);
+    });
     return uniqueUsages;
 }
 
@@ -216,9 +220,9 @@ function createDiscoverRootNode() {
 }
 
 
-function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null, forceDeepExpand = false) {
+function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRecipe = null, forceDeepExpand = false, parentQuantity = 1) {
     const data = itemsDatabase[id];
-    if (!data) return document.createElement('div');
+    if (!data) return createGenericNode("Unknown Item", 0);
 
     const node = document.createElement('div');
     node.className = 'tree-node';
@@ -256,18 +260,18 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
     let validRecipes = [];
 
     if (treeMode === 'recipe') {
-        if (data.crafting && data.crafting.is_craftable && !visited.has(id)) {
-            validRecipes = data.crafting.recipes.filter(r => showTransmutations || !r.transmutation);
+        if (data.Recipes && data.Recipes.length > 0 && !visited.has(id)) {
+            validRecipes = data.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
             if (validRecipes.length > 0) {
                 hasValidChildren = true;
                 if (selectedRecipeIndices[id] === undefined) selectedRecipeIndices[id] = 0;
                 if (selectedRecipeIndices[id] >= validRecipes.length) selectedRecipeIndices[id] = 0;
-                childrenData = validRecipes[selectedRecipeIndices[id]].ingredients;
+                childrenData = validRecipes[selectedRecipeIndices[id]].Ingredients || [];
             }
         }
     } else if (treeMode === 'usage' || treeMode === 'discover') {
-        const allUsages = usageIndex[data.name.toLowerCase()] || [];
-        const validUsages = allUsages.filter(u => showTransmutations || !u.recipe.transmutation);
+        const allUsages = usageIndex[(data.DisplayName || "").toLowerCase()] || [];
+        const validUsages = allUsages.filter(u => showTransmutations || !u.recipe?.IsTransmutation);
         
         const uniqueUsagesMap = new Map();
         validUsages.forEach(u => {
@@ -275,7 +279,11 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         });
         
         const uniqueUsages = Array.from(uniqueUsagesMap.values());
-        uniqueUsages.sort((a,b) => itemsDatabase[a.id]?.name.localeCompare(itemsDatabase[b.id]?.name));
+        uniqueUsages.sort((a,b) => {
+            const nameA = itemsDatabase[a.id]?.DisplayName || itemsDatabase[a.id]?.name || "";
+            const nameB = itemsDatabase[b.id]?.DisplayName || itemsDatabase[b.id]?.name || "";
+            return nameA.localeCompare(nameB);
+        });
 
         if (uniqueUsages.length > 0 && !visited.has(id)) {
             hasValidChildren = true;
@@ -283,17 +291,19 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         }
     }
 
-    // Inject the Multiple-Recipe UI Toggle Pill
+    // Inject the Multiple-Recipe UI Toggle Pill (built here, appended to node later so it sits between card and expand btn)
+    let recipeSelector = null;
     if (treeMode === 'recipe' && validRecipes.length > 1) {
-        const selector = document.createElement('div');
-        selector.className = 'absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center bg-slate-800 dark:bg-slate-900 text-white rounded-full px-2 py-0.5 shadow-lg border border-slate-600 dark:border-slate-500 z-30 text-[10px] font-bold whitespace-nowrap cursor-default no-pan';
-        
+        recipeSelector = document.createElement('div');
+        recipeSelector.className = 'flex items-center justify-center bg-slate-800 dark:bg-slate-900 text-white rounded-full px-2 py-0.5 shadow-lg border border-slate-600 dark:border-slate-500 z-30 text-[10px] font-bold whitespace-nowrap cursor-default no-pan mt-1';
+
         const btnPrev = document.createElement('button');
         btnPrev.className = 'hover:text-emerald-400 px-1.5 py-0.5 cursor-pointer no-pan transition-colors';
         btnPrev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
         btnPrev.onclick = (e) => {
             e.stopPropagation();
             selectedRecipeIndices[id] = (selectedRecipeIndices[id] - 1 + validRecipes.length) % validRecipes.length;
+            recheckCollectedForRecipeSwitch(id);
             saveCurrentState();
             loadTree(currentTreeItemId, true); // Instantly rebuilds the tree below this item
         };
@@ -308,12 +318,12 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         btnNext.onclick = (e) => {
             e.stopPropagation();
             selectedRecipeIndices[id] = (selectedRecipeIndices[id] + 1) % validRecipes.length;
+            recheckCollectedForRecipeSwitch(id);
             saveCurrentState();
             loadTree(currentTreeItemId, true);
         };
 
-        selector.append(btnPrev, label, btnNext);
-        card.appendChild(selector);
+        recipeSelector.append(btnPrev, label, btnNext);
     }
 
     if (hasValidChildren) {
@@ -341,6 +351,14 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
 
             if (!isClosed) {
                 container.classList.add('hidden');
+                
+                // Recursive Memory Wipe: Remove this node AND all its currently loaded children from the expanded set!
+                const childCards = container.querySelectorAll('.item-card, .discover-box-container');
+                childCards.forEach(c => {
+                    if (c.dataset.id) expandedNodes.delete(c.dataset.id);
+                });
+                expandedNodes.delete(id); 
+                
                 if (isDeepExpandMode) {
                     btn.innerHTML = '<i class="fa-solid fa-code-branch mr-1"></i> Expand Path';
                     btn.classList.replace('bg-indigo-700', 'bg-indigo-600');
@@ -348,7 +366,6 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
                     btn.classList.remove(btnColor);
                 }
-                expandedNodes.delete(id); 
             } else {
                 container.innerHTML = '';
                 container.classList.remove('hidden');
@@ -393,19 +410,26 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                 const newVis = new Set(visited).add(id);
                 if (treeMode === 'recipe') {
                     childrenData.forEach(ing => {
-                        const ingLower = ing.name.toLowerCase();
+                        const ingName = ing.Name || ing.name;
+                        const ingAmount = ing.Amount || ing.amount;
+                        const displayAmount = showTotalQuantity ? ingAmount * parentQuantity : ingAmount;
+                        const ingLower = ingName.toLowerCase();
                         const isGroup = Object.keys(RECIPE_GROUPS).some(k => k.toLowerCase() === ingLower) || ingLower.startsWith("any ");
-                        
+
                         let childNode;
                         if (isGroup) {
-                            childNode = createFlashingGroupNode(ing.name, ing.amount);
+                            childNode = createFlashingGroupNode(ingName, displayAmount);
                         } else {
-                            const cid = itemIndex.find(i => i.name === ing.name)?.id;
-                            childNode = cid ? createTreeNode(cid, false, newVis) : createGenericNode(ing.name, ing.amount);
+                            let cid = ing.ID;
+                            if (!cid || !itemsDatabase[cid]) {
+                                const found = itemIndex.find(i => i.name.toLowerCase() === ingName.toLowerCase());
+                                if (found) cid = found.id.toString();
+                            }
+                            childNode = cid ? createTreeNode(cid, false, newVis, null, false, displayAmount) : createGenericNode(ingName, displayAmount);
                             if(cid) {
                                 const b = document.createElement('span');
                                 b.className = 'absolute -top-2 -right-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 text-slate-700 dark:text-slate-300 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
-                                b.textContent = `x${ing.amount}`;
+                                b.textContent = `x${displayAmount}`;
                                 childNode.querySelector('.item-card').appendChild(b);
                             }
                         }
@@ -421,7 +445,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                         const childNode = createTreeNode(usage.id, false, newVis, usage.recipe, isDeep);
                         const b = document.createElement('span');
                         b.className = 'absolute -top-2 -right-2 bg-purple-100 dark:bg-purple-900 border border-purple-300 dark:border-purple-500 text-purple-800 dark:text-purple-200 text-[10px] px-1.5 py-0.5 rounded-full z-20 font-mono shadow';
-                        b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount}`;
+                        b.textContent = usage.viaGroup ? `via ${usage.viaGroup}` : `Req: ${usage.amount || usage.Amount}`;
                         childNode.querySelector('.item-card').appendChild(b);
                         
                         const hLine = document.createElement('div'); hLine.className = 'line-h'; attachLineEvents(hLine);
@@ -457,7 +481,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
                 setTimeout(() => {
                     if (isDeepExpandMode) {
                         focusSubtree(node, container);
-                    } else if (!isExpandedAll) {
+                    } else {
                         const vizRect = dom.vizArea.getBoundingClientRect();
                         const nRect = node.getBoundingClientRect();
                         const cRect = container.getBoundingClientRect();
@@ -492,6 +516,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
             }
         };
         
+        if (recipeSelector) node.appendChild(recipeSelector);
         node.append(btn, container);
         if(isRoot || expandedNodes.has(id) || forceDeepExpand) btn.toggle('open', forceDeepExpand);
     }
@@ -533,17 +558,11 @@ function createFlashingGroupNode(groupName, amount) {
     card.className = 'item-card relative flex flex-col items-center justify-center rounded-lg w-24 h-24 bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 shadow-sm transition-transform hover:scale-105';
     
     const img = document.createElement('img');
-    // Start explicitly with the safe, offline-ready fallback to prevent native browser flashing
     img.src = FALLBACK_ICON; 
     img.alt = `Any ${groupItems[0]} Terraria Crafting Alternative`; // SEO Addition
     img.draggable = false;
     img.ondragstart = (e) => e.preventDefault();
     img.className = 'w-10 h-10 object-contain mb-1 transition-opacity duration-300';
-    
-    // Asynchronously upgrade to the actual image if it successfully resolves from cache or network
-    const initialPreloader = new Image();
-    initialPreloader.onload = () => { img.src = initialPreloader.src; };
-    initialPreloader.src = createDirectImageUrl(groupItems[0]);
     
     const nameSpan = document.createElement('span');
     nameSpan.textContent = groupItems[0];
@@ -559,33 +578,48 @@ function createFlashingGroupNode(groupName, amount) {
 
     card.append(img, nameSpan, badge, groupLabel);
 
-    if (groupItems.length > 1) {
-        let idx = 0;
-        setInterval(() => {
-            idx = (idx + 1) % groupItems.length;
-            const nextItem = groupItems[idx];
-            const nextUrl = createDirectImageUrl(nextItem);
-            
-            // Preload the image in memory to mathematically prevent the browser from flashing a broken UI
-            const preloader = new Image();
-            
-            const swapContent = (safeUrl) => {
-                img.style.opacity = '0';
-                nameSpan.style.opacity = '0';
-                setTimeout(() => {
-                    img.src = safeUrl;
-                    nameSpan.textContent = nextItem;
-                    img.style.opacity = '1';
-                    nameSpan.style.opacity = '1';
-                }, 150);
-            };
+    let intervalId = null;
+    
+    // We use a custom observer for flashing nodes to start the interval only when visible
+    const flashingObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Load initial image
+                const initialPreloader = new Image();
+                initialPreloader.onload = () => { img.src = initialPreloader.src; };
+                initialPreloader.src = createDirectImageUrl(groupItems[0]);
+                
+                // Start interval if multiple items
+                if (groupItems.length > 1 && !intervalId) {
+                    let idx = 0;
+                    intervalId = setInterval(() => {
+                        idx = (idx + 1) % groupItems.length;
+                        const nextItem = groupItems[idx];
+                        const nextUrl = createDirectImageUrl(nextItem);
+                        
+                        const preloader = new Image();
+                        const swapContent = (safeUrl) => {
+                            img.style.opacity = '0';
+                            nameSpan.style.opacity = '0';
+                            setTimeout(() => {
+                                img.src = safeUrl;
+                                nameSpan.textContent = nextItem;
+                                img.style.opacity = '1';
+                                nameSpan.style.opacity = '1';
+                            }, 150);
+                        };
 
-            preloader.onload = () => swapContent(nextUrl);
-            preloader.onerror = () => swapContent(FALLBACK_ICON);
-            preloader.src = nextUrl;
-            
-        }, 1500); 
-    }
+                        preloader.onload = () => swapContent(nextUrl);
+                        preloader.onerror = () => swapContent(FALLBACK_ICON);
+                        preloader.src = nextUrl;
+                    }, 1500);
+                }
+                observer.unobserve(card);
+            }
+        });
+    }, { rootMargin: '200px' });
+    
+    flashingObserver.observe(card);
 
     card.onclick = (e) => {
         e.stopPropagation();

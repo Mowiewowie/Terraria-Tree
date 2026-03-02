@@ -238,8 +238,19 @@ def generate_wiki_url(item_name: str) -> str:
     return f"https://terraria.wiki.gg/wiki/{urllib.parse.quote(formatted_name, safe='')}"
 
 def generate_image_url(item_name: str) -> str:
-    formatted_name = item_name.replace(" ", "_")
-    return f"https://terraria.wiki.gg/wiki/Special:FilePath/{urllib.parse.quote(formatted_name, safe='')}.png"
+    # 1. Replace spaces with underscores
+    raw_name = item_name.replace(" ", "_") + ".png"
+    
+    # 2. Replicate the strict whitelist using Regex
+    # This strips out ', (, ), and any other symbols not in the whitelist
+    sanitized = re.sub(r'[^a-zA-Z0-9_\-\.]', '', raw_name)
+    
+    # 3. Fallback for edge cases where the name is completely stripped
+    if not sanitized or sanitized == ".png":
+        sanitized = "unknown_file.png"
+        
+    # 4. Route to the local directory
+    return f"/sprites/{sanitized}"
 
 # ==========================================
 # MAIN WORKFLOW PIPELINE

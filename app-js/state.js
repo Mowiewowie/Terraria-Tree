@@ -10,6 +10,7 @@ let isAnimating = false;
 
 let isPanning = false, startX = 0, startY = 0;
 let showTransmutations = false;
+let showTotalQuantity = false;
 
 let isDraggingThresholdMet = false;
 let dragStartX = 0, dragStartY = 0;
@@ -24,7 +25,8 @@ let expandedNodes = new Set(JSON.parse(localStorage.getItem('terraria_expandedNo
 let isExpandedAll = false;
 let selectedRecipeIndices = {}; // Tracks user-selected alternative recipes
 
-let discoverBoxItems = JSON.parse(localStorage.getItem('terraria_discoverBox')) || []; 
+let discoverBoxItems = JSON.parse(localStorage.getItem('terraria_discoverBox')) || [];
+let collectedItems = new Set(JSON.parse(localStorage.getItem('terraria_collectedItems')) || []);
 
 let lineTooltipTimeout = null;
 let lastMouseCoords = { x: 0, y: 0 };
@@ -85,9 +87,16 @@ const dom = {
     toolbarTools: document.getElementById('toolbarTools'),
     toolMode: document.getElementById('toolMode'),
     toolFilters: document.getElementById('toolFilters'),
+    expandTierBtn: document.getElementById('expandTierBtn'),
     expandAllBtn: document.getElementById('expandAllBtn'),
+    collapseAllBtn: document.getElementById('collapseAllBtn'),
     resetViewBtn: document.getElementById('resetViewBtn'),
+    lagWarningModal: document.getElementById('lagWarningModal'),
+    lagWarningCount: document.getElementById('lagWarningCount'),
+    btnCancelExpand: document.getElementById('btnCancelExpand'),
+    btnConfirmExpand: document.getElementById('btnConfirmExpand'),
     transmuteCheck: document.getElementById('showTransmutations'),
+    totalQtyCheck: document.getElementById('showTotalQuantity'),
     dbStatus: document.getElementById('dbStatus'),
     navBack: document.getElementById('navBack'),
     navForward: document.getElementById('navForward'),
@@ -142,13 +151,52 @@ function getFriendlyUseTime(value) {
 function getMinScale() {
     const w = window.innerWidth;
     if (w < 600) return 0.40; 
-    if (w < 1024) return 0.25; 
-    return 0.15; 
+    if (w < 1024) return 0.35; 
+    return 0.30; 
 }
+
+const pendingImages = new Map();
+const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        const img = entry.target;
+        
+        if (entry.isIntersecting) {
+            // DEBOUNCED LAZY LOADING
+            if (img.dataset.src && !pendingImages.has(img)) {
+                const timeoutId = setTimeout(() => {
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    observer.unobserve(img); // INSTANT CPU RELIEF: Stop tracking this node!
+                    pendingImages.delete(img);
+                }, 150); // Lowered to 150ms for snappier loads while still preventing sweep-loading
+                pendingImages.set(img, timeoutId);
+            }
+        } else {
+            // Cancel pending image downloads if we are just sweeping past
+            if (pendingImages.has(img)) {
+                clearTimeout(pendingImages.get(img));
+                pendingImages.delete(img);
+            }
+        }
+    });
+}, {
+    rootMargin: '300px' // Optimized margin
+});
 
 function createDirectImageUrl(name) {
     if (!name) return FALLBACK_ICON;
-    const f = name.replace(/ /g, '_') + '.png';
-    const h = md5(f);
-    return `https://terraria.wiki.gg/images/${h[0]}/${h.substring(0, 2)}/${f}`;
+    
+    // 1. Replace spaces with underscores
+    let rawName = name.replace(/ /g, '_') + '.png';
+    
+    // 2. Replicate the Python safe_chars whitelist
+    let sanitized = rawName.replace(/[^a-zA-Z0-9_\-\. ]/g, '');
+    
+    // 3. Fallback
+    if (!sanitized || sanitized === ".png") {
+        sanitized = "unknown_file.png";
+    }
+    return `/sprites/${sanitized}`;
 }

@@ -3,36 +3,43 @@
 // --- Intelligent Search & UI Events ---
 
 let isToolbarDragging = false;
+let toolbarDragMoved = false;
 let toolbarStartX;
 let toolbarScrollLeft;
 
 dom.toolbarTools.addEventListener('mousedown', (e) => {
     isToolbarDragging = true;
-    toolbarStartX = e.pageX - dom.toolbarTools.offsetLeft;
+    toolbarDragMoved = false;
+    toolbarStartX = e.pageX;
     toolbarScrollLeft = dom.toolbarTools.scrollLeft;
     dom.toolbarTools.style.cursor = 'grabbing';
 });
 
-dom.toolbarTools.addEventListener('mouseleave', () => {
-    isToolbarDragging = false;
-    dom.toolbarTools.style.cursor = '';
-    dom.toolbarTools.style.pointerEvents = '';
-});
-
-dom.toolbarTools.addEventListener('mouseup', () => {
-    isToolbarDragging = false;
-    dom.toolbarTools.style.cursor = '';
-    setTimeout(() => { dom.toolbarTools.style.pointerEvents = ''; }, 10);
-});
-
-dom.toolbarTools.addEventListener('mousemove', (e) => {
+// Listen on window so the drag continues even when the mouse leaves the toolbar
+window.addEventListener('mousemove', (e) => {
     if (!isToolbarDragging) return;
     e.preventDefault();
-    const x = e.pageX - dom.toolbarTools.offsetLeft;
-    const walk = (x - toolbarStartX) * 1.5; 
-    if (Math.abs(walk) > 5) dom.toolbarTools.style.pointerEvents = 'none';
+    const walk = (e.pageX - toolbarStartX) * 1.5;
+    if (Math.abs(walk) > 5) toolbarDragMoved = true;
     dom.toolbarTools.scrollLeft = toolbarScrollLeft - walk;
 });
+
+window.addEventListener('mouseup', () => {
+    if (!isToolbarDragging) return;
+    isToolbarDragging = false;
+    dom.toolbarTools.style.cursor = '';
+    // Reset after current event cycle so the click handler below can check it first
+    setTimeout(() => { toolbarDragMoved = false; }, 0);
+});
+
+// Swallow accidental button clicks when the user was drag-scrolling
+dom.toolbarTools.addEventListener('click', (e) => {
+    if (toolbarDragMoved) {
+        e.stopPropagation();
+        e.preventDefault();
+        toolbarDragMoved = false;
+    }
+}, true);
 
 dom.mobileMenuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -52,6 +59,14 @@ dom.transmuteCheck.addEventListener('change', (e) => {
     if (currentViewType === 'tree' && currentTreeItemId) {
         saveCurrentState();
         loadTree(currentTreeItemId, true); 
+    }
+});
+
+dom.totalQtyCheck.addEventListener('change', (e) => {
+    showTotalQuantity = e.target.checked;
+    if (currentViewType === 'tree' && currentTreeItemId) {
+        saveCurrentState();
+        loadTree(currentTreeItemId, true);
     }
 });
 
@@ -169,7 +184,7 @@ function attachSearchLogic(inputEl, resultsEl, onSelectCallback) {
                 
                 const img = document.createElement('img');
                 img.onerror = () => { img.src = FALLBACK_ICON; };
-                img.src = createDirectImageUrl(m.item.name);
+                img.src = m.item.icon_url || createDirectImageUrl(m.item.name);
                 img.alt = `${m.item.name} Terraria Icon`; // SEO Addition
                 img.className = 'w-6 h-6 object-contain';
                 
@@ -218,8 +233,14 @@ function showTooltip(e, data, extraRecipe = null) {
         dom.tooltip.desc.className = "text-sm text-slate-700 dark:text-slate-300 mb-3 block";
         dom.tooltip.desc.classList.remove('hidden');
         
-        dom.tooltip.image.src = createDirectImageUrl(data.groupItems[0]); 
-        dom.tooltip.image.onerror = () => { dom.tooltip.image.src = FALLBACK_ICON; };
+        const primaryItemId = Object.keys(itemsDatabase).find(id => itemsDatabase[id].DisplayName === data.groupItems[0] || itemsDatabase[id].name === data.groupItems[0]);
+        const targetSrc = (primaryItemId && itemsDatabase[primaryItemId].IconUrl) ? itemsDatabase[primaryItemId].IconUrl : createDirectImageUrl(data.groupItems[0]); 
+        
+        // Prevent redundant DOM updates to stop browser from re-evaluating the image cache
+        if (dom.tooltip.image.getAttribute('src') !== targetSrc) {
+            dom.tooltip.image.src = targetSrc;
+        }
+        dom.tooltip.image.onerror = () => { if (dom.tooltip.image.getAttribute('src') !== FALLBACK_ICON) dom.tooltip.image.src = FALLBACK_ICON; };
         
         // Restore exact DOM consistency for the shortcuts under the title
         if (!isMobileUX()) {
@@ -257,8 +278,9 @@ function showTooltip(e, data, extraRecipe = null) {
         const gridWrap = document.createElement('div');
         gridWrap.className = 'flex flex-wrap gap-1';
         data.groupItems.forEach(itemName => {
+            const itemId = Object.keys(itemsDatabase).find(id => itemsDatabase[id].DisplayName === itemName || itemsDatabase[id].name === itemName);
             const img = document.createElement('img');
-            img.src = createDirectImageUrl(itemName);
+            img.src = (itemId && itemsDatabase[itemId].IconUrl) ? itemsDatabase[itemId].IconUrl : createDirectImageUrl(itemName);
             img.className = 'w-8 h-8 object-contain rounded bg-slate-100 dark:bg-slate-800 p-1 border border-slate-300 dark:border-slate-600 shadow-sm';
             img.title = itemName;
             img.onerror = () => { img.src = FALLBACK_ICON; };
@@ -279,50 +301,53 @@ function showTooltip(e, data, extraRecipe = null) {
     }
     // --- End Interceptor ---
 
-    const rarityVal = data.stats?.rarity !== undefined ? data.stats.rarity : 0;
+    const rarityVal = data.Stats?.Rarity !== undefined ? data.Stats.Rarity : 0;
     dom.tooltip.name.className = `terraria-text font-bold text-lg leading-tight rarity-${rarityVal}`;
-    dom.tooltip.name.textContent = data.name;
+    dom.tooltip.name.textContent = data.DisplayName || data.name;
     
-    // Reset description class in case the group tooltip altered it
     dom.tooltip.desc.className = "text-sm text-slate-700 dark:text-slate-300 mb-3 block";
     
-    if (!data.description || data.description.trim() === "N/A" || data.description.trim() === "") {
+    if (!data.Category || data.Category.trim() === "") {
         dom.tooltip.desc.classList.add('hidden');
     } else {
-        dom.tooltip.desc.textContent = data.description;
+        dom.tooltip.desc.textContent = `Type: ${data.Category}`;
         dom.tooltip.desc.classList.remove('hidden');
     }
     
-    dom.tooltip.image.src = createDirectImageUrl(data.name);
-    dom.tooltip.image.onerror = () => { if(dom.tooltip.image.src !== data.image_url) dom.tooltip.image.src = data.image_url; else dom.tooltip.image.src = FALLBACK_ICON; };
+    const targetSrcNormal = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
+    // Prevent redundant DOM updates to stop browser from re-evaluating the image cache
+    if (dom.tooltip.image.getAttribute('src') !== targetSrcNormal) {
+        dom.tooltip.image.src = targetSrcNormal;
+    }
+    dom.tooltip.image.onerror = () => { if (dom.tooltip.image.getAttribute('src') !== FALLBACK_ICON) dom.tooltip.image.src = FALLBACK_ICON; };
     
     const usingMobileUX = isMobileUX();
 
-    if (data.url || data.specific_type) {
+    if (data.WikiUrl || data.Category) {
         if (usingMobileUX) {
             dom.tooltip.wikiDesktop.classList.add('hidden');
             dom.tooltip.wikiMobile.classList.remove('hidden');
             
-            dom.tooltip.btnWiki.classList.toggle('hidden', !data.url);
-            dom.tooltip.btnCategory.classList.toggle('hidden', !data.specific_type);
+            dom.tooltip.btnWiki.classList.toggle('hidden', !data.WikiUrl);
+            dom.tooltip.btnCategory.classList.toggle('hidden', !data.Category);
             
             dom.tooltip.btnWiki.onclick = (ev) => { 
                 ev.stopPropagation(); 
                 if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
                 activeMobileCard = null; dom.tooltip.el.classList.add('hidden'); 
-                window.open(data.url, '_blank'); 
+                window.open(data.WikiUrl, '_blank'); 
             };
             dom.tooltip.btnCategory.onclick = (ev) => { 
                 ev.stopPropagation(); 
                 if (activeMobileCard) activeMobileCard.classList.remove('mobile-active');
                 activeMobileCard = null; dom.tooltip.el.classList.add('hidden'); 
-                viewCategory(data.specific_type); 
+                viewCategory(data.Category); 
             };
         } else {
             dom.tooltip.wikiMobile.classList.add('hidden');
             dom.tooltip.wikiDesktop.classList.remove('hidden');
-            dom.tooltip.wikiDesktop.children[0].classList.toggle('hidden', !data.url);
-            dom.tooltip.wikiDesktop.children[1].classList.toggle('hidden', !data.specific_type);
+            dom.tooltip.wikiDesktop.children[0].classList.toggle('hidden', !data.WikiUrl);
+            dom.tooltip.wikiDesktop.children[1].classList.toggle('hidden', !data.Category);
         }
     } else {
         dom.tooltip.wikiDesktop.classList.add('hidden');
@@ -330,24 +355,23 @@ function showTooltip(e, data, extraRecipe = null) {
     }
     
     dom.tooltip.stats.innerHTML = '';
-    if (data.stats) {
-        Object.entries(data.stats).forEach(([k, v]) => {
-            if (k === 'rarity') return; 
+    if (data.Stats) {
+        Object.entries(data.Stats).forEach(([k, v]) => {
+            if (k === 'Rarity' || k === 'MaxStack' || k === 'ToolPower' || k === 'Value' || k === 'IsHardmode' || v === -1 || v === null || v === "") return; 
             
             const statDiv = document.createElement('div');
             const keySpan = document.createElement('span');
             keySpan.className = 'text-slate-500 capitalize';
             
-            let label = k.replace('_', ' ');
-            if (k === 'usetime') label = 'Use Time';
+            let label = k.replace(/([A-Z])/g, ' $1').trim();
             keySpan.textContent = label + ': ';
             
             const valSpan = document.createElement('span');
             valSpan.className = 'text-slate-900 dark:text-white font-medium';
             
             let displayValue = v;
-            if (k === 'knockback') displayValue = `${v} (${getFriendlyKnockback(v)})`;
-            else if (k === 'usetime') displayValue = `${v} (${getFriendlyUseTime(v)})`;
+            if (k === 'Knockback') displayValue = `${v} (${getFriendlyKnockback(v)})`;
+            else if (k === 'UseTime') displayValue = `${v} (${getFriendlyUseTime(v)})`;
             
             valSpan.textContent = displayValue;
             statDiv.append(keySpan, valSpan);
@@ -355,34 +379,35 @@ function showTooltip(e, data, extraRecipe = null) {
         });
     }
     
-    const validRecipes = data.crafting?.recipes?.filter(r => showTransmutations || !r.transmutation) || [];
+    const validRecipes = data.Recipes?.filter(r => showTransmutations || !r.IsTransmutation) || [];
     if (validRecipes.length > 0) {
-        const rIndex = selectedRecipeIndices[data.id] || 0;
+        const rIndex = selectedRecipeIndices[data.ID || data.id] || 0;
         const r = validRecipes[Math.min(rIndex, validRecipes.length - 1)];
-        dom.tooltip.stationText.textContent = `Crafted at: ${r.station}`;
+        const stationText = r.Stations && r.Stations.length > 0 ? r.Stations.join(', ') : 'By Hand';
+        dom.tooltip.stationText.textContent = `Crafted at: ${stationText}`;
         dom.tooltip.station.classList.remove('hidden');
     } else {
         dom.tooltip.station.classList.add('hidden');
     }
 
-    if (data.acquisition && data.acquisition.length > 0) {
+    if (data.ObtainedFromDrops && data.ObtainedFromDrops.length > 0) {
         dom.tooltip.acqList.innerHTML = '';
-        const sources = data.acquisition.slice(0, 3);
+        const sources = data.ObtainedFromDrops.slice(0, 3);
         sources.forEach(src => {
             const li = document.createElement('li');
             const srcSpan = document.createElement('span');
             srcSpan.className = 'text-slate-700 dark:text-slate-300';
-            srcSpan.textContent = src.source + ' ';
+            srcSpan.textContent = (src.SourceNPC_Name || src.source) + ' ';
             const rateSpan = document.createElement('span');
             rateSpan.className = 'text-emerald-600 dark:text-emerald-500 text-xs';
-            rateSpan.textContent = `(${src.rate})`;
+            rateSpan.textContent = `(${src.DropChance || src.rate})`;
             li.append(srcSpan, rateSpan);
             dom.tooltip.acqList.appendChild(li);
         });
-        if (data.acquisition.length > 3) {
+        if (data.ObtainedFromDrops.length > 3) {
             const li = document.createElement('li');
             li.className = "text-xs text-slate-500 italic mt-1";
-            li.textContent = `+${data.acquisition.length - 3} more...`;
+            li.textContent = `+${data.ObtainedFromDrops.length - 3} more...`;
             dom.tooltip.acqList.appendChild(li);
         }
         dom.tooltip.acq.classList.remove('hidden');
@@ -392,11 +417,12 @@ function showTooltip(e, data, extraRecipe = null) {
 
     if ((treeMode === 'usage' || treeMode === 'discover') && extraRecipe && (currentTreeItemId || discoverBoxItems.length > 0)) {
         const contextualRootNames = treeMode === 'discover' 
-            ? discoverBoxItems.map(id => itemsDatabase[id].name.toLowerCase()) 
-            : [itemsDatabase[currentTreeItemId].name.toLowerCase()];
+            ? discoverBoxItems.map(id => (itemsDatabase[id].DisplayName || itemsDatabase[id].name).toLowerCase()) 
+            : [(itemsDatabase[currentTreeItemId].DisplayName || itemsDatabase[currentTreeItemId].name).toLowerCase()];
         
-        const extraIngs = extraRecipe.ingredients.filter(ing => {
-            const ingLower = ing.name.toLowerCase();
+        const extraIngs = (extraRecipe.Ingredients || extraRecipe.ingredients || []).filter(ing => {
+            const ingName = ing.Name || ing.name;
+            const ingLower = ingName.toLowerCase();
             if (contextualRootNames.includes(ingLower)) return false;
             
             if (ingLower.startsWith('any ')) {
@@ -413,11 +439,18 @@ function showTooltip(e, data, extraRecipe = null) {
             dom.tooltip.extraIngList.innerHTML = '';
             
             extraIngs.forEach(ing => {
+                const ingName = ing.Name || ing.name;
+                const ingAmount = ing.Amount || ing.amount;
                 const img = document.createElement('img');
                 img.onerror = () => { img.src = FALLBACK_ICON; };
-                img.src = createDirectImageUrl(ing.name);
+                let ingId = ing.ID;
+                if (!ingId || !itemsDatabase[ingId]) {
+                    const found = itemIndex.find(i => i.name.toLowerCase() === ingName.toLowerCase());
+                    if (found) ingId = found.id.toString();
+                }
+                img.src = (ingId && itemsDatabase[ingId].IconUrl) ? itemsDatabase[ingId].IconUrl : createDirectImageUrl(ingName);
                 img.className = 'w-6 h-6 object-contain rounded bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-300 dark:border-slate-600 shadow-sm';
-                img.title = `${ing.name} (x${ing.amount})`;
+                img.title = `${ingName} (x${ingAmount})`;
                 dom.tooltip.extraIngList.appendChild(img);
             });
         } else {

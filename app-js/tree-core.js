@@ -2,35 +2,192 @@
 
 // --- Core Tree & Category View Generation ---
 
+function syncAllCollectedCards() {
+    document.querySelectorAll('.item-card[data-id]').forEach(c => {
+        const id = c.dataset.id;
+        const isCollected = collectedItems.has(id);
+        const btn = c.querySelector('.collected-check');
+        if (btn) {
+            btn.innerHTML = isCollected
+                ? '<i class="fa-solid fa-circle-check"></i>'
+                : '<i class="fa-regular fa-circle"></i>';
+            btn.classList.toggle('collected-active', isCollected);
+            btn.title = isCollected ? 'Mark as not collected' : 'Mark as collected';
+        }
+        c.classList.toggle('item-card-collected', isCollected);
+    });
+}
+
+function resolveIngredientId(ing) {
+    let id = ing.ID;
+    if (!id || !itemsDatabase[id]) {
+        const found = itemIndex.find(i => i.name.toLowerCase() === (ing.Name || ing.name || "").toLowerCase());
+        if (found) id = found.id?.toString();
+    }
+    return id ? String(id) : null;
+}
+
+function cascadeCollectedDown(id, collected, visited = new Set()) {
+    if (treeMode !== 'recipe' || visited.has(id)) return;
+    visited.add(id);
+    const itemData = itemsDatabase[id];
+    if (!itemData?.Recipes) return;
+    let validRecipes = itemData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
+    let rIdx = selectedRecipeIndices[id] || 0;
+    if (rIdx >= validRecipes.length) rIdx = 0;
+    const recipe = validRecipes[rIdx];
+    if (!recipe?.Ingredients) return;
+    recipe.Ingredients.forEach(ing => {
+        const ingId = resolveIngredientId(ing);
+        if (ingId) {
+            if (collected) collectedItems.add(ingId);
+            else collectedItems.delete(ingId);
+            cascadeCollectedDown(ingId, collected, visited);
+        }
+    });
+}
+
+function propagateCollectedUp(seedIds) {
+    const queue = [...seedIds];
+    const processed = new Set();
+
+    while (queue.length > 0 && processed.size < 5000) {
+        const id = queue.shift();
+        if (processed.has(id)) continue;
+        processed.add(id);
+
+        const item = itemsDatabase[id];
+        if (!item) continue;
+        const name = (item.DisplayName || item.name || "").toLowerCase();
+        const usages = usageIndex[name] || [];
+
+        for (const usage of usages) {
+            const parentId = String(usage.id);
+            if (processed.has(parentId)) continue;
+
+            const parentData = itemsDatabase[parentId];
+            if (!parentData?.Recipes) continue;
+
+            const validRecipes = parentData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
+            if (validRecipes.length === 0) continue;
+            let rIdx = selectedRecipeIndices[parentId] || 0;
+            if (rIdx >= validRecipes.length) rIdx = 0;
+            const selectedRecipe = validRecipes[rIdx];
+            const anySatisfied = selectedRecipe?.Ingredients?.length > 0 &&
+                selectedRecipe.Ingredients.every(ing => {
+                    const ingId = resolveIngredientId(ing);
+                    return ingId && collectedItems.has(ingId);
+                });
+
+            const wasCollected = collectedItems.has(parentId);
+            if (anySatisfied && !wasCollected) {
+                collectedItems.add(parentId);
+                queue.push(parentId);
+            } else if (!anySatisfied && wasCollected) {
+                collectedItems.delete(parentId);
+                queue.push(parentId);
+            }
+        }
+    }
+}
+
+function recheckCollectedForRecipeSwitch(id) {
+    const itemData = itemsDatabase[id];
+    if (!itemData?.Recipes) return;
+    const validRecipes = itemData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
+    if (validRecipes.length === 0) return;
+    let rIdx = selectedRecipeIndices[id] || 0;
+    if (rIdx >= validRecipes.length) rIdx = 0;
+    const recipe = validRecipes[rIdx];
+    const isSatisfied = recipe?.Ingredients?.length > 0 && recipe.Ingredients.every(ing => {
+        const ingId = resolveIngredientId(ing);
+        return ingId && collectedItems.has(ingId);
+    });
+
+    const wasCollected = collectedItems.has(String(id));
+    if (isSatisfied && !wasCollected) {
+        collectedItems.add(String(id));
+        propagateCollectedUp([String(id)]);
+    } else if (!isSatisfied && wasCollected) {
+        collectedItems.delete(String(id));
+        propagateCollectedUp([String(id)]);
+    }
+}
+
 function createItemCardElement(data, sizeClasses, contextRecipe = null, customClickHandler = null) {
     const card = document.createElement('div');
     card.className = `item-card relative flex flex-col items-center justify-center rounded-lg ${sizeClasses}`;
-    card.dataset.id = data.id; 
-    
+    card.dataset.id = data.ID || data.id;
+
+    // Mod-source background tint
+    const modSource = (data.ModSource || '').toLowerCase();
+    if (modSource === 'calamitymod' || modSource === 'calamitymodmusic') {
+        card.style.background = 'linear-gradient(rgba(205, 97, 85, 0.3), rgba(205, 97, 85, 0.3)), var(--card-bg)';
+    } else if (modSource === 'fargowiltas' || modSource === 'fargowiltassouls') {
+        card.style.background = 'linear-gradient(rgba(165, 105, 189, 0.3), rgba(165, 105, 189, 0.3)), var(--card-bg)';
+    }
+
     const img = document.createElement('img');
-    img.src = createDirectImageUrl(data.name);
+    img.src = FALLBACK_ICON;
+    img.dataset.src = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
     img.draggable = false; 
     img.ondragstart = (e) => e.preventDefault(); // Strict JS block
     img.className = sizeClasses.includes('w-32') ? 'w-14 h-14 object-contain mb-2' : 'w-10 h-10 object-contain mb-1';
-    img.onerror = () => { if(img.src !== data.image_url) img.src = data.image_url; else img.src = FALLBACK_ICON; };
+    img.onerror = () => { img.src = FALLBACK_ICON; };
+    imageObserver.observe(img);
     
     const name = document.createElement('span');
-    name.textContent = data.name;
+    name.textContent = data.DisplayName || data.name;
     name.className = `text-center font-semibold leading-tight px-1 line-clamp-2 text-slate-800 dark:text-slate-200 ${sizeClasses.includes('w-32') ? 'text-sm' : 'text-[10px]'}`;
     
-    if (data.hardmode) {
-        const hmBadge = document.createElement('div');
-        hmBadge.className = 'absolute top-1 left-1 flex items-center justify-center w-4 h-4 bg-gradient-to-br from-pink-500 to-purple-600 rounded-sm shadow-md border border-purple-800/50 text-[9px] font-bold text-white z-20 cursor-help';
-        hmBadge.title = "Hardmode Item";
-        hmBadge.textContent = "H";
+    if (data.IsHardmode || data.hardmode) {
+        const hmBadge = document.createElement('img');
+        hmBadge.src = '/sprites/Hardmode_Icon.png';
+        hmBadge.alt = 'Hardmode Icon';
+        hmBadge.title = 'Hardmode Item';
+        hmBadge.draggable = false;
+        hmBadge.className = 'absolute top-0.5 left-0.5 w-4 h-4 z-20 cursor-help drop-shadow';
         card.appendChild(hmBadge);
     }
 
+    // --- Collected Item Checkmark ---
+    const itemId = String(data.ID || data.id);
+    const isCollected = collectedItems.has(itemId);
+
+    const checkBtn = document.createElement('button');
+    checkBtn.className = `collected-check absolute bottom-0.5 left-0.5 w-5 h-5 flex items-center justify-center rounded-full z-20 cursor-pointer no-pan ${isCollected ? 'collected-active' : ''}`;
+    checkBtn.innerHTML = isCollected
+        ? '<i class="fa-solid fa-circle-check"></i>'
+        : '<i class="fa-regular fa-circle"></i>';
+    checkBtn.title = isCollected ? 'Mark as not collected' : 'Mark as collected';
+
+    checkBtn.onclick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const id = String(data.ID || data.id);
+        const nowCollected = !collectedItems.has(id);
+
+        if (nowCollected) collectedItems.add(id);
+        else collectedItems.delete(id);
+
+        // Recursive downward cascade through all descendants
+        cascadeCollectedDown(id, nowCollected);
+
+        // Upward propagation: check ALL parents in the data whose recipes are now satisfied/unsatisfied
+        propagateCollectedUp([id]);
+
+        syncAllCollectedCards();
+        saveCurrentState();
+    };
+
+    card.appendChild(checkBtn);
+    if (isCollected) card.classList.add('item-card-collected');
+
     card.append(img, name);
-    
-    card.onclick = (e) => { 
-        e.stopPropagation(); 
-        
+
+    card.onclick = (e) => {
+        e.stopPropagation();
+
         if (isDraggingThresholdMet) {
             isDraggingThresholdMet = false;
             return;
@@ -56,11 +213,11 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
         }
 
         if (e.ctrlKey || e.metaKey) {
-            if(data.url) window.open(data.url, '_blank'); 
+            if(data.WikiUrl) window.open(data.WikiUrl, '_blank'); 
             return;
         } 
-        if (e.shiftKey && data.specific_type) {
-            viewCategory(data.specific_type);
+        if (e.shiftKey && data.Category) {
+            viewCategory(data.Category);
             return;
         } 
         
@@ -70,9 +227,9 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
                 const radio = document.querySelector(`input[name="treeMode"][value="recipe"]`);
                 if (radio) radio.checked = true;
             }
-            transitionToNewItem(card, data.id);
+            transitionToNewItem(card, data.ID || data.id);
         } else {
-            viewItem(data.id, true);
+            viewItem(data.ID || data.id, true);
         }
     };
     
@@ -103,20 +260,22 @@ function loadCategory(typeStr, preserveState = false, isHistoryPop = false) {
     dom.toolMode.classList.add('hidden');
     dom.toolFilters.classList.add('hidden');
     dom.expandAllBtn.classList.add('hidden');
+    dom.expandTierBtn.classList.add('hidden');
+    dom.collapseAllBtn.classList.add('hidden');
 
     performIKTransition(
         () => false, 
         () => {
             dom.treeContainer.classList.remove('mode-usage');
-            const items = Object.values(itemsDatabase).filter(i => i.specific_type === typeStr);
+            const items = Object.values(itemsDatabase).filter(i => i.Category === typeStr);
             
             items.sort((a, b) => {
-                const dmgA = a.stats?.damage ?? -1;
-                const dmgB = b.stats?.damage ?? -1;
+                const dmgA = a.Stats?.Damage ?? -1;
+                const dmgB = b.Stats?.Damage ?? -1;
                 if (dmgA !== dmgB) {
                     return dmgB - dmgA; 
                 }
-                return a.name.localeCompare(b.name);
+                return (a.DisplayName || a.name || "").localeCompare(b.DisplayName || b.name || "");
             });
 
             const box = document.createElement('div');
@@ -158,8 +317,12 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     
     if (treeMode === 'discover') {
         dom.expandAllBtn.classList.add('hidden');
+        dom.expandTierBtn.classList.add('hidden');
+        dom.collapseAllBtn.classList.add('hidden');
     } else {
         dom.expandAllBtn.classList.remove('hidden');
+        dom.expandTierBtn.classList.remove('hidden');
+        dom.collapseAllBtn.classList.remove('hidden');
     }
 
     let isFirstLoad = !preserveState;
@@ -317,28 +480,67 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     }, postAlign, isInstant);
 }
 
+function estimateTreeSize(rootId, mode) {
+    let count = 0;
+    let visited = new Set();
+    let queue = [rootId];
+    if (mode === 'discover') queue = [...discoverBoxItems];
+
+    while(queue.length > 0 && count < 5000) {
+        let curr = queue.shift();
+        count++;
+        let data = itemsDatabase[curr];
+        if(!data) continue;
+        
+        if (mode === 'recipe') {
+            if (data.Recipes && data.Recipes.length > 0 && !visited.has(curr)) {
+                visited.add(curr);
+                let validRecipes = data.Recipes;
+                if (!showTransmutations) validRecipes = validRecipes.filter(r => !r.IsTransmutation);
+                if (validRecipes.length === 0) continue;
+                let rIndex = selectedRecipeIndices[curr] || 0;
+                if (rIndex >= validRecipes.length) rIndex = 0;
+                let recipe = validRecipes[rIndex];
+                if (recipe && recipe.Ingredients) {
+                    recipe.Ingredients.forEach(ing => {
+                        let cid = ing.ID;
+                        if (!cid) {
+                            let found = itemIndex.find(i => i.name.toLowerCase() === (ing.Name||"").toLowerCase());
+                            if (found) cid = found.id?.toString();
+                        }
+                        if(cid) queue.push(cid);
+                    });
+                }
+            }
+        } else if (mode === 'usage' || mode === 'discover') {
+            if (!visited.has(curr)) {
+                visited.add(curr);
+                let usages = usageIndex[(data.DisplayName || data.name || "").toLowerCase()] || [];
+                if (!showTransmutations) usages = usages.filter(u => !u.recipe?.IsTransmutation);
+                let uSet = new Set(usages.map(u => u.id));
+                uSet.forEach(id => queue.push(id));
+            }
+        }
+    }
+    return count;
+}
+
 function syncExpandAllButton() {
     const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
     if (expandBtns.length === 0) {
-        isExpandedAll = false;
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand';
+        dom.expandAllBtn.classList.add('opacity-50', 'pointer-events-none');
+        dom.expandTierBtn.classList.add('opacity-50', 'pointer-events-none');
+        dom.collapseAllBtn.classList.add('opacity-50', 'pointer-events-none');
         return;
     }
-    const allExpanded = expandBtns.every(btn => btn.innerHTML.includes('fa-minus'));
-    isExpandedAll = allExpanded;
     
-    if (allExpanded) {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-compress"></i> Collapse';
-    } else {
-        dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Expand';
-    }
+    dom.expandAllBtn.classList.remove('opacity-50', 'pointer-events-none');
+    dom.expandTierBtn.classList.remove('opacity-50', 'pointer-events-none');
+    dom.collapseAllBtn.classList.remove('opacity-50', 'pointer-events-none');
 }
 
-dom.expandAllBtn.onclick = async () => {
-    isExpandedAll = !isExpandedAll;
-    const targetState = isExpandedAll ? 'open' : 'close';
+async function executeExpandAll(targetState) {
     dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
-    
     await new Promise(r => requestAnimationFrame(r));
     
     let unstable = true, d = 0;
@@ -352,6 +554,63 @@ dom.expandAllBtn.onclick = async () => {
         d++;
     }
     
+    dom.expandAllBtn.innerHTML = '<i class="fa-solid fa-angles-down"></i> Expand All';
+    syncExpandAllButton();
+    setTimeout(() => resetView(), 100);
+}
+
+dom.expandTierBtn.onclick = () => {
+    const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
+    let changed = false;
+    
+    // Specifically target only closed buttons (pluses) on the current visible layer
+    for (const btn of expandBtns) {
+        if (btn.innerHTML.includes('fa-plus')) {
+            btn.toggle('open');
+            changed = true;
+        }
+    }
+    if (changed) {
+        syncExpandAllButton();
+        setTimeout(() => resetView(), 100);
+    }
+};
+
+dom.expandAllBtn.onclick = async () => {
+    const estimatedNodes = estimateTreeSize(currentTreeItemId, treeMode);
+    if (estimatedNodes > 200) {
+        dom.lagWarningCount.innerText = "~" + estimatedNodes;
+        dom.lagWarningModal.classList.remove('hidden');
+        
+        dom.btnCancelExpand.onclick = () => {
+            dom.lagWarningModal.classList.add('hidden');
+        };
+        dom.btnConfirmExpand.onclick = () => {
+            dom.lagWarningModal.classList.add('hidden');
+            executeExpandAll('open');
+        };
+        return; 
+    }
+    executeExpandAll('open');
+};
+
+dom.collapseAllBtn.onclick = async () => {
+    const originalHtml = dom.collapseAllBtn.innerHTML;
+    dom.collapseAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
+    await new Promise(r => requestAnimationFrame(r));
+    
+    // Instantly wipe memory of all deeply expanded nodes to reset the entire tree state
+    expandedNodes.clear();
+    
+    const expandBtns = Array.from(dom.treeContainer.querySelectorAll('.expand-btn:not(.deep-expand-btn)'));
+    for (const btn of expandBtns) {
+        // Target only currently open buttons
+        if (btn.innerHTML.includes('fa-minus')) {
+            btn.toggle('close');
+        }
+    }
+    
+    dom.collapseAllBtn.innerHTML = originalHtml;
     syncExpandAllButton();
     setTimeout(() => resetView(), 100);
 };

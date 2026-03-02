@@ -1,4 +1,5 @@
-displayName: JSON Data Exporter
-author: CI/CD Pipeline
-version: 1.0
-buildIgnore: *.csproj, *.user, obj\*, bin\*
+displayName = Automated Data Exporter
+author = TerrariTree
+version = 1.0
+tModLoaderVersion = 1.4.4
+side = Server

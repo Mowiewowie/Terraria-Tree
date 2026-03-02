@@ -17,8 +17,10 @@ function renderLoop() {
     // Keep them disabled during fast travel or physical dragging to maintain CPU performance.
     if (isPanning || initialPinchDist || diff > 1.5) {
         dom.treeContainer.style.pointerEvents = 'none';
+        dom.treeContainer.classList.add('fast-panning'); // Triggers GPU performance mode
     } else {
         dom.treeContainer.style.pointerEvents = '';
+        dom.treeContainer.classList.remove('fast-panning');
     }
 
     if (diff < 0.001 && !isPanning && !initialPinchDist) {
@@ -51,7 +53,8 @@ dom.vizArea.addEventListener('wheel', e => {
     const localY = (mouseY - targetY) / targetScale;
     const zoomDelta = -e.deltaY * 0.0015; 
     
-    targetScale = Math.max(getMinScale(), Math.min(targetScale + zoomDelta, 4));
+    // Allowed manual zoom down to 2% (0.02) overriding the getMinScale() reset limit
+    targetScale = Math.max(0.02, Math.min(targetScale + zoomDelta, 4));
     targetX = mouseX - localX * targetScale;
     targetY = mouseY - localY * targetScale;
     triggerAnimation();
@@ -78,6 +81,8 @@ window.addEventListener('mouseup', () => {
     if (isPanning) {
         isPanning = false; 
         dom.vizArea.classList.remove('grabbing'); 
+        dom.treeContainer.style.pointerEvents = ''; // Force unlock clicks
+        triggerAnimation(); // Ensure physics loop settles gracefully
         saveCurrentState();
     }
 });
@@ -139,7 +144,8 @@ dom.vizArea.addEventListener('touchmove', e => {
         const localX = (mouseX - targetX) / targetScale;
         const localY = (mouseY - targetY) / targetScale;
 
-        const newScale = Math.max(getMinScale(), Math.min(initialScale * zoomDelta, 4));
+        // Allowed manual zoom down to 2% (0.02) overriding the getMinScale() reset limit
+        const newScale = Math.max(0.02, Math.min(initialScale * zoomDelta, 4));
         if (Number.isFinite(newScale)) {
             targetScale = newScale;
             targetX = mouseX - localX * targetScale;
@@ -154,6 +160,8 @@ dom.vizArea.addEventListener('touchend', e => {
         isPanning = false;
         initialPinchDist = null;
         dom.vizArea.classList.remove('grabbing');
+        dom.treeContainer.style.pointerEvents = ''; // Force unlock taps
+        triggerAnimation(); // Ensure physics loop settles gracefully
         saveCurrentState();
     } else if (e.touches.length === 1) {
         initialPinchDist = null;
