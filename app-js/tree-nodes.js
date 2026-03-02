@@ -303,6 +303,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         btnPrev.onclick = (e) => {
             e.stopPropagation();
             selectedRecipeIndices[id] = (selectedRecipeIndices[id] - 1 + validRecipes.length) % validRecipes.length;
+            recheckCollectedForRecipeSwitch(id);
             saveCurrentState();
             loadTree(currentTreeItemId, true); // Instantly rebuilds the tree below this item
         };
@@ -317,6 +318,7 @@ function createTreeNode(id, isRoot = false, visited = new Set(), parentContextRe
         btnNext.onclick = (e) => {
             e.stopPropagation();
             selectedRecipeIndices[id] = (selectedRecipeIndices[id] + 1) % validRecipes.length;
+            recheckCollectedForRecipeSwitch(id);
             saveCurrentState();
             loadTree(currentTreeItemId, true);
         };

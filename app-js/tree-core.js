@@ -47,32 +47,70 @@ function cascadeCollectedDown(id, collected, visited = new Set()) {
     });
 }
 
-function cascadeCollectedUp(startNode) {
-    let node = startNode;
-    while (node) {
-        const parentNode = node.parentElement?.closest('.tree-node');
-        if (!parentNode) break;
-        const parentCard = parentNode.querySelector(':scope > .item-card');
-        const parentId = parentCard?.dataset?.id;
-        if (!parentId) break;
-        const parentData = itemsDatabase[parentId];
-        if (!parentData?.Recipes) break;
-        const parentValid = parentData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
-        const anySatisfied = parentValid.some(recipe => {
-            if (!recipe.Ingredients?.length) return false;
-            return recipe.Ingredients.every(ing => {
-                const ingId = resolveIngredientId(ing);
-                return ingId && collectedItems.has(ingId);
-            });
-        });
-        if (anySatisfied && !collectedItems.has(parentId)) {
-            collectedItems.add(parentId);
-        } else if (!anySatisfied && collectedItems.has(parentId)) {
-            collectedItems.delete(parentId);
-        } else {
-            break; // No change at this level, stop propagating
+function propagateCollectedUp(seedIds) {
+    const queue = [...seedIds];
+    const processed = new Set();
+
+    while (queue.length > 0 && processed.size < 5000) {
+        const id = queue.shift();
+        if (processed.has(id)) continue;
+        processed.add(id);
+
+        const item = itemsDatabase[id];
+        if (!item) continue;
+        const name = (item.DisplayName || item.name || "").toLowerCase();
+        const usages = usageIndex[name] || [];
+
+        for (const usage of usages) {
+            const parentId = String(usage.id);
+            if (processed.has(parentId)) continue;
+
+            const parentData = itemsDatabase[parentId];
+            if (!parentData?.Recipes) continue;
+
+            const validRecipes = parentData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
+            if (validRecipes.length === 0) continue;
+            let rIdx = selectedRecipeIndices[parentId] || 0;
+            if (rIdx >= validRecipes.length) rIdx = 0;
+            const selectedRecipe = validRecipes[rIdx];
+            const anySatisfied = selectedRecipe?.Ingredients?.length > 0 &&
+                selectedRecipe.Ingredients.every(ing => {
+                    const ingId = resolveIngredientId(ing);
+                    return ingId && collectedItems.has(ingId);
+                });
+
+            const wasCollected = collectedItems.has(parentId);
+            if (anySatisfied && !wasCollected) {
+                collectedItems.add(parentId);
+                queue.push(parentId);
+            } else if (!anySatisfied && wasCollected) {
+                collectedItems.delete(parentId);
+                queue.push(parentId);
+            }
         }
-        node = parentNode;
+    }
+}
+
+function recheckCollectedForRecipeSwitch(id) {
+    const itemData = itemsDatabase[id];
+    if (!itemData?.Recipes) return;
+    const validRecipes = itemData.Recipes.filter(r => showTransmutations || !r.IsTransmutation);
+    if (validRecipes.length === 0) return;
+    let rIdx = selectedRecipeIndices[id] || 0;
+    if (rIdx >= validRecipes.length) rIdx = 0;
+    const recipe = validRecipes[rIdx];
+    const isSatisfied = recipe?.Ingredients?.length > 0 && recipe.Ingredients.every(ing => {
+        const ingId = resolveIngredientId(ing);
+        return ingId && collectedItems.has(ingId);
+    });
+
+    const wasCollected = collectedItems.has(String(id));
+    if (isSatisfied && !wasCollected) {
+        collectedItems.add(String(id));
+        propagateCollectedUp([String(id)]);
+    } else if (!isSatisfied && wasCollected) {
+        collectedItems.delete(String(id));
+        propagateCollectedUp([String(id)]);
     }
 }
 
@@ -135,10 +173,8 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
         // Recursive downward cascade through all descendants
         cascadeCollectedDown(id, nowCollected);
 
-        // Upward cascade: auto-check/uncheck ancestors based on recipe satisfaction
-        if (treeMode === 'recipe') {
-            cascadeCollectedUp(card.closest('.tree-node'));
-        }
+        // Upward propagation: check ALL parents in the data whose recipes are now satisfied/unsatisfied
+        propagateCollectedUp([id]);
 
         syncAllCollectedCards();
         saveCurrentState();
