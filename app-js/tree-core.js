@@ -130,7 +130,7 @@ function createItemCardElement(data, sizeClasses, contextRecipe = null, customCl
     const img = document.createElement('img');
     img.src = FALLBACK_ICON;
     img.dataset.src = data.IconUrl || createDirectImageUrl(data.DisplayName || data.name);
-    img.draggable = false; 
+    img.draggable = false;
     img.ondragstart = (e) => e.preventDefault(); // Strict JS block
     img.className = sizeClasses.includes('w-32') ? 'w-14 h-14 object-contain mb-2' : 'w-10 h-10 object-contain mb-1';
     img.onerror = () => { img.src = FALLBACK_ICON; };
@@ -313,17 +313,16 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
     dom.tooltip.el.classList.add('hidden'); 
     
     dom.toolMode.classList.remove('hidden');
-    dom.toolFilters.classList.remove('hidden');
-    
+
     if (treeMode === 'discover') {
-        dom.expandAllBtn.classList.add('hidden');
-        dom.expandTierBtn.classList.add('hidden');
-        dom.collapseAllBtn.classList.add('hidden');
+        dom.toolFilters.classList.add('hidden');
     } else {
-        dom.expandAllBtn.classList.remove('hidden');
-        dom.expandTierBtn.classList.remove('hidden');
-        dom.collapseAllBtn.classList.remove('hidden');
+        dom.toolFilters.classList.remove('hidden');
     }
+
+    dom.expandAllBtn.classList.remove('hidden');
+    dom.expandTierBtn.classList.remove('hidden');
+    dom.collapseAllBtn.classList.remove('hidden');
 
     let isFirstLoad = !preserveState;
     if (isFirstLoad) {
@@ -481,17 +480,26 @@ function loadTree(id, preserveState = false, isHistoryPop = false, transitionTyp
 }
 
 function estimateTreeSize(rootId, mode) {
+    // Discover mode: count actual nodes in the filtered discovery graph
+    if (mode === 'discover') {
+        const graph = buildDiscoveryGraph();
+        if (!graph) return 0;
+        let count = 0;
+        const countNodes = (node) => { count++; node.children.forEach(countNodes); };
+        for (const tree of graph.trees) tree.children.forEach(countNodes);
+        return count;
+    }
+
     let count = 0;
     let visited = new Set();
     let queue = [rootId];
-    if (mode === 'discover') queue = [...discoverBoxItems];
 
     while(queue.length > 0 && count < 5000) {
         let curr = queue.shift();
         count++;
         let data = itemsDatabase[curr];
         if(!data) continue;
-        
+
         if (mode === 'recipe') {
             if (data.Recipes && data.Recipes.length > 0 && !visited.has(curr)) {
                 visited.add(curr);
@@ -512,7 +520,7 @@ function estimateTreeSize(rootId, mode) {
                     });
                 }
             }
-        } else if (mode === 'usage' || mode === 'discover') {
+        } else if (mode === 'usage') {
             if (!visited.has(curr)) {
                 visited.add(curr);
                 let usages = usageIndex[(data.DisplayName || data.name || "").toLowerCase()] || [];

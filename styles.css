@@ -339,8 +339,11 @@ button.no-pan {
 
 /* --- Mobile GPU Performance Mode --- */
 /* Strips expensive shadowing and transitions while panning to maintain 60 FPS on massive trees */
-.fast-panning .item-card {
+.fast-panning .item-card:not(.convergence-target) {
     box-shadow: none !important;
+    transition: none !important;
+}
+.fast-panning .item-card.convergence-target {
     transition: none !important;
 }
 .fast-panning .item-card span {
@@ -349,6 +352,15 @@ button.no-pan {
 .fast-panning .discover-box-container {
     box-shadow: none !important;
     transition: none !important;
+}
+
+/* --- Discovery Convergence SVG Overlay & Routing Channels --- */
+.convergence-svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 15;
 }
 
 /* --- Collected Item Checkmark --- */
