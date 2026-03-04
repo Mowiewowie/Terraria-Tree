@@ -354,7 +354,7 @@ button.no-pan {
     transition: none !important;
 }
 
-/* --- Discovery Convergence SVG Overlay & Routing Channels --- */
+/* --- Discovery Convergence SVG Overlay --- */
 .convergence-svg {
     position: absolute;
     inset: 0;
