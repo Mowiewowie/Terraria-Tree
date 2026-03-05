@@ -32,7 +32,7 @@ export interface DiscoveryGraph {
 export function getDiscoverableItems(
   discoverBoxItems: string[],
   itemsDatabase: ItemsDatabase,
-  usageIndex: UsageIndex,
+  _usageIndex: UsageIndex,
   showTransmutations: boolean,
 ): DiscoverUsage[] {
   if (discoverBoxItems.length === 0) return [];

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useStore } from '../store/useStore';
-import { saveCurrentState, viewHome } from '../router/navigation';
+import { saveCurrentState } from '../router/navigation';
 
 /**
  * Hook that listens for browser popstate events and restores app state.

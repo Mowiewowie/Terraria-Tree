@@ -29,7 +29,7 @@ export function useCanvas(
   const initialScaleRef = useRef(1);
 
   // Wheel debounce
-  const wheelTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const wheelTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const saveCurrentState = useCallback(() => {
     // Will be wired to router.saveCurrentState in Phase 6

@@ -5,7 +5,7 @@ import { getFriendlyKnockback, getFriendlyUseTime, isMobileUX } from '../../util
 import { RECIPE_GROUPS } from '../../data/recipe-groups';
 import type { TooltipData } from '../../hooks/useTooltip';
 import { isGroupTooltip } from '../../hooks/useTooltip';
-import type { ItemRecord, Recipe } from '../../types/items';
+import type { ItemRecord } from '../../types/items';
 
 interface TooltipProps {
   data: TooltipData;

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import {} from 'react';
 import { useCanvas } from '../../hooks/useCanvas';
 
 interface CanvasContainerProps {

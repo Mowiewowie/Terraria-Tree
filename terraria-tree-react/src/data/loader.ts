@@ -220,8 +220,6 @@ export async function loadVersionData(
   else if (modFargos) envName = 'Vanilla_Fargowiltas';
 
   let loadedEnv = envName;
-  let usedLegacy = false;
-
   try {
     // Phase 1: Try the exact requested environment
     let res = await fetch(`Terraria_${envName}_${targetVersion}_Export.json`);
@@ -242,7 +240,6 @@ export async function loadVersionData(
         res = await fetch('terraria_items.json');
         if (!res.ok) throw new Error('No data files found for this version.');
         loadedEnv = 'Vanilla';
-        usedLegacy = true;
       } else {
         throw new Error(`Data for ${targetVersion} not found.`);
       }

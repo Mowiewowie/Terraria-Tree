@@ -10,7 +10,7 @@ import ForwardChainNode from './ForwardChainNode';
 import ConvergenceOverlay from './ConvergenceOverlay';
 import ExpandButton from '../Tree/ExpandButton';
 import Tooltip from '../Tooltip/Tooltip';
-import type { ItemIndexEntry, Recipe } from '../../types/items';
+import type { ItemIndexEntry } from '../../types/items';
 
 interface DiscoverRootProps {
   onNavigate?: (cardEl: HTMLDivElement, id: string) => void;
@@ -34,7 +34,7 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
 
   const { tooltip, show: tooltipShow, move: tooltipMove, hide: tooltipHide } = useTooltip();
   const { toggleAndCascade } = useCollected();
-  const { results, isOpen, activeIndex, search, handleKeyDown, close } = useSearch();
+  const { results, isOpen, activeIndex, search, onKeyDown, close } = useSearch();
 
   const [searchValue, setSearchValue] = useState('');
   const [dagOpen, setDagOpen] = useState(true);
@@ -78,7 +78,7 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
     saveToLocalStorage();
   }, [removeDiscoverBoxItem, saveToLocalStorage]);
 
-  const handleItemClick = useCallback((itemId: string) => {
+  const handleItemClick = useCallback((_itemId: string) => {
     // Switch to recipe mode and navigate to this item
     onModeSwitch?.('recipe');
   }, [onModeSwitch]);
@@ -148,7 +148,7 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
               placeholder="Search to add items..."
               value={searchValue}
               onChange={handleSearchInput}
-              onKeyDown={(e) => handleKeyDown(e, handleSearchSelect)}
+              onKeyDown={(e) => onKeyDown(e, handleSearchSelect)}
               onFocus={() => { if (searchValue.length >= 2 && results.length > 0) search(searchValue); }}
             />
             {isOpen && results.length > 0 && (

@@ -11,7 +11,7 @@ import { useCallback, useRef } from 'react';
 export function useTransition(
   treeContainerRef: React.RefObject<HTMLDivElement | null>,
 ) {
-  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const ghostRef = useRef<HTMLDivElement | null>(null);
 
   /**

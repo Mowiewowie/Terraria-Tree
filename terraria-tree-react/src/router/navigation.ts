@@ -73,7 +73,7 @@ export function saveCurrentState(skipBrowserState = false): void {
 
 // --- Navigate to item (from search or click) ---
 
-export function viewItem(id: string, isFromSearch = false): void {
+export function viewItem(id: string, _isFromSearch = false): void {
   const s = useStore.getState();
 
   saveCurrentState();
@@ -89,7 +89,7 @@ export function viewItem(id: string, isFromSearch = false): void {
   };
 
   s.pushHistory(entry);
-  const newIdx = s.appHistory.length; // pushHistory updates idx internally
+  // pushHistory updates idx internally
   safePushState({ idx: useStore.getState().historyIdx }, `?id=${id}`);
 
   // Update view state

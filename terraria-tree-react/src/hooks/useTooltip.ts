@@ -31,7 +31,7 @@ export function useTooltip() {
     visible: false,
   });
 
-  const lineTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const lineTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const show = useCallback(
     (e: React.MouseEvent | MouseEvent | { clientX: number; clientY: number }, data: ItemRecord | GroupTooltipData, extraRecipe?: Recipe | null) => {

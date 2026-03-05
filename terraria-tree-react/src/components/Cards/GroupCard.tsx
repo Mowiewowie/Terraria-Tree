@@ -3,7 +3,7 @@ import { createDirectImageUrl, FALLBACK_ICON } from '../../utils/image';
 import { isMobileUX } from '../../utils/helpers';
 import { RECIPE_GROUPS } from '../../data/recipe-groups';
 import type { GroupTooltipData } from '../../hooks/useTooltip';
-import type { ItemRecord } from '../../types/items';
+
 
 interface GroupCardProps {
   groupName: string;
@@ -34,7 +34,7 @@ const GroupCard = memo(function GroupCard({
   const [currentIdx, setCurrentIdx] = useState(0);
   const [fading, setFading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const isVisibleRef = useRef(false);
 
   const currentItem = groupItems[currentIdx];
