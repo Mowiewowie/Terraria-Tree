@@ -1,3 +1,5 @@
+node_modules/
+terraria-tree-react/dist/
 UI-design.txt
 diagnostics.py
 generate_sitemap.py

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
@@ -19,6 +20,12 @@ jobs:
         with:
           submodules: true
           lfs: false
+      - name: Copy shared assets into React app public dir
+        run: |
+          cp terraria_items.json terraria-tree-react/public/terraria_items.json
+          cp -r sprites terraria-tree-react/public/sprites
+          cp -r icons terraria-tree-react/public/icons
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -28,9 +35,9 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
+          app_location: "/terraria-tree-react" # React app source
           api_location: "" # Api source code path - optional
-          output_location: "." # Built app content directory - optional
+          output_location: "dist" # Vite build output
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
