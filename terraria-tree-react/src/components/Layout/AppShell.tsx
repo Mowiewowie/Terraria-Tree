@@ -1,10 +1,11 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { useHistory } from '../../hooks/useHistory';
 import { useTransition } from '../../hooks/useTransition';
 import { viewItem, viewCategory, viewHome, switchMode, transitionToNewItem, calculateResetView, saveCurrentState } from '../../router/navigation';
 import SearchBar from './SearchBar';
 import Toolbar from './Toolbar';
+import SettingsModal from './SettingsModal';
 import CanvasContainer from '../Canvas/CanvasContainer';
 import TreeView from '../Tree/TreeView';
 import CategoryView from '../Category/CategoryView';
@@ -17,6 +18,7 @@ export default function AppShell() {
   const currentViewType = useStore((s) => s.currentViewType);
   const treeMode = useStore((s) => s.treeMode);
 
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const vizAreaRef = useRef<HTMLDivElement>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
 
@@ -62,16 +64,17 @@ export default function AppShell() {
   }, []);
 
   const handleExpandTier = useCallback(() => {
-    // Expand one tier: add all currently-visible non-expanded nodes to expandedNodes
-    const s = useStore.getState();
+    // Expand one tier: find all visible expand buttons in the DOM and expand their nodes
     const treeContainer = treeContainerRef.current;
     if (!treeContainer) return;
 
-    const expandBtns = treeContainer.querySelectorAll<HTMLElement>('.expand-btn');
-    let expanded = false;
+    const s = useStore.getState();
     const next = new Set(s.expandedNodes);
+    let expanded = false;
 
-    expandBtns.forEach((btn) => {
+    // Query all expand buttons that are currently collapsed (fa-plus icon = not expanded)
+    treeContainer.querySelectorAll<HTMLElement>('.expand-btn').forEach((btn) => {
+      // Only expand buttons for nodes not already expanded
       const node = btn.closest('.tree-node');
       const card = node?.querySelector<HTMLElement>('.item-card');
       if (card?.dataset.id && !next.has(card.dataset.id)) {
@@ -113,6 +116,32 @@ export default function AppShell() {
   const handleModeChange = useCallback((mode: TreeMode) => {
     handleModeSwitch(mode);
   }, [handleModeSwitch]);
+
+  // Auto-center the tree after view content changes
+  const currentTreeItemId = useStore((s) => s.currentTreeItemId);
+  const currentCategoryName = useStore((s) => s.currentCategoryName);
+
+  useEffect(() => {
+    if (currentViewType === 'home') return;
+    // Wait for React to render the new tree content, then center
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        if (!vizAreaRef.current || !treeContainerRef.current) return;
+        // Only auto-center if no saved camera state exists for this history entry
+        const s = useStore.getState();
+        const entry = s.appHistory[s.historyIdx];
+        if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+          // Restore saved camera position
+          s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
+          return;
+        }
+        const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
+        s.setTarget(x, y, scale);
+      });
+      return () => cancelAnimationFrame(raf2);
+    });
+    return () => cancelAnimationFrame(raf1);
+  }, [currentViewType, currentTreeItemId, currentCategoryName, treeMode]);
 
   // Save state periodically and on unload
   useEffect(() => {
@@ -195,6 +224,7 @@ export default function AppShell() {
             <button
               className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none"
               title="Data Sources & Mods"
+              onClick={() => setSettingsOpen(true)}
             >
               <i className="fa-solid fa-gear text-xl" />
             </button>
@@ -227,6 +257,8 @@ export default function AppShell() {
           {renderContent()}
         </CanvasContainer>
       </main>
+
+      <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }

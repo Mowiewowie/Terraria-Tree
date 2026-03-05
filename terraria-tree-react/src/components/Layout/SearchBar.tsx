@@ -25,13 +25,13 @@ export default function SearchBar({ onSelect, disabled }: SearchBarProps) {
   );
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full">
       <input
         ref={inputRef}
         type="text"
         placeholder="Search items..."
         disabled={disabled}
-        className="no-pan w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm disabled:opacity-50"
+        className="no-pan w-full px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm disabled:opacity-50"
         onChange={(e) => search(e.target.value)}
         onKeyDown={(e) => onKeyDown(e, handleSelect)}
         onFocus={open}

@@ -15,6 +15,10 @@ interface TreeNodeProps {
   parentContextRecipe?: Recipe | null;
   forceDeepExpand?: boolean;
   parentQuantity?: number;
+  /** Display amount on the card badge (recipe: "x3", usage: "Req: 2") */
+  amount?: number;
+  amountText?: string;
+  amountMode?: 'recipe' | 'usage';
   // Callbacks passed down from TreeView
   onTooltipShow?: (e: React.MouseEvent, data: any, extraRecipe?: Recipe | null) => void;
   onTooltipMove?: (e: React.MouseEvent) => void;
@@ -33,6 +37,9 @@ const TreeNode = memo(function TreeNode({
   parentContextRecipe,
   forceDeepExpand = false,
   parentQuantity = 1,
+  amount,
+  amountText,
+  amountMode,
   onTooltipShow,
   onTooltipMove,
   onTooltipHide,
@@ -163,11 +170,12 @@ const TreeNode = memo(function TreeNode({
               <div key={`${cid}-${i}`} className={`tree-node ${posClasses}`}>
                 <div className="line-h" />
                 <div className="line-v" />
-                <AmountBadge amount={displayAmount} mode="recipe" />
                 <TreeNode
                   id={cid}
                   visited={newVisited}
                   parentQuantity={displayAmount}
+                  amount={displayAmount}
+                  amountMode="recipe"
                   onTooltipShow={onTooltipShow}
                   onTooltipMove={onTooltipMove}
                   onTooltipHide={onTooltipHide}
@@ -200,12 +208,13 @@ const TreeNode = memo(function TreeNode({
           <div key={`${usage.id}-${i}`} className={`tree-node ${posClasses}`}>
             <div className="line-h" />
             <div className="line-v" />
-            <AmountBadge text={badgeText} mode="usage" />
             <TreeNode
               id={usage.id}
               visited={newVisited}
               parentContextRecipe={usage.recipe}
               forceDeepExpand={forceDeepExpand}
+              amountText={badgeText}
+              amountMode="usage"
               onTooltipShow={onTooltipShow}
               onTooltipMove={onTooltipMove}
               onTooltipHide={onTooltipHide}
@@ -248,18 +257,23 @@ const TreeNode = memo(function TreeNode({
         </button>
       )}
 
-      {/* Item card */}
-      <ItemCard
-        data={data}
-        sizeClass={isRoot ? 'lg' : 'sm'}
-        contextRecipe={parentContextRecipe}
-        onTooltipShow={onTooltipShow}
-        onTooltipMove={onTooltipMove}
-        onTooltipHide={onTooltipHide}
-        onNavigate={onNavigate}
-        onCategoryView={onCategoryView}
-        onCollectedToggle={onCollectedToggle}
-      />
+      {/* Item card with optional amount badge */}
+      <div className="relative">
+        {(amount !== undefined || amountText) && amountMode && (
+          <AmountBadge amount={amount} text={amountText} mode={amountMode} />
+        )}
+        <ItemCard
+          data={data}
+          sizeClass={isRoot ? 'lg' : 'sm'}
+          contextRecipe={parentContextRecipe}
+          onTooltipShow={onTooltipShow}
+          onTooltipMove={onTooltipMove}
+          onTooltipHide={onTooltipHide}
+          onNavigate={onNavigate}
+          onCategoryView={onCategoryView}
+          onCollectedToggle={onCollectedToggle}
+        />
+      </div>
 
       {/* Recipe selector pill */}
       {treeMode === 'recipe' && validRecipes.length > 1 && (

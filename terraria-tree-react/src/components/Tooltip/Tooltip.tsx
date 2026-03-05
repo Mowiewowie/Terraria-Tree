@@ -22,23 +22,29 @@ export default function Tooltip({ data, onWikiClick, onCategoryClick }: TooltipP
   const currentTreeItemId = useStore((s) => s.currentTreeItemId);
   const treeMode = useStore((s) => s.treeMode);
 
-  // Position tooltip
+  // Position tooltip — use layout effect for immediate positioning
   useEffect(() => {
     if (!elRef.current || !data.visible) return;
     const el = elRef.current;
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-    const offset = 15;
-    let l = data.position.x + offset;
-    let t = data.position.y + offset;
 
-    if (l + w > window.innerWidth) l = data.position.x - w - offset;
-    if (t + h > window.innerHeight) t = data.position.y - h - offset;
-    l = Math.max(10, l);
-    t = Math.max(10, t);
+    // Use rAF to ensure the DOM has painted and we can measure accurately
+    const frame = requestAnimationFrame(() => {
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      const offset = 15;
+      let l = data.position.x + offset;
+      let t = data.position.y + offset;
 
-    el.style.left = `${l}px`;
-    el.style.top = `${t}px`;
+      if (l + w > window.innerWidth) l = data.position.x - w - offset;
+      if (t + h > window.innerHeight) t = data.position.y - h - offset;
+      l = Math.max(10, l);
+      t = Math.max(10, t);
+
+      el.style.left = `${l}px`;
+      el.style.top = `${t}px`;
+      el.style.visibility = 'visible';
+    });
+    return () => cancelAnimationFrame(frame);
   }, [data.position, data.visible]);
 
   if (!data.visible || !data.itemData) return null;
@@ -56,7 +62,7 @@ export default function Tooltip({ data, onWikiClick, onCategoryClick }: TooltipP
       : createDirectImageUrl(gd.groupItems[0]);
 
     return (
-      <div ref={elRef} className="tooltip fixed bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] pointer-events-none transition-colors">
+      <div ref={elRef} className="tooltip fixed bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] pointer-events-none transition-colors" style={{ visibility: 'hidden' }}>
         <div className="flex items-start gap-4 mb-3">
           <img src={imgSrc} alt="" className="w-12 h-12 object-contain rounded bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shrink-0" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_ICON; }} />
           <div className="w-full">
@@ -132,7 +138,7 @@ export default function Tooltip({ data, onWikiClick, onCategoryClick }: TooltipP
   const extraDropCount = (item.ObtainedFromDrops?.length || 0) - 3;
 
   return (
-    <div ref={elRef} className={`tooltip fixed bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] transition-colors ${mobile ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+    <div ref={elRef} className={`tooltip fixed bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] transition-colors ${mobile ? 'pointer-events-auto' : 'pointer-events-none'}`} style={{ visibility: 'hidden' }}>
       <div className="flex items-start gap-4 mb-3">
         <img src={imgSrc} alt="" draggable={false} className="w-12 h-12 object-contain rounded bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shrink-0" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_ICON; }} />
         <div className="w-full">

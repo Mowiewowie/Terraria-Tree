@@ -23,6 +23,8 @@ export default function Toolbar({
   const showTransmutations = useStore((s) => s.showTransmutations);
   const showTotalQuantity = useStore((s) => s.showTotalQuantity);
   const currentViewType = useStore((s) => s.currentViewType);
+  const historyIdx = useStore((s) => s.historyIdx);
+  const historyLength = useStore((s) => s.appHistory.length);
   const setShowTransmutations = useStore((s) => s.setShowTransmutations);
   const setShowTotalQuantity = useStore((s) => s.setShowTotalQuantity);
 
@@ -112,7 +114,7 @@ export default function Toolbar({
       <div className="controls-panel flex gap-1 p-1 rounded-lg shadow-lg pointer-events-auto shrink-0">
         <button
           id="navBack"
-          disabled
+          disabled={historyIdx <= 0}
           title="Go Back"
           onClick={() => history.back()}
           className="w-10 h-10 rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all flex items-center justify-center text-xl"
@@ -121,7 +123,7 @@ export default function Toolbar({
         </button>
         <button
           id="navForward"
-          disabled
+          disabled={historyIdx >= historyLength - 1}
           title="Go Forward"
           onClick={() => history.forward()}
           className="w-10 h-10 rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all flex items-center justify-center text-xl"

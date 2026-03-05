@@ -280,5 +280,21 @@ export function useCanvas(
     };
   }, [vizAreaRef, treeContainerRef, triggerAnimation, saveCurrentState]);
 
+  // Auto-trigger animation when store targets change
+  useEffect(() => {
+    let prevTX = useStore.getState().targetX;
+    let prevTY = useStore.getState().targetY;
+    let prevTS = useStore.getState().targetScale;
+
+    return useStore.subscribe((state) => {
+      if (state.targetX !== prevTX || state.targetY !== prevTY || state.targetScale !== prevTS) {
+        prevTX = state.targetX;
+        prevTY = state.targetY;
+        prevTS = state.targetScale;
+        triggerAnimation();
+      }
+    });
+  }, [triggerAnimation]);
+
   return { triggerAnimation, getAnimationState, setCurrentPosition };
 }
