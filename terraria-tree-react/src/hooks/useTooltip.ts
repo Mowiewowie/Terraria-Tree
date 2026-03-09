@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useLayoutEffect } from 'react';
 import type { ItemRecord, Recipe } from '../types/items';
 
 export interface TooltipData {
@@ -41,6 +41,7 @@ function positionTooltipEl(el: HTMLElement, clientX: number, clientY: number) {
 /**
  * Hook for managing tooltip visibility and positioning.
  * Uses React state for content/visibility, direct DOM for position.
+ * useLayoutEffect positions the tooltip after React commits DOM (before paint).
  */
 export function useTooltip() {
   const [tooltip, setTooltip] = useState<TooltipData>({
@@ -51,29 +52,33 @@ export function useTooltip() {
 
   const tooltipElRef = useRef<HTMLDivElement | null>(null);
   const lineTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  // Position tooltip after React commits the Tooltip component's DOM.
+  // Fires AFTER ref is assigned but BEFORE browser paints.
+  useLayoutEffect(() => {
+    if (tooltip.visible && tooltipElRef.current) {
+      positionTooltipEl(tooltipElRef.current, mouseRef.current.x, mouseRef.current.y);
+      tooltipElRef.current.style.visibility = 'visible';
+    }
+  }, [tooltip.visible, tooltip.itemData]);
 
   const show = useCallback(
     (e: React.MouseEvent | MouseEvent | { clientX: number; clientY: number }, data: ItemRecord | GroupTooltipData, extraRecipe?: Recipe | null) => {
       const clientX = 'clientX' in e ? e.clientX : 0;
       const clientY = 'clientY' in e ? e.clientY : 0;
+      mouseRef.current = { x: clientX, y: clientY };
       setTooltip({
         itemData: data,
         extraRecipe: extraRecipe || null,
         visible: true,
-      });
-      // Position after next paint when element is rendered
-      requestAnimationFrame(() => {
-        if (tooltipElRef.current) {
-          positionTooltipEl(tooltipElRef.current, clientX, clientY);
-          tooltipElRef.current.style.visibility = 'visible';
-        }
       });
     },
     [],
   );
 
   const move = useCallback((e: React.MouseEvent | MouseEvent) => {
-    // Direct DOM manipulation — no React re-render
+    mouseRef.current = { x: e.clientX, y: e.clientY };
     if (tooltipElRef.current) {
       positionTooltipEl(tooltipElRef.current, e.clientX, e.clientY);
     }
@@ -81,13 +86,15 @@ export function useTooltip() {
 
   const hide = useCallback(() => {
     setTooltip((prev) => ({ ...prev, visible: false }));
+    if (tooltipElRef.current) {
+      tooltipElRef.current.style.visibility = 'hidden';
+    }
     clearTimeout(lineTimeoutRef.current);
   }, []);
 
   const showDelayed = useCallback(
     (e: React.MouseEvent | MouseEvent, data: ItemRecord | GroupTooltipData, delay = 300, extraRecipe?: Recipe | null) => {
       clearTimeout(lineTimeoutRef.current);
-      // Capture coords at call time since the event object may be recycled
       const clientX = e.clientX;
       const clientY = e.clientY;
       lineTimeoutRef.current = setTimeout(() => {

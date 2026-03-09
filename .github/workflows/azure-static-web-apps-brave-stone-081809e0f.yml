@@ -29,10 +29,11 @@ jobs:
           cd terraria-tree-react
           npm ci
           npm run build
-          cp ../terraria_items.json dist/terraria_items.json
-          cp ../Terraria_*_Export.json dist/ 2>/dev/null || true
-          cp -r ../sprites dist/sprites
-          cp -r ../icons dist/icons
+          # Hard-link JSON/assets into dist (no file duplication on disk)
+          ln ../terraria_items.json dist/terraria_items.json
+          for f in ../Terraria_*_Export.json; do [ -e "$f" ] && ln "$f" dist/; done
+          ln -s ../../sprites dist/sprites
+          ln -s ../../icons dist/icons
 
       - name: Deploy
         id: builddeploy

@@ -13,6 +13,31 @@ import CategoryView from '../Category/CategoryView';
 import DiscoverRoot from '../Discover/DiscoverRoot';
 import type { ItemIndexEntry, TreeMode } from '../../types/items';
 
+/** Abbreviate status text for narrow screens: "v1.4.5 (Vanilla, Calamity)" → "v1.4.5 V+C" */
+function abbreviateStatus(text: string | undefined): string {
+  if (!text) return '';
+  // Extract version (e.g. "v1.4.5")
+  const versionMatch = text.match(/^v[\d.]+/);
+  const version = versionMatch ? versionMatch[0] : text.split(' ')[0];
+
+  // Abbreviate mod names
+  const abbrevMap: Record<string, string> = {
+    'vanilla': 'V',
+    'calamity': 'C',
+    "fargo's": 'F',
+    'fargowiltas': 'F',
+  };
+
+  const modMatch = text.match(/\(([^)]+)\)/);
+  if (modMatch) {
+    const mods = modMatch[1].split(',').map(m => m.trim().toLowerCase());
+    const abbrevs = mods.map(m => abbrevMap[m] || m.charAt(0).toUpperCase());
+    return `${version} ${abbrevs.join('+')}`;
+  }
+
+  return version;
+}
+
 export default function AppShell() {
   const isDataLoaded = useStore((s) => s.isDataLoaded);
   const statusText = useStore((s) => s.statusText);
@@ -64,8 +89,17 @@ export default function AppShell() {
     saveCurrentState();
   }, []);
 
+  // Reset view after a delay (lets React render new nodes first)
+  const resetViewDelayed = useCallback(() => {
+    setTimeout(() => {
+      if (!vizAreaRef.current || !treeContainerRef.current) return;
+      const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
+      useStore.getState().setTarget(x, y, scale);
+      saveCurrentState();
+    }, 100);
+  }, []);
+
   const handleExpandTier = useCallback(() => {
-    // Expand one tier: find all visible expand buttons in the DOM and expand their nodes
     const treeContainer = treeContainerRef.current;
     if (!treeContainer) return;
 
@@ -73,9 +107,7 @@ export default function AppShell() {
     const next = new Set(s.expandedNodes);
     let expanded = false;
 
-    // Query all expand buttons that are currently collapsed (fa-plus icon = not expanded)
     treeContainer.querySelectorAll<HTMLElement>('.expand-btn').forEach((btn) => {
-      // Only expand buttons for nodes not already expanded
       const node = btn.closest('.tree-node');
       const card = node?.querySelector<HTMLElement>('.item-card');
       if (card?.dataset.id && !next.has(card.dataset.id)) {
@@ -86,9 +118,9 @@ export default function AppShell() {
 
     if (expanded) {
       s.setExpandedNodes(next);
-      saveCurrentState();
+      resetViewDelayed();
     }
-  }, []);
+  }, [resetViewDelayed]);
 
   const handleExpandAll = useCallback(() => {
     const s = useStore.getState();
@@ -108,13 +140,13 @@ export default function AppShell() {
     }
 
     s.setExpandedNodes(next);
-    saveCurrentState();
-  }, []);
+    resetViewDelayed();
+  }, [resetViewDelayed]);
 
   const handleCollapseAll = useCallback(() => {
     useStore.getState().clearExpandedNodes();
-    saveCurrentState();
-  }, []);
+    resetViewDelayed();
+  }, [resetViewDelayed]);
 
   const handleModeChange = useCallback((mode: TreeMode) => {
     handleModeSwitch(mode);
@@ -162,47 +194,42 @@ export default function AppShell() {
   const showToolbar = currentViewType === 'tree' || currentViewType === 'category';
   const isHome = currentViewType === 'home';
 
-  // FLIP animation: animate logo, search, status between home and compact positions
+  // FLIP animation: store previous rects after each render, animate on transition
   const prevViewRef = useRef(currentViewType);
+  const prevRectsRef = useRef<Map<string, DOMRect>>(new Map());
+
+  // Capture element positions after every render (runs after paint)
+  useEffect(() => {
+    const ids = ['logoContainer', 'searchWrapper', 'statusWrapper'];
+    const rects = new Map<string, DOMRect>();
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) rects.set(id, el.getBoundingClientRect());
+    });
+    prevRectsRef.current = rects;
+  });
+
+  // FLIP animation on home↔non-home transition (runs before paint)
   useLayoutEffect(() => {
     const prev = prevViewRef.current;
     prevViewRef.current = currentViewType;
     const isTransition = (prev === 'home') !== (currentViewType === 'home');
     if (!isTransition) return;
 
-    const els = [
-      document.getElementById('logoContainer'),
-      document.getElementById('searchWrapper'),
-      document.getElementById('statusWrapper'),
-    ].filter(Boolean) as HTMLElement[];
+    const ids = ['logoContainer', 'searchWrapper', 'statusWrapper'];
+    const els = ids.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
 
-    // Capture FIRST positions (already measured before DOM class change via isHome)
-    // But since React already applied the new class, we need to invert.
-    // The class has already been applied by React render, so we measure LAST positions:
+    // LAST positions = current DOM after React applied new layout
     const lastRects = els.map(el => el.getBoundingClientRect());
 
-    // Temporarily toggle back to measure FIRST positions
-    const root = document.querySelector('.h-\\[100dvh\\]');
-    if (!root) return;
-    if (currentViewType === 'home') {
-      root.classList.remove('home-mode');
-    } else {
-      root.classList.add('home-mode');
-    }
-    const firstRects = els.map(el => el.getBoundingClientRect());
-
-    // Restore the correct class
-    if (currentViewType === 'home') {
-      root.classList.add('home-mode');
-    } else {
-      root.classList.remove('home-mode');
-    }
-
-    // Apply FLIP inversion
+    // FIRST positions = stored from previous render's useEffect
     els.forEach((el, i) => {
-      const invertX = firstRects[i].left - lastRects[i].left;
-      const invertY = firstRects[i].top - lastRects[i].top;
-      const invertScaleX = firstRects[i].width / (lastRects[i].width || 1);
+      const firstRect = prevRectsRef.current.get(el.id);
+      if (!firstRect) return;
+
+      const invertX = firstRect.left - lastRects[i].left;
+      const invertY = firstRect.top - lastRects[i].top;
+      const invertScaleX = firstRect.width / (lastRects[i].width || 1);
 
       el.style.transformOrigin = 'top left';
       el.style.transition = 'none';
@@ -299,9 +326,10 @@ export default function AppShell() {
             <span className={isDataLoaded ? 'text-green-500' : 'text-slate-500'}>
               {isDataLoaded ? (
                 <>
-                  {/* Full text on large screens, condensed on small */}
-                  <span className="hidden sm:inline">{statusText}</span>
-                  <span className="sm:hidden">{statusText?.replace(/\s•\s.*$/, '') || 'Initializing...'}</span>
+                  {/* Full text on lg+ screens */}
+                  <span className="hidden lg:inline">{statusText}</span>
+                  {/* Abbreviated on smaller screens: version + short mods, no item count */}
+                  <span className="lg:hidden">{abbreviateStatus(statusText)}</span>
                 </>
               ) : (
                 statusText || 'Initializing...'

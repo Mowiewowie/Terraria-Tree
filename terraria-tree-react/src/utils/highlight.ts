@@ -1,7 +1,8 @@
 /**
- * Double-flash highlight on a card element.
- * Waits for camera animation to settle before flashing.
- * Used on tree line clicks (amber) and convergence line clicks (line color).
+ * Sustained glow highlight on a card element.
+ * Waits for camera animation to settle, then applies a glow
+ * that holds briefly and fades out smoothly.
+ * Used on navigation (amber) and convergence line clicks (line color).
  */
 export function highlightCard(
   cardEl: HTMLElement | null,
@@ -19,10 +20,20 @@ export function highlightCard(
       return;
     }
     const saved = cardEl.style.boxShadow;
+    const savedTransition = cardEl.style.transition;
+
+    // Apply glow instantly
+    cardEl.style.transition = 'none';
     cardEl.style.boxShadow = glow;
-    setTimeout(() => { cardEl.style.boxShadow = saved; }, 200);
-    setTimeout(() => { cardEl.style.boxShadow = glow; }, 400);
-    setTimeout(() => { cardEl.style.boxShadow = saved; }, 600);
+
+    // Hold for 500ms, then fade out over 1.5s
+    setTimeout(() => {
+      cardEl.style.transition = 'box-shadow 1.5s ease-out';
+      cardEl.style.boxShadow = saved;
+      setTimeout(() => {
+        cardEl.style.transition = savedTransition;
+      }, 1600);
+    }, 500);
   };
   requestAnimationFrame(waitForSettle);
 }
