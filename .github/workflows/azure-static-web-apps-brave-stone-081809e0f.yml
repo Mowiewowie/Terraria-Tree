@@ -30,6 +30,7 @@ jobs:
           npm ci
           npm run build
           cp ../terraria_items.json dist/terraria_items.json
+          cp ../Terraria_*_Export.json dist/ 2>/dev/null || true
           cp -r ../sprites dist/sprites
           cp -r ../icons dist/icons
 

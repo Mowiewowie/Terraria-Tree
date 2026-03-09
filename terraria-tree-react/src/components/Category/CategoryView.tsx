@@ -18,7 +18,7 @@ export default function CategoryView({ onNavigate, onCategoryView }: CategoryVie
   const currentCategoryName = useStore((s) => s.currentCategoryName);
   const itemsDatabase = useStore((s) => s.itemsDatabase);
 
-  const { tooltip, show, move, hide } = useTooltip();
+  const { tooltip, tooltipElRef, show, move, hide } = useTooltip();
   const { toggleAndCascade } = useCollected();
 
   const items = useMemo(() => {
@@ -57,6 +57,7 @@ export default function CategoryView({ onNavigate, onCategoryView }: CategoryVie
 
       <Tooltip
         data={tooltip}
+        elRef={tooltipElRef}
         onWikiClick={(url) => window.open(url, '_blank')}
         onCategoryClick={onCategoryView}
       />

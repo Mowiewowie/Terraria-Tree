@@ -60,6 +60,7 @@ interface AppState {
   setItemIndex: (index: ItemIndexEntry[]) => void;
   setUsageIndex: (index: UsageIndex) => void;
   setDataLoaded: (loaded: boolean) => void;
+  setEngineVersion: (version: string) => void;
   setLoadingStatus: (status: { isLoading?: boolean; statusText?: string; loadError?: string | null }) => void;
 
   // Camera
@@ -174,6 +175,7 @@ export const useStore = create<AppState>((set, get) => ({
   setItemIndex: (index) => set({ itemIndex: index }),
   setUsageIndex: (index) => set({ usageIndex: index }),
   setDataLoaded: (loaded) => set({ isDataLoaded: loaded }),
+  setEngineVersion: (version) => set({ engineVersion: version }),
   setLoadingStatus: (status) =>
     set((state) => ({
       isLoading: status.isLoading ?? state.isLoading,

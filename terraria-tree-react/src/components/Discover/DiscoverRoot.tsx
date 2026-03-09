@@ -32,7 +32,7 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
   const addDiscoverBoxItem = useStore((s) => s.addDiscoverBoxItem);
   const saveToLocalStorage = useStore((s) => s.saveToLocalStorage);
 
-  const { tooltip, show: tooltipShow, move: tooltipMove, hide: tooltipHide } = useTooltip();
+  const { tooltip, tooltipElRef, show: tooltipShow, move: tooltipMove, hide: tooltipHide } = useTooltip();
   const { toggleAndCascade } = useCollected();
   const { results, isOpen, activeIndex, search, onKeyDown, close } = useSearch();
 
@@ -267,6 +267,7 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
 
       <Tooltip
         data={tooltip}
+        elRef={tooltipElRef}
         onWikiClick={(url) => window.open(url, '_blank')}
         onCategoryClick={onCategoryView}
       />

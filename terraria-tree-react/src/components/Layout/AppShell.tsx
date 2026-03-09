@@ -1,8 +1,9 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { useHistory } from '../../hooks/useHistory';
 import { useTransition } from '../../hooks/useTransition';
 import { viewItem, viewCategory, viewHome, switchMode, transitionToNewItem, calculateResetView, saveCurrentState } from '../../router/navigation';
+import { highlightCard } from '../../utils/highlight';
 import SearchBar from './SearchBar';
 import Toolbar from './Toolbar';
 import SettingsModal from './SettingsModal';
@@ -90,17 +91,19 @@ export default function AppShell() {
   }, []);
 
   const handleExpandAll = useCallback(() => {
-    // This is handled by React re-renders when expandedNodes changes
-    // We iteratively expand by adding all node IDs that have children
     const s = useStore.getState();
     const db = s.itemsDatabase;
     const next = new Set(s.expandedNodes);
 
-    // Expand all nodes that have recipes (recipe mode) or usages
-    for (const id of Object.keys(db)) {
-      const item = db[id];
-      if (item.Recipes && item.Recipes.length > 0) {
-        next.add(id);
+    if (s.treeMode === 'recipe') {
+      for (const id of Object.keys(db)) {
+        if (db[id].Recipes && db[id].Recipes.length > 0) next.add(id);
+      }
+    } else {
+      const usageIdx = s.usageIndex;
+      for (const id of Object.keys(db)) {
+        const name = (db[id].DisplayName || '').toLowerCase();
+        if (usageIdx[name] && usageIdx[name].length > 0) next.add(id);
       }
     }
 
@@ -133,10 +136,16 @@ export default function AppShell() {
         if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
           // Restore saved camera position
           s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
-          return;
+        } else {
+          const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
+          s.setTarget(x, y, scale);
         }
-        const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
-        s.setTarget(x, y, scale);
+
+        // Highlight root card after navigation
+        if (currentViewType === 'tree' && currentTreeItemId) {
+          const rootCard = treeContainerRef.current?.querySelector<HTMLElement>(`.is-root > .relative > .item-card[data-id="${currentTreeItemId}"]`);
+          if (rootCard) highlightCard(rootCard);
+        }
       });
       return () => cancelAnimationFrame(raf2);
     });
@@ -152,6 +161,75 @@ export default function AppShell() {
 
   const showToolbar = currentViewType === 'tree' || currentViewType === 'category';
   const isHome = currentViewType === 'home';
+
+  // FLIP animation: animate logo, search, status between home and compact positions
+  const prevViewRef = useRef(currentViewType);
+  useLayoutEffect(() => {
+    const prev = prevViewRef.current;
+    prevViewRef.current = currentViewType;
+    const isTransition = (prev === 'home') !== (currentViewType === 'home');
+    if (!isTransition) return;
+
+    const els = [
+      document.getElementById('logoContainer'),
+      document.getElementById('searchWrapper'),
+      document.getElementById('statusWrapper'),
+    ].filter(Boolean) as HTMLElement[];
+
+    // Capture FIRST positions (already measured before DOM class change via isHome)
+    // But since React already applied the new class, we need to invert.
+    // The class has already been applied by React render, so we measure LAST positions:
+    const lastRects = els.map(el => el.getBoundingClientRect());
+
+    // Temporarily toggle back to measure FIRST positions
+    const root = document.querySelector('.h-\\[100dvh\\]');
+    if (!root) return;
+    if (currentViewType === 'home') {
+      root.classList.remove('home-mode');
+    } else {
+      root.classList.add('home-mode');
+    }
+    const firstRects = els.map(el => el.getBoundingClientRect());
+
+    // Restore the correct class
+    if (currentViewType === 'home') {
+      root.classList.add('home-mode');
+    } else {
+      root.classList.remove('home-mode');
+    }
+
+    // Apply FLIP inversion
+    els.forEach((el, i) => {
+      const invertX = firstRects[i].left - lastRects[i].left;
+      const invertY = firstRects[i].top - lastRects[i].top;
+      const invertScaleX = firstRects[i].width / (lastRects[i].width || 1);
+
+      el.style.transformOrigin = 'top left';
+      el.style.transition = 'none';
+      if (el.id === 'logoContainer') {
+        el.style.transform = `translate3d(${invertX}px, ${invertY}px, 0) scale(${invertScaleX})`;
+      } else {
+        el.style.transform = `translate3d(${invertX}px, ${invertY}px, 0)`;
+      }
+    });
+
+    // Force reflow then animate to final position
+    void document.body.offsetWidth;
+
+    els.forEach(el => {
+      el.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+      el.style.transform = '';
+    });
+
+    const cleanup = setTimeout(() => {
+      els.forEach(el => {
+        el.style.transition = '';
+        el.style.transformOrigin = '';
+      });
+    }, 600);
+
+    return () => clearTimeout(cleanup);
+  }, [currentViewType]);
 
   // Render tree content based on view type and mode
   const renderContent = () => {
@@ -219,7 +297,15 @@ export default function AppShell() {
           {/* Status */}
           <div id="statusWrapper" className="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap z-50 pointer-events-auto shrink-0 flex items-center gap-3">
             <span className={isDataLoaded ? 'text-green-500' : 'text-slate-500'}>
-              {statusText || 'Initializing...'}
+              {isDataLoaded ? (
+                <>
+                  {/* Full text on large screens, condensed on small */}
+                  <span className="hidden sm:inline">{statusText}</span>
+                  <span className="sm:hidden">{statusText?.replace(/\s•\s.*$/, '') || 'Initializing...'}</span>
+                </>
+              ) : (
+                statusText || 'Initializing...'
+              )}
             </span>
             <button
               className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none"

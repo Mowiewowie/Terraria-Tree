@@ -1,4 +1,3 @@
-import { useRef, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { createDirectImageUrl, FALLBACK_ICON } from '../../utils/image';
 import { getFriendlyKnockback, getFriendlyUseTime, isMobileUX } from '../../utils/helpers';
@@ -9,43 +8,18 @@ import type { ItemRecord } from '../../types/items';
 
 interface TooltipProps {
   data: TooltipData;
+  elRef: React.RefObject<HTMLDivElement | null>;
   onWikiClick?: (url: string) => void;
   onCategoryClick?: (category: string) => void;
 }
 
-export default function Tooltip({ data, onWikiClick, onCategoryClick }: TooltipProps) {
-  const elRef = useRef<HTMLDivElement>(null);
+export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: TooltipProps) {
   const showTransmutations = useStore((s) => s.showTransmutations);
   const selectedRecipeIndices = useStore((s) => s.selectedRecipeIndices);
   const itemsDatabase = useStore((s) => s.itemsDatabase);
   const discoverBoxItems = useStore((s) => s.discoverBoxItems);
   const currentTreeItemId = useStore((s) => s.currentTreeItemId);
   const treeMode = useStore((s) => s.treeMode);
-
-  // Position tooltip — use layout effect for immediate positioning
-  useEffect(() => {
-    if (!elRef.current || !data.visible) return;
-    const el = elRef.current;
-
-    // Use rAF to ensure the DOM has painted and we can measure accurately
-    const frame = requestAnimationFrame(() => {
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
-      const offset = 15;
-      let l = data.position.x + offset;
-      let t = data.position.y + offset;
-
-      if (l + w > window.innerWidth) l = data.position.x - w - offset;
-      if (t + h > window.innerHeight) t = data.position.y - h - offset;
-      l = Math.max(10, l);
-      t = Math.max(10, t);
-
-      el.style.left = `${l}px`;
-      el.style.top = `${t}px`;
-      el.style.visibility = 'visible';
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [data.position, data.visible]);
 
   if (!data.visible || !data.itemData) return null;
 

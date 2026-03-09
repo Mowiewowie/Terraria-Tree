@@ -20,7 +20,7 @@ interface TreeViewProps {
 export default function TreeView({ onNavigate, onCategoryView, onModeSwitch }: TreeViewProps) {
   const currentTreeItemId = useStore((s) => s.currentTreeItemId);
 
-  const { tooltip, show, move, hide } = useTooltip();
+  const { tooltip, tooltipElRef, show, move, hide } = useTooltip();
   const { toggleAndCascade } = useCollected();
 
   const handleTreeReload = useCallback(() => {}, []);
@@ -44,6 +44,7 @@ export default function TreeView({ onNavigate, onCategoryView, onModeSwitch }: T
 
       <Tooltip
         data={tooltip}
+        elRef={tooltipElRef}
         onWikiClick={(url) => window.open(url, '_blank')}
         onCategoryClick={onCategoryView}
       />

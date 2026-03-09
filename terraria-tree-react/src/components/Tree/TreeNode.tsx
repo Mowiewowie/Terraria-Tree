@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import { useStore } from '../../store/useStore';
 import { RECIPE_GROUPS } from '../../data/recipe-groups';
 import ItemCard from '../Cards/ItemCard';
@@ -6,6 +6,7 @@ import GroupCard from '../Cards/GroupCard';
 import GenericCard from '../Cards/GenericCard';
 import RecipeSelector from './RecipeSelector';
 import ExpandButton from './ExpandButton';
+import { highlightCard } from '../../utils/highlight';
 import type { ItemRecord, Recipe, TreeMode, UsageEntry } from '../../types/items';
 
 interface TreeNodeProps {
@@ -62,10 +63,11 @@ const TreeNode = memo(function TreeNode({
   const setSelectedRecipeIndex = useStore((s) => s.setSelectedRecipeIndex);
 
   const data = itemsDatabase[id] as ItemRecord | undefined;
+  const lineTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const lastMouseRef = useRef({ x: 0, y: 0 });
 
-  // Local expanded state (drives children rendering)
-  const shouldAutoExpand = isRoot || expandedNodes.has(id) || forceDeepExpand;
-  const [isOpen, setIsOpen] = useState(shouldAutoExpand);
+  // Derive open state from store (no local state — enables Expand All/Collapse All)
+  const isOpen = isRoot || expandedNodes.has(id) || forceDeepExpand;
 
   // Determine children data
   const { hasValidChildren, childrenData, validRecipes, recipeIndex } = useMemo(() => {
@@ -107,14 +109,12 @@ const TreeNode = memo(function TreeNode({
 
   const handleToggle = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    const newOpen = !isOpen;
-    setIsOpen(newOpen);
-    if (newOpen) {
-      addExpandedNode(id);
-    } else {
+    if (isOpen && !isRoot) {
       removeExpandedNode(id);
+    } else {
+      addExpandedNode(id);
     }
-  }, [isOpen, id, addExpandedNode, removeExpandedNode]);
+  }, [isOpen, isRoot, id, addExpandedNode, removeExpandedNode]);
 
   const handleRecipePrev = useCallback(() => {
     const newIdx = (recipeIndex - 1 + validRecipes.length) % validRecipes.length;
@@ -127,6 +127,38 @@ const TreeNode = memo(function TreeNode({
     setSelectedRecipeIndex(id, newIdx);
     onTreeReload?.();
   }, [id, recipeIndex, validRecipes.length, setSelectedRecipeIndex, onTreeReload]);
+
+  // --- Tree line event handlers ---
+  const handleLineEnter = useCallback((e: React.MouseEvent) => {
+    const treeChildren = (e.currentTarget as HTMLElement).closest('.tree-children');
+    treeChildren?.classList.add('lines-hovered');
+    lastMouseRef.current = { x: e.clientX, y: e.clientY };
+    clearTimeout(lineTimeoutRef.current);
+    lineTimeoutRef.current = setTimeout(() => {
+      if (data) {
+        onTooltipShow?.({ clientX: lastMouseRef.current.x, clientY: lastMouseRef.current.y } as React.MouseEvent, data, parentContextRecipe);
+      }
+    }, 300);
+  }, [data, parentContextRecipe, onTooltipShow]);
+
+  const handleLineMove = useCallback((e: React.MouseEvent) => {
+    lastMouseRef.current = { x: e.clientX, y: e.clientY };
+    onTooltipMove?.(e);
+  }, [onTooltipMove]);
+
+  const handleLineLeave = useCallback((e: React.MouseEvent) => {
+    const treeChildren = (e.currentTarget as HTMLElement).closest('.tree-children');
+    treeChildren?.classList.remove('lines-hovered');
+    clearTimeout(lineTimeoutRef.current);
+    onTooltipHide?.();
+  }, [onTooltipHide]);
+
+  const handleLineClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    const node = (e.currentTarget as HTMLElement).closest('.tree-node') || (e.currentTarget as HTMLElement).parentElement;
+    const card = node?.querySelector<HTMLElement>('.item-card');
+    highlightCard(card || null);
+  }, []);
 
   if (!data) {
     return <GenericCard name="Unknown" amount={1} />;
@@ -151,8 +183,8 @@ const TreeNode = memo(function TreeNode({
         if (isGroup) {
           childNodes.push(
             <div key={`group-${ingName}-${i}`} className={`tree-node ${i === 0 ? 'is-first' : ''} ${i === childrenData.length - 1 ? 'is-last' : ''} ${childrenData.length === 1 ? 'is-only' : ''}`}>
-              <div className="line-h" />
-              <div className="line-v" />
+              <div className="line-h" onMouseEnter={handleLineEnter} onMouseMove={handleLineMove} onMouseLeave={handleLineLeave} onClick={handleLineClick} />
+              <div className="line-v" onMouseEnter={handleLineEnter} onMouseMove={handleLineMove} onMouseLeave={handleLineLeave} onClick={handleLineClick} />
               <GroupCard groupName={ingName} amount={displayAmount} onTooltipShow={onTooltipShow} onTooltipMove={onTooltipMove} onTooltipHide={onTooltipHide} onCategoryView={onCategoryView} />
             </div>,
           );
@@ -168,8 +200,8 @@ const TreeNode = memo(function TreeNode({
           if (cid && itemsDatabase[cid]) {
             childNodes.push(
               <div key={`${cid}-${i}`} className={`tree-node ${posClasses}`}>
-                <div className="line-h" />
-                <div className="line-v" />
+                <div className="line-h" onMouseEnter={handleLineEnter} onMouseMove={handleLineMove} onMouseLeave={handleLineLeave} onClick={handleLineClick} />
+                <div className="line-v" onMouseEnter={handleLineEnter} onMouseMove={handleLineMove} onMouseLeave={handleLineLeave} onClick={handleLineClick} />
                 <TreeNode
                   id={cid}
                   visited={newVisited}
@@ -190,8 +222,8 @@ const TreeNode = memo(function TreeNode({
           } else {
             childNodes.push(
               <div key={`generic-${ingName}-${i}`} className={`tree-node ${posClasses}`}>
-                <div className="line-h" />
-                <div className="line-v" />
+                <div className="line-h" onMouseEnter={handleLineEnter} onMouseMove={handleLineMove} onMouseLeave={handleLineLeave} onClick={handleLineClick} />
+                <div className="line-v" onMouseEnter={handleLineEnter} onMouseMove={handleLineMove} onMouseLeave={handleLineLeave} onClick={handleLineClick} />
                 <GenericCard name={ingName} amount={displayAmount} />
               </div>,
             );
@@ -231,7 +263,13 @@ const TreeNode = memo(function TreeNode({
 
     return (
       <div className={`tree-children`}>
-        <button className="tree-line-btn" />
+        <button
+          className="tree-line-btn"
+          onMouseEnter={handleLineEnter}
+          onMouseMove={handleLineMove}
+          onMouseLeave={handleLineLeave}
+          onClick={handleLineClick}
+        />
         {childNodes}
       </div>
     );

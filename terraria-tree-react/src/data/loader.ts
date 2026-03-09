@@ -264,6 +264,7 @@ export async function loadVersionData(
     store.setItemIndex(itemIdx);
     store.setUsageIndex(usageIdx);
     store.setDataLoaded(true);
+    store.setEngineVersion(targetVersion);
     store.setLoadingStatus({ isLoading: false, statusText: `v${targetVersion} (${modsLoaded}) • ${itemCount.toLocaleString()} Items`, loadError: null });
 
     return {
