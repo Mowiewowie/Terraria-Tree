@@ -4,6 +4,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { useTooltip } from '../../hooks/useTooltip';
 import { useCollected } from '../../hooks/useCollected';
 import { buildDiscoveryGraph, getDiscoverableItems } from '../../algorithms/discovery';
+import type { DiscoveryPathNode } from '../../algorithms/discovery';
 import ItemCard from '../Cards/ItemCard';
 import TreeNode from '../Tree/TreeNode';
 import ForwardChainNode from './ForwardChainNode';
@@ -63,6 +64,38 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
     if (discoverBoxItems.length < 2) return null;
     return buildDiscoveryGraph(discoverBoxItems, itemsDatabase, usageIndex, showTransmutations);
   }, [discoverBoxItems, itemsDatabase, usageIndex, showTransmutations]);
+
+  // Auto-expand all nodes along convergence paths so lines can draw
+  useEffect(() => {
+    if (!graph || graph.convergences.length === 0) return;
+
+    function collectPathIds(node: DiscoveryPathNode): boolean {
+      if (node.convergenceIdx !== null) return true;
+      let hasTarget = false;
+      for (const child of node.children) {
+        if (collectPathIds(child)) hasTarget = true;
+      }
+      if (hasTarget) pathIds.push(node.id);
+      return hasTarget;
+    }
+
+    const pathIds: string[] = [];
+    for (const tree of graph.trees) {
+      for (const child of tree.children) {
+        collectPathIds(child);
+      }
+    }
+
+    if (pathIds.length > 0) {
+      const s = useStore.getState();
+      const next = new Set(s.expandedNodes);
+      let changed = false;
+      for (const id of pathIds) {
+        if (!next.has(id)) { next.add(id); changed = true; }
+      }
+      if (changed) s.setExpandedNodes(next);
+    }
+  }, [graph]);
 
   // Get simple discoverable items for 0-1 items
   const simpleItems = useMemo(() => {

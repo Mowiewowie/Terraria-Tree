@@ -49,11 +49,11 @@ export default function AppShell() {
   const vizAreaRef = useRef<HTMLDivElement>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
 
-  // Wire up browser history (popstate)
-  useHistory();
-
   // Crossfade transitions
   const { performCrossfade } = useTransition(treeContainerRef);
+
+  // Wire up browser history (popstate) with hero fly animation support
+  useHistory(treeContainerRef, vizAreaRef, performCrossfade);
 
   // --- Navigation handlers ---
 
@@ -123,25 +123,50 @@ export default function AppShell() {
     }
   }, [resetViewDelayed]);
 
+  // Tier-by-tier expand: expands one layer at a time to distribute render work
+  // across multiple frames, preventing UI freezes on massive trees.
   const doExpandAll = useCallback(() => {
-    const s = useStore.getState();
-    const db = s.itemsDatabase;
-    const next = new Set(s.expandedNodes);
-
-    if (s.treeMode === 'recipe') {
-      for (const id of Object.keys(db)) {
-        if (db[id].Recipes && db[id].Recipes.length > 0) next.add(id);
+    let iteration = 0;
+    const expandNextTier = () => {
+      const treeContainer = treeContainerRef.current;
+      if (!treeContainer || iteration >= 20) {
+        resetViewDelayed();
+        return;
       }
-    } else {
-      const usageIdx = s.usageIndex;
-      for (const id of Object.keys(db)) {
-        const name = (db[id].DisplayName || '').toLowerCase();
-        if (usageIdx[name] && usageIdx[name].length > 0) next.add(id);
-      }
-    }
+      iteration++;
 
-    s.setExpandedNodes(next);
-    resetViewDelayed();
+      const s = useStore.getState();
+      const next = new Set(s.expandedNodes);
+      let expanded = false;
+
+      // Find expand buttons for currently visible (not yet expanded) nodes
+      treeContainer.querySelectorAll<HTMLElement>('.expand-btn').forEach((btn) => {
+        const node = btn.closest('.tree-node');
+        const card = node?.querySelector<HTMLElement>('.item-card');
+        if (card?.dataset.id && !next.has(card.dataset.id)) {
+          next.add(card.dataset.id);
+          expanded = true;
+        }
+      });
+
+      // Also handle discover_root
+      const discoverBox = treeContainer.querySelector('[data-id="discover_root"]');
+      if (discoverBox && !next.has('discover_root')) {
+        next.add('discover_root');
+        expanded = true;
+      }
+
+      if (!expanded) {
+        resetViewDelayed();
+        return;
+      }
+
+      s.setExpandedNodes(next);
+      // Wait for React to render this tier, then expand the next
+      requestAnimationFrame(() => requestAnimationFrame(expandNextTier));
+    };
+
+    expandNextTier();
   }, [resetViewDelayed]);
 
   const handleExpandAll = useCallback(() => {

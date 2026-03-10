@@ -207,19 +207,19 @@ export default function Toolbar({
         {/* Expand/Collapse/Reset */}
         {isTreeView && (
           <>
-            <button onClick={onExpandTier} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
+            <button onClick={onExpandTier} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12 cursor-pointer">
               <i className="fa-solid fa-angle-down" /> Expand Tier
             </button>
-            <button onClick={onExpandAll} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
+            <button onClick={onExpandAll} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12 cursor-pointer">
               <i className="fa-solid fa-angles-down" /> Expand All
             </button>
-            <button onClick={onCollapseAll} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
+            <button onClick={onCollapseAll} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12 cursor-pointer">
               <i className="fa-solid fa-angles-up" /> Collapse All
             </button>
           </>
         )}
 
-        <button onClick={onResetView} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12">
+        <button onClick={onResetView} className="controls-panel px-3 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-blue-500 shadow-lg flex items-center justify-center gap-1.5 transition-all text-sm font-medium whitespace-nowrap shrink-0 h-10 md:h-12 cursor-pointer">
           <i className="fa-solid fa-compress-arrows-alt" /> Reset
         </button>
       </div>

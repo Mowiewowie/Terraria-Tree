@@ -243,6 +243,71 @@ export function calculateResetView(
   return { x, y, scale };
 }
 
+// --- Focus camera on expanded subtree ---
+
+export function focusSubtree(nodeEl: HTMLElement, mode: TreeMode): void {
+  const treeContainer = document.getElementById('treeContainer');
+  const vizArea = treeContainer?.parentElement;
+  if (!treeContainer || !vizArea) return;
+
+  const s = useStore.getState();
+  const scale = s.targetScale;
+  const tr = treeContainer.getBoundingClientRect();
+
+  // Find the card and children container
+  const card = nodeEl.querySelector('.item-card');
+  const children = nodeEl.querySelector('.tree-children');
+  if (!card) return;
+
+  const cr = card.getBoundingClientRect();
+  const cardLocalLeft = (cr.left - tr.left) / scale;
+  const cardLocalRight = (cr.right - tr.left) / scale;
+  const cardLocalTop = (cr.top - tr.top) / scale;
+  const cardLocalBottom = (cr.bottom - tr.top) / scale;
+
+  let minX = cardLocalLeft, maxX = cardLocalRight;
+  let minY = cardLocalTop, maxY = cardLocalBottom;
+
+  if (children) {
+    const chr = children.getBoundingClientRect();
+    minX = Math.min(minX, (chr.left - tr.left) / scale);
+    maxX = Math.max(maxX, (chr.right - tr.left) / scale);
+    minY = Math.min(minY, (chr.top - tr.top) / scale);
+    maxY = Math.max(maxY, (chr.bottom - tr.top) / scale);
+  }
+
+  const vizRect = vizArea.getBoundingClientRect();
+  const padX = 120, padY = 120;
+  const pLocalCenterX = (cardLocalLeft + cardLocalRight) / 2;
+  const distLeft = pLocalCenterX - minX;
+  const distRight = maxX - pLocalCenterX;
+  const maxDistX = Math.max(distLeft, distRight);
+  const totalHeight = maxY - minY;
+  const contentWidth = maxDistX * 2;
+
+  // Check if content fits at current scale (just pan, no zoom)
+  const viewWidth = (vizRect.width - padX) / scale;
+  const viewHeight = (vizRect.height - padY) / scale;
+
+  let newS = scale;
+  if (contentWidth > viewWidth || totalHeight > viewHeight) {
+    // Need to zoom out to fit
+    const sX = (vizRect.width - padX) / (contentWidth || 1);
+    const sY = (vizRect.height - padY) / (totalHeight || 1);
+    newS = Math.max(0.15, Math.min(sX, sY, scale)); // Only zoom out, never in
+  }
+
+  const newX = (vizRect.width / 2) - (pLocalCenterX * newS);
+  let newY: number;
+  if (mode === 'recipe' || mode === 'discover') {
+    newY = (padY / 2) - (minY * newS);
+  } else {
+    newY = vizRect.height - (padY / 2) - (maxY * newS);
+  }
+
+  s.setTarget(newX, newY, newS);
+}
+
 // --- Estimate tree size for expand-all warning ---
 
 export function estimateTreeSize(rootId: string | null, mode: TreeMode): number {

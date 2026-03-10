@@ -7,6 +7,7 @@ import GenericCard from '../Cards/GenericCard';
 import RecipeSelector from './RecipeSelector';
 import ExpandButton from './ExpandButton';
 import { highlightCard } from '../../utils/highlight';
+import { focusSubtree } from '../../router/navigation';
 import type { ItemRecord, Recipe, TreeMode, UsageEntry } from '../../types/items';
 
 interface TreeNodeProps {
@@ -56,7 +57,8 @@ const TreeNode = memo(function TreeNode({
   const treeMode = useStore((s) => s.treeMode);
   const showTransmutations = useStore((s) => s.showTransmutations);
   const showTotalQuantity = useStore((s) => s.showTotalQuantity);
-  const expandedNodes = useStore((s) => s.expandedNodes);
+  // Optimized: only re-render this node when ITS expanded state changes
+  const isExpanded = useStore((s) => s.expandedNodes.has(id));
   const selectedRecipeIndices = useStore((s) => s.selectedRecipeIndices);
   const addExpandedNode = useStore((s) => s.addExpandedNode);
   const removeExpandedNode = useStore((s) => s.removeExpandedNode);
@@ -65,9 +67,10 @@ const TreeNode = memo(function TreeNode({
   const data = itemsDatabase[id] as ItemRecord | undefined;
   const lineTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const lastMouseRef = useRef({ x: 0, y: 0 });
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   // Derive open state from store (no local state — enables Expand All/Collapse All)
-  const isOpen = isRoot || expandedNodes.has(id) || forceDeepExpand;
+  const isOpen = isRoot || isExpanded || forceDeepExpand;
 
   // Determine children data
   const { hasValidChildren, childrenData, validRecipes, recipeIndex } = useMemo(() => {
@@ -113,8 +116,14 @@ const TreeNode = memo(function TreeNode({
       removeExpandedNode(id);
     } else {
       addExpandedNode(id);
+      // Focus camera on expanded content after React renders new children
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (nodeRef.current) focusSubtree(nodeRef.current, treeMode);
+        });
+      });
     }
-  }, [isOpen, isRoot, id, addExpandedNode, removeExpandedNode]);
+  }, [isOpen, isRoot, id, addExpandedNode, removeExpandedNode, treeMode]);
 
   const handleRecipePrev = useCallback(() => {
     const newIdx = (recipeIndex - 1 + validRecipes.length) % validRecipes.length;
@@ -276,7 +285,7 @@ const TreeNode = memo(function TreeNode({
   };
 
   return (
-    <div className={`tree-node ${isRoot ? 'is-root' : ''}`}>
+    <div ref={nodeRef} className={`tree-node ${isRoot ? 'is-root' : ''}`}>
       {/* Root mode toggle button */}
       {isRoot && treeMode !== 'discover' && (
         <button

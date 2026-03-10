@@ -41,7 +41,13 @@ export default function ConvergenceOverlay({
     const svgParent = svg.parentElement;
     if (!svgParent) return;
     const refRect = svgParent.getBoundingClientRect();
-    const scale = useStore.getState().targetScale || 1;
+    // Use actual rendered scale from the CSS transform, not targetScale
+    const treeContainer = container.closest('#treeContainer') as HTMLElement | null;
+    let scale = 1;
+    if (treeContainer) {
+      const matrix = new DOMMatrix(window.getComputedStyle(treeContainer).transform);
+      scale = matrix.a || 1;
+    }
 
     // Create arrowhead markers
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -171,15 +177,23 @@ export default function ConvergenceOverlay({
     });
   }, [convergences, containerRef, itemsDatabase, onTooltipShow, onTooltipMove, onTooltipHide]);
 
-  // Initial draw + redraw on layout changes
+  const expandedNodes = useStore((s) => s.expandedNodes);
+
+  // Redraw on layout changes and when expanded nodes change (new cards may be visible)
   useEffect(() => {
-    // Double rAF to ensure layout is settled
-    const raf1 = requestAnimationFrame(() => {
-      const raf2 = requestAnimationFrame(redraw);
-      return () => cancelAnimationFrame(raf2);
+    // Triple rAF to ensure layout is settled (especially after auto-expand)
+    let raf1: number, raf2: number, raf3: number;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        raf3 = requestAnimationFrame(redraw);
+      });
     });
-    return () => cancelAnimationFrame(raf1);
-  }, [redraw]);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      cancelAnimationFrame(raf3);
+    };
+  }, [redraw, expandedNodes]);
 
   // Expose redraw via ref so parent can trigger it
   useEffect(() => {

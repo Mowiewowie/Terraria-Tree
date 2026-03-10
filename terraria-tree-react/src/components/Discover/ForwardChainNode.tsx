@@ -1,8 +1,9 @@
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import { useStore } from '../../store/useStore';
 import ItemCard from '../Cards/ItemCard';
 import GenericCard from '../Cards/GenericCard';
 import ExpandButton from '../Tree/ExpandButton';
+import { focusSubtree } from '../../router/navigation';
 import type { DiscoveryPathNode, ConvergenceEntry } from '../../algorithms/discovery';
 import type { ItemRecord, Recipe } from '../../types/items';
 
@@ -35,13 +36,13 @@ const ForwardChainNode = memo(function ForwardChainNode({
   onCollectedToggle,
 }: ForwardChainNodeProps) {
   const itemsDatabase = useStore((s) => s.itemsDatabase);
-  const expandedNodes = useStore((s) => s.expandedNodes);
+  const isOpen = useStore((s) => s.expandedNodes.has(pathNode.id));
   const addExpandedNode = useStore((s) => s.addExpandedNode);
   const removeExpandedNode = useStore((s) => s.removeExpandedNode);
 
   const data = itemsDatabase[pathNode.id] as ItemRecord | undefined;
   const hasChildren = pathNode.children.length > 0;
-  const isOpen = expandedNodes.has(pathNode.id);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   // Convergence target styling
   const convergenceStyle = useMemo(() => {
@@ -61,15 +62,20 @@ const ForwardChainNode = memo(function ForwardChainNode({
       if (onRedraw) requestAnimationFrame(onRedraw);
     } else {
       addExpandedNode(pathNode.id);
-      // Trigger convergence line redraw after layout settles
-      if (onRedraw) requestAnimationFrame(() => requestAnimationFrame(onRedraw));
+      // Focus camera and redraw convergence lines after layout settles
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (nodeRef.current) focusSubtree(nodeRef.current, 'discover');
+          if (onRedraw) onRedraw();
+        });
+      });
     }
   }, [isOpen, pathNode.id, addExpandedNode, removeExpandedNode, onRedraw]);
 
   if (!data) return <GenericCard name="Unknown Item" amount={0} />;
 
   return (
-    <div className="tree-node">
+    <div ref={nodeRef} className="tree-node">
       <div
         className={`${isConvergenceTarget ? 'convergence-target' : ''}`}
         style={convergenceStyle}
