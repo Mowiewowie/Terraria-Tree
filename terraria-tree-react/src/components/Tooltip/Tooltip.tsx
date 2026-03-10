@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useStore } from '../../store/useStore';
 import { createDirectImageUrl, FALLBACK_ICON } from '../../utils/image';
 import { getFriendlyKnockback, getFriendlyUseTime, isMobileUX } from '../../utils/helpers';
@@ -25,6 +26,9 @@ export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: T
 
   const mobile = isMobileUX();
 
+  // Render via portal to avoid CSS transform interference from canvas container
+  const renderPortal = (content: React.ReactNode) => createPortal(content, document.body);
+
   // --- Group tooltip ---
   if (isGroupTooltip(data.itemData)) {
     const gd = data.itemData;
@@ -35,7 +39,7 @@ export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: T
       ? itemsDatabase[primaryId].IconUrl
       : createDirectImageUrl(gd.groupItems[0]);
 
-    return (
+    return renderPortal(
       <div ref={elRef} className="tooltip fixed bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] pointer-events-none transition-colors" style={{ visibility: 'hidden' }}>
         <div className="flex items-start gap-4 mb-3">
           <img src={imgSrc} alt="" className="w-12 h-12 object-contain rounded bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shrink-0" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_ICON; }} />
@@ -111,7 +115,7 @@ export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: T
   const drops = item.ObtainedFromDrops?.slice(0, 3) || [];
   const extraDropCount = (item.ObtainedFromDrops?.length || 0) - 3;
 
-  return (
+  return renderPortal(
     <div ref={elRef} className={`tooltip fixed bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-2xl p-4 max-w-sm text-left z-[9999] transition-colors ${mobile ? 'pointer-events-auto' : 'pointer-events-none'}`} style={{ visibility: 'hidden' }}>
       <div className="flex items-start gap-4 mb-3">
         <img src={imgSrc} alt="" draggable={false} className="w-12 h-12 object-contain rounded bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shrink-0" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_ICON; }} />
@@ -216,3 +220,4 @@ export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: T
     </div>
   );
 }
+

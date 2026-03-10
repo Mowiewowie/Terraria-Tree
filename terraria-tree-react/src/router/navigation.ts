@@ -1,5 +1,6 @@
 import { useStore } from '../store/useStore';
 import { updateSEOState } from './seo';
+import { buildDiscoveryGraph } from '../algorithms/discovery';
 import type { HistoryEntry, TreeMode } from '../types/items';
 
 // --- Safe History API wrappers ---
@@ -169,12 +170,16 @@ export function switchMode(newMode: TreeMode): void {
 
   s.setTreeMode(newMode);
   s.clearExpandedNodes();
+  // Auto-open the discover DAG when entering discover mode
+  if (newMode === 'discover') {
+    s.addExpandedNode('discover_root');
+  }
 
   const entry: HistoryEntry = {
     viewType: 'tree',
     id: useStore.getState().currentTreeItemId || undefined,
     mode: newMode,
-    expanded: [],
+    expanded: newMode === 'discover' ? ['discover_root'] : [],
     discoverItems: [...useStore.getState().discoverBoxItems],
     selectedRecipeIndices: { ...s.selectedRecipeIndices },
   };
@@ -236,4 +241,63 @@ export function calculateResetView(
   const y = Math.max(40, (vHeight - ((treeHeight || 0) * scale)) / 2);
 
   return { x, y, scale };
+}
+
+// --- Estimate tree size for expand-all warning ---
+
+export function estimateTreeSize(rootId: string | null, mode: TreeMode): number {
+  const s = useStore.getState();
+  const { itemsDatabase, usageIndex, itemIndex, showTransmutations, selectedRecipeIndices, discoverBoxItems } = s;
+
+  // Discover mode: count actual nodes in the filtered discovery graph
+  if (mode === 'discover') {
+    const graph = buildDiscoveryGraph(discoverBoxItems, itemsDatabase, usageIndex, showTransmutations);
+    if (!graph) return 0;
+    let count = 0;
+    const countNodes = (node: any) => { count++; node.children.forEach(countNodes); };
+    for (const tree of graph.trees) tree.children.forEach(countNodes);
+    return count;
+  }
+
+  let count = 0;
+  const visited = new Set<string>();
+  const queue: string[] = rootId ? [rootId] : [];
+
+  while (queue.length > 0 && count < 5000) {
+    const curr = queue.shift()!;
+    count++;
+    const data = itemsDatabase[curr];
+    if (!data) continue;
+
+    if (mode === 'recipe') {
+      if (data.Recipes && data.Recipes.length > 0 && !visited.has(curr)) {
+        visited.add(curr);
+        let validRecipes = data.Recipes;
+        if (!showTransmutations) validRecipes = validRecipes.filter(r => !r.IsTransmutation);
+        if (validRecipes.length === 0) continue;
+        let rIndex = selectedRecipeIndices[curr] || 0;
+        if (rIndex >= validRecipes.length) rIndex = 0;
+        const recipe = validRecipes[rIndex];
+        if (recipe?.Ingredients) {
+          recipe.Ingredients.forEach((ing) => {
+            let cid = ing.ID;
+            if (!cid) {
+              const found = itemIndex.find(idx => idx.name.toLowerCase() === (ing.Name || '').toLowerCase());
+              if (found) cid = String(found.id);
+            }
+            if (cid) queue.push(cid);
+          });
+        }
+      }
+    } else if (mode === 'usage') {
+      if (!visited.has(curr)) {
+        visited.add(curr);
+        let usages = usageIndex[(data.DisplayName || '').toLowerCase()] || [];
+        if (!showTransmutations) usages = usages.filter(u => !u.recipe?.IsTransmutation);
+        const uSet = new Set(usages.map(u => u.id));
+        uSet.forEach(id => queue.push(id));
+      }
+    }
+  }
+  return count;
 }

@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
 import ItemCard from '../Cards/ItemCard';
 import GenericCard from '../Cards/GenericCard';
@@ -41,8 +41,7 @@ const ForwardChainNode = memo(function ForwardChainNode({
 
   const data = itemsDatabase[pathNode.id] as ItemRecord | undefined;
   const hasChildren = pathNode.children.length > 0;
-  const shouldAutoExpand = expandedNodes.has(pathNode.id);
-  const [isOpen, setIsOpen] = useState(shouldAutoExpand);
+  const isOpen = expandedNodes.has(pathNode.id);
 
   // Convergence target styling
   const convergenceStyle = useMemo(() => {
@@ -57,15 +56,13 @@ const ForwardChainNode = memo(function ForwardChainNode({
 
   const handleToggle = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    const newOpen = !isOpen;
-    setIsOpen(newOpen);
-    if (newOpen) {
+    if (isOpen) {
+      removeExpandedNode(pathNode.id);
+      if (onRedraw) requestAnimationFrame(onRedraw);
+    } else {
       addExpandedNode(pathNode.id);
       // Trigger convergence line redraw after layout settles
       if (onRedraw) requestAnimationFrame(() => requestAnimationFrame(onRedraw));
-    } else {
-      removeExpandedNode(pathNode.id);
-      if (onRedraw) requestAnimationFrame(onRedraw);
     }
   }, [isOpen, pathNode.id, addExpandedNode, removeExpandedNode, onRedraw]);
 

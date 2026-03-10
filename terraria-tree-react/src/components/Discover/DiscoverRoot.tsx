@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { useSearch } from '../../hooks/useSearch';
 import { useTooltip } from '../../hooks/useTooltip';
@@ -36,9 +36,27 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
   const { toggleAndCascade } = useCollected();
   const { results, isOpen, activeIndex, search, onKeyDown, close } = useSearch();
 
+  const expandedNodes = useStore((s) => s.expandedNodes);
+  const addExpandedNode = useStore((s) => s.addExpandedNode);
+  const removeExpandedNode = useStore((s) => s.removeExpandedNode);
+
   const [searchValue, setSearchValue] = useState('');
-  const [dagOpen, setDagOpen] = useState(true);
+  // DAG open/close tracked via expandedNodes with special key so toolbar collapse-all affects it
+  const dagOpen = expandedNodes.has('discover_root');
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-open DAG on mount and when items are added to discover box
+  const prevItemCountRef = useRef(-1);
+  useEffect(() => {
+    const prevCount = prevItemCountRef.current;
+    prevItemCountRef.current = discoverBoxItems.length;
+    // Open on mount (prevCount === -1) or when items are added
+    if (prevCount === -1 || discoverBoxItems.length > prevCount) {
+      if (discoverBoxItems.length > 0 && !expandedNodes.has('discover_root')) {
+        addExpandedNode('discover_root');
+      }
+    }
+  }, [discoverBoxItems.length, expandedNodes, addExpandedNode]);
 
   // Build discovery graph for 2+ items
   const graph = useMemo(() => {
@@ -85,8 +103,12 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
 
   const handleDagToggle = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    setDagOpen((prev) => !prev);
-  }, []);
+    if (dagOpen) {
+      removeExpandedNode('discover_root');
+    } else {
+      addExpandedNode('discover_root');
+    }
+  }, [dagOpen, addExpandedNode, removeExpandedNode]);
 
   const triggerRedraw = useCallback(() => {
     const container = containerRef.current;

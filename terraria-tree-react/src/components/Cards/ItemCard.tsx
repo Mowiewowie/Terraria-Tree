@@ -127,6 +127,7 @@ const ItemCard = memo(function ItemCard({
         src={imgSrc}
         alt={`${data.DisplayName} Terraria Icon`}
         draggable={false}
+        loading="lazy"
         className={`${isLarge ? 'w-14 h-14 mb-2' : 'w-10 h-10 mb-1'} object-contain`}
         onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_ICON; }}
       />

@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react
 import { useStore } from '../../store/useStore';
 import { useHistory } from '../../hooks/useHistory';
 import { useTransition } from '../../hooks/useTransition';
-import { viewItem, viewCategory, viewHome, switchMode, transitionToNewItem, calculateResetView, saveCurrentState } from '../../router/navigation';
+import { viewItem, viewCategory, viewHome, switchMode, transitionToNewItem, calculateResetView, saveCurrentState, estimateTreeSize } from '../../router/navigation';
 import { highlightCard } from '../../utils/highlight';
 import SearchBar from './SearchBar';
 import Toolbar from './Toolbar';
@@ -45,6 +45,7 @@ export default function AppShell() {
   const treeMode = useStore((s) => s.treeMode);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [expandWarning, setExpandWarning] = useState<{ show: boolean; count: number }>({ show: false, count: 0 });
   const vizAreaRef = useRef<HTMLDivElement>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
 
@@ -122,7 +123,7 @@ export default function AppShell() {
     }
   }, [resetViewDelayed]);
 
-  const handleExpandAll = useCallback(() => {
+  const doExpandAll = useCallback(() => {
     const s = useStore.getState();
     const db = s.itemsDatabase;
     const next = new Set(s.expandedNodes);
@@ -142,6 +143,16 @@ export default function AppShell() {
     s.setExpandedNodes(next);
     resetViewDelayed();
   }, [resetViewDelayed]);
+
+  const handleExpandAll = useCallback(() => {
+    const s = useStore.getState();
+    const estimated = estimateTreeSize(s.currentTreeItemId, s.treeMode);
+    if (estimated > 200) {
+      setExpandWarning({ show: true, count: estimated });
+      return;
+    }
+    doExpandAll();
+  }, [doExpandAll]);
 
   const handleCollapseAll = useCallback(() => {
     useStore.getState().clearExpandedNodes();
@@ -173,10 +184,16 @@ export default function AppShell() {
           s.setTarget(x, y, scale);
         }
 
-        // Highlight root card after navigation
+        // Highlight root card after navigation — delay to let camera animation settle
         if (currentViewType === 'tree' && currentTreeItemId) {
-          const rootCard = treeContainerRef.current?.querySelector<HTMLElement>(`.is-root > .relative > .item-card[data-id="${currentTreeItemId}"]`);
-          if (rootCard) highlightCard(rootCard);
+          setTimeout(() => {
+            if (!treeContainerRef.current) return;
+            // Try standard root card first, then any matching card (for discover mode)
+            const rootCard =
+              treeContainerRef.current.querySelector<HTMLElement>(`.is-root > .relative > .item-card[data-id="${currentTreeItemId}"]`) ||
+              treeContainerRef.current.querySelector<HTMLElement>(`.item-card[data-id="${currentTreeItemId}"]`);
+            if (rootCard) highlightCard(rootCard);
+          }, 600);
         }
       });
       return () => cancelAnimationFrame(raf2);
@@ -197,9 +214,12 @@ export default function AppShell() {
   // FLIP animation: store previous rects after each render, animate on transition
   const prevViewRef = useRef(currentViewType);
   const prevRectsRef = useRef<Map<string, DOMRect>>(new Map());
+  const flipAnimatingRef = useRef(false);
 
   // Capture element positions after every render (runs after paint)
+  // Skip capture during active FLIP animation to avoid corrupting stored positions
   useEffect(() => {
+    if (flipAnimatingRef.current) return;
     const ids = ['logoContainer', 'searchWrapper', 'statusWrapper'];
     const rects = new Map<string, DOMRect>();
     ids.forEach(id => {
@@ -215,6 +235,8 @@ export default function AppShell() {
     prevViewRef.current = currentViewType;
     const isTransition = (prev === 'home') !== (currentViewType === 'home');
     if (!isTransition) return;
+
+    flipAnimatingRef.current = true;
 
     const ids = ['logoContainer', 'searchWrapper', 'statusWrapper'];
     const els = ids.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
@@ -253,9 +275,18 @@ export default function AppShell() {
         el.style.transition = '';
         el.style.transformOrigin = '';
       });
-    }, 600);
+      flipAnimatingRef.current = false;
+      // Capture final positions now that animation is complete
+      const ids2 = ['logoContainer', 'searchWrapper', 'statusWrapper'];
+      const rects = new Map<string, DOMRect>();
+      ids2.forEach(id2 => {
+        const el2 = document.getElementById(id2);
+        if (el2) rects.set(id2, el2.getBoundingClientRect());
+      });
+      prevRectsRef.current = rects;
+    }, 650);
 
-    return () => clearTimeout(cleanup);
+    return () => { clearTimeout(cleanup); flipAnimatingRef.current = false; };
   }, [currentViewType]);
 
   // Render tree content based on view type and mode
@@ -373,6 +404,35 @@ export default function AppShell() {
       </main>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+
+      {/* Expand All warning modal */}
+      {expandWarning.show && (
+        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4" onClick={() => setExpandWarning({ show: false, count: 0 })}>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-sm shadow-2xl border border-slate-300 dark:border-slate-600" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+              <i className="fa-solid fa-triangle-exclamation text-amber-500" /> Large Tree Warning
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+              This tree has approximately <strong className="text-amber-600 dark:text-amber-400">~{expandWarning.count}</strong> nodes.
+              Expanding all may cause lag. Consider using <strong>Expand Tier</strong> instead for better performance.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                className="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 text-sm font-medium transition-colors"
+                onClick={() => setExpandWarning({ show: false, count: 0 })}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
+                onClick={() => { setExpandWarning({ show: false, count: 0 }); doExpandAll(); }}
+              >
+                Expand Anyway
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -107,6 +107,7 @@ const GroupCard = memo(function GroupCard({
           src={imgSrc}
           alt={`Any ${groupItems[0]} Terraria Crafting Alternative`}
           draggable={false}
+          loading="lazy"
           className={`w-10 h-10 object-contain mb-1 transition-opacity duration-300 ${fading ? 'opacity-0' : 'opacity-100'}`}
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_ICON; }}
         />
