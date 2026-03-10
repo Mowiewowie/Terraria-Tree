@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { saveCurrentState, getLocalCenter } from '../router/navigation';
-import type { HistoryEntry } from '../types/items';
 
 /**
  * Hook that listens for browser popstate events and restores app state.
