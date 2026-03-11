@@ -193,10 +193,10 @@ export function switchMode(newMode: TreeMode): void {
 
 // --- Transition to new item (from card click with FLIP animation) ---
 
-export function transitionToNewItem(targetId: string): void {
+export function transitionToNewItem(targetId: string, skipSave = false): void {
   const s = useStore.getState();
 
-  saveCurrentState();
+  if (!skipSave) saveCurrentState();
 
   const entry: HistoryEntry = {
     viewType: 'tree',

@@ -28,6 +28,9 @@ export function useCanvas(
   const initialPinchDist = useRef<number | null>(null);
   const initialScaleRef = useRef(1);
 
+  // Track user-initiated drag to keep icons visible during settle phase
+  const wasUserDrag = useRef(false);
+
   // Wheel debounce
   const wheelTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -70,12 +73,17 @@ export function useCanvas(
       Math.abs(store.targetY - currentY.current) +
       Math.abs(store.targetScale - currentScale.current);
 
+    // Track user-initiated drag/pinch
+    if (isPanning.current || initialPinchDist.current) {
+      wasUserDrag.current = true;
+    }
+
     // Performance mode during fast movement
     if (isPanning.current || initialPinchDist.current || diff > 1.5) {
       container.style.pointerEvents = 'none';
       container.classList.add('fast-panning');
-      // Track whether this is a manual drag vs camera fly for image hiding logic
-      if (isPanning.current || initialPinchDist.current) {
+      // Keep user-dragging through settle phase so icons stay visible
+      if (wasUserDrag.current) {
         container.classList.add('user-dragging');
       } else {
         container.classList.remove('user-dragging');
@@ -84,6 +92,7 @@ export function useCanvas(
       container.style.pointerEvents = '';
       container.classList.remove('fast-panning');
       container.classList.remove('user-dragging');
+      wasUserDrag.current = false;
     }
 
     // Settle when visually negligible

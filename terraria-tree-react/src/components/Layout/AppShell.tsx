@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react
 import { useStore } from '../../store/useStore';
 import { useHistory } from '../../hooks/useHistory';
 import { useTransition } from '../../hooks/useTransition';
-import { viewItem, viewCategory, viewHome, switchMode, transitionToNewItem, calculateResetView, saveCurrentState, estimateTreeSize } from '../../router/navigation';
+import { viewItem, viewCategory, viewHome, switchMode, transitionToNewItem, calculateResetView, saveCurrentState, estimateTreeSize, getLocalCenter } from '../../router/navigation';
 import { highlightCard } from '../../utils/highlight';
 import SearchBar from './SearchBar';
 import Toolbar from './Toolbar';
@@ -58,13 +58,55 @@ export default function AppShell() {
   // --- Navigation handlers ---
 
   const handleSearchSelect = useCallback((item: ItemIndexEntry) => {
+    useStore.getState().setHighlightAfterNav(false);
     performCrossfade();
     viewItem(item.id, true);
   }, [performCrossfade]);
 
-  const handleNavigate = useCallback((_cardEl: HTMLDivElement, id: string) => {
-    performCrossfade();
-    transitionToNewItem(id);
+  const handleNavigate = useCallback((cardEl: HTMLDivElement, id: string) => {
+    const treeContainer = treeContainerRef.current;
+    const vizArea = vizAreaRef.current;
+
+    // Fallback: no refs, just crossfade
+    if (!treeContainer || !vizArea) {
+      useStore.getState().setHighlightAfterNav(true);
+      performCrossfade();
+      transitionToNewItem(id);
+      return;
+    }
+
+    const s = useStore.getState();
+
+    // Save current state BEFORE fly (captures correct camera + itemLocations)
+    saveCurrentState();
+
+    // Get bridge card's local center on current page
+    const startLocal = getLocalCenter(cardEl, treeContainer, s.targetScale);
+
+    // Hero fly setup: dim other cards, keep bridge visible
+    cardEl.classList.add('hero-bridge');
+    treeContainer.classList.add('fade-unfocused');
+
+    // Calculate fly destination: where the bridge card will be on the new page
+    // For new forward navigation, no saved state exists — aim for center at scale 1.1
+    const vizRect = vizArea.getBoundingClientRect();
+    const futureScale = 1.1;
+    const futureBaseWidth = 128; // standard card width
+    const startBaseWidth = startLocal.w || 96;
+    const flyScale = futureScale * (futureBaseWidth / startBaseWidth);
+    const flyX = vizRect.width / 2 - startLocal.x * flyScale;
+    const flyY = vizRect.height / 2 - startLocal.y * flyScale;
+
+    s.setTarget(flyX, flyY, flyScale);
+    s.setHighlightAfterNav(true);
+
+    // Wait for camera fly, then crossfade and swap content
+    setTimeout(() => {
+      treeContainer.classList.remove('fade-unfocused');
+      void treeContainer.offsetWidth; // force reflow before ghost clone
+      performCrossfade();
+      transitionToNewItem(id, true); // skipSave — already saved above
+    }, 400);
   }, [performCrossfade]);
 
   const handleCategoryView = useCallback((category: string) => {
@@ -213,11 +255,11 @@ export default function AppShell() {
           s.setTarget(x, y, scale);
         }
 
-        // Highlight root card after navigation — delay to let camera animation settle
-        if (currentViewType === 'tree' && currentTreeItemId) {
+        // Highlight root card after navigation — only for card clicks and back/forward
+        if (s.highlightAfterNav && currentViewType === 'tree' && currentTreeItemId) {
+          s.setHighlightAfterNav(false);
           setTimeout(() => {
             if (!treeContainerRef.current) return;
-            // Try standard root card first, then any matching card (for discover mode)
             const rootCard =
               treeContainerRef.current.querySelector<HTMLElement>(`.is-root > .relative > .item-card[data-id="${currentTreeItemId}"]`) ||
               treeContainerRef.current.querySelector<HTMLElement>(`.item-card[data-id="${currentTreeItemId}"]`);

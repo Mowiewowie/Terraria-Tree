@@ -49,6 +49,9 @@ interface AppState {
   showTransmutations: boolean;
   showTotalQuantity: boolean;
 
+  // Navigation animation
+  highlightAfterNav: boolean;
+
   // History engine
   appHistory: HistoryEntry[];
   historyIdx: number;
@@ -96,6 +99,9 @@ interface AppState {
   // Filters
   setShowTransmutations: (show: boolean) => void;
   setShowTotalQuantity: (show: boolean) => void;
+
+  // Navigation animation
+  setHighlightAfterNav: (v: boolean) => void;
 
   // History
   pushHistory: (entry: HistoryEntry) => void;
@@ -166,6 +172,9 @@ export const useStore = create<AppState>((set, get) => ({
   // Filters
   showTransmutations: false,
   showTotalQuantity: false,
+
+  // Navigation animation
+  highlightAfterNav: false,
 
   // History
   appHistory: [],
@@ -254,6 +263,8 @@ export const useStore = create<AppState>((set, get) => ({
 
   setShowTransmutations: (show) => set({ showTransmutations: show }),
   setShowTotalQuantity: (show) => set({ showTotalQuantity: show }),
+
+  setHighlightAfterNav: (v) => set({ highlightAfterNav: v }),
 
   pushHistory: (entry) =>
     set((state) => {

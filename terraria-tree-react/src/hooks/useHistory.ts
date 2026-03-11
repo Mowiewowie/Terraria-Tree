@@ -4,8 +4,15 @@ import { saveCurrentState, getLocalCenter } from '../router/navigation';
 
 /**
  * Hook that listens for browser popstate events and restores app state.
- * Supports hero fly animation: if the target item exists as a card in the
- * current tree, the camera flies to it before crossfading to the new content.
+ * Supports hero fly animation with proper forward/backward detection:
+ *
+ * FORWARD (going to a page we've visited):
+ *   Bridge = destination page's root item (exists as child card in current tree)
+ *   Fly camera so bridge card aligns with where it'll be on destination page.
+ *
+ * BACKWARD (going back to a previous page):
+ *   Bridge = current page's root item (exists as child card on destination page)
+ *   Fly camera so current root aligns with where it was on destination page.
  */
 export function useHistory(
   treeContainerRef?: React.RefObject<HTMLDivElement | null>,
@@ -18,13 +25,14 @@ export function useHistory(
 
       const s = useStore.getState();
 
-      // Save outgoing state
+      // Save outgoing state (captures camera + itemLocations at current position)
       if (s.historyIdx >= 0 && s.appHistory[s.historyIdx]) {
         saveCurrentState(true);
       }
 
       const targetIdx = e.state.idx as number;
-      const state = s.appHistory[targetIdx];
+      const isBackward = targetIdx < s.historyIdx;
+      const state = s.appHistory[targetIdx]; // destination page's saved state
 
       // Home state
       if (e.state.isHome || (state && state.isHome)) {
@@ -53,7 +61,7 @@ export function useHistory(
         return;
       }
 
-      // Category view
+      // Category view — simple crossfade
       if (state.viewType === 'category') {
         performCrossfade?.();
         s.setHistoryIdx(targetIdx);
@@ -62,60 +70,139 @@ export function useHistory(
         return;
       }
 
-      // --- Tree view: check for hero fly bridge ---
+      // --- Tree view: attempt hero fly ---
       const treeContainer = treeContainerRef?.current;
-      let bridgeCard: HTMLElement | null = null;
+      const vizArea = vizAreaRef?.current;
 
-      if (treeContainer && s.currentViewType === 'tree' && state.viewType === 'tree') {
-        const bridgeId = state.id;
-        if (bridgeId) {
-          bridgeCard = treeContainer.querySelector<HTMLElement>(
-            `.item-card[data-id="${bridgeId}"]`,
-          );
-        }
-      }
-
+      /** Apply destination state after crossfade */
       const applyState = () => {
         const s2 = useStore.getState();
         s2.setHistoryIdx(targetIdx);
+        s2.setHighlightAfterNav(true);
         if (state.mode) s2.setTreeMode(state.mode);
         if (state.expanded) s2.setExpandedNodes(new Set(state.expanded));
         if (state.discoverItems) s2.setDiscoverBoxItems(state.discoverItems);
         if (state.selectedRecipeIndices) s2.setSelectedRecipeIndices(state.selectedRecipeIndices);
         s2.setCurrentTreeItemId(state.id || null);
         s2.setViewType('tree');
-        if (state.cameraX !== undefined && state.cameraY !== undefined && state.cameraScale !== undefined) {
-          s2.setTarget(state.cameraX, state.cameraY, state.cameraScale);
-        }
+        // Camera will be restored by AppShell's auto-center effect from saved history
       };
 
-      if (bridgeCard && treeContainer && vizAreaRef?.current) {
-        // Fly camera to bridge card position, then crossfade to new content.
-        // hero-bridge keeps the card visible (not dimmed) but without scale/glow.
-        // The flash happens on the DESTINATION page via AppShell's highlightCard effect.
-        bridgeCard.classList.add('hero-bridge');
-        treeContainer.classList.add('fade-unfocused');
+      // Both pages must be tree views for hero fly
+      if (treeContainer && vizArea && s.currentViewType === 'tree' && state.viewType === 'tree') {
+        // Validate bridge for discover mode transitions
+        const pastState = s.appHistory[s.historyIdx];
+        const leavingMode = pastState?.mode;
+        const enteringMode = state.mode;
+        let isValidBridge = true;
 
-        const localCenter = getLocalCenter(bridgeCard, treeContainer, s.targetScale);
-        const vizRect = vizAreaRef.current.getBoundingClientRect();
-        s.setTarget(
-          vizRect.width / 2 - localCenter.x * s.targetScale,
-          vizRect.height / 2 - localCenter.y * s.targetScale,
-          s.targetScale,
-        );
+        if (leavingMode === 'discover' || enteringMode === 'discover') {
+          if (leavingMode === 'discover') {
+            // Leaving discover: target item must exist in outgoing page's snapshot
+            if (!pastState?.itemLocations || !pastState.itemLocations[String(state.id)]) {
+              isValidBridge = false;
+            }
+          }
+          if (enteringMode === 'discover') {
+            // Entering discover: current root must exist in destination's snapshot
+            if (!state.itemLocations || !state.itemLocations[String(s.currentTreeItemId)]) {
+              isValidBridge = false;
+            }
+          }
+        }
 
-        // Wait for camera fly to settle, then swap content
-        setTimeout(() => {
-          treeContainer.classList.remove('fade-unfocused');
-          void treeContainer.offsetWidth; // Force reflow before cloning
-          performCrossfade?.();
-          applyState();
-        }, 400);
-      } else {
-        // No bridge card found — just crossfade
-        performCrossfade?.();
-        applyState();
+        if (isValidBridge && isBackward) {
+          // BACKWARD: bridge = current page's root (which was a child on destination page)
+          const bridgeId = s.currentTreeItemId;
+          const rootCard = bridgeId
+            ? treeContainer.querySelector<HTMLElement>(
+                `.is-root > .relative > .item-card[data-id="${bridgeId}"], .item-card[data-id="${bridgeId}"]`,
+              )
+            : treeContainer.querySelector<HTMLElement>(
+                '.is-root > .relative > .item-card, .is-root > .discover-box-container',
+              );
+
+          // Check if bridge has a known position on the destination page
+          const pastLoc = bridgeId && state.itemLocations?.[bridgeId];
+
+          if (rootCard && pastLoc && state.cameraX !== undefined && state.cameraY !== undefined && state.cameraScale !== undefined) {
+            rootCard.classList.add('hero-bridge');
+            treeContainer.classList.add('fade-unfocused');
+
+            const startLocal = getLocalCenter(rootCard, treeContainer, s.targetScale);
+            const startBaseWidth = startLocal.w || 128;
+            const pastBaseWidth = pastLoc.w || 96;
+            const pastScale = state.cameraScale;
+
+            // Fly so current root card aligns with its position on the destination page
+            const flyScale = pastScale * (pastBaseWidth / startBaseWidth);
+            const pastScreenX = state.cameraX + pastLoc.x * pastScale;
+            const pastScreenY = state.cameraY + pastLoc.y * pastScale;
+            const flyX = pastScreenX - startLocal.x * flyScale;
+            const flyY = pastScreenY - startLocal.y * flyScale;
+
+            s.setTarget(flyX, flyY, flyScale);
+
+            setTimeout(() => {
+              treeContainer.classList.remove('fade-unfocused');
+              void treeContainer.offsetWidth;
+              performCrossfade?.();
+              applyState();
+            }, 400);
+            return;
+          }
+        } else if (isValidBridge && !isBackward) {
+          // FORWARD: bridge = destination page's root (exists as child in current tree)
+          const bridgeId = state.id;
+          if (bridgeId) {
+            const childCard = treeContainer.querySelector<HTMLElement>(
+              `.item-card[data-id="${bridgeId}"]`,
+            );
+
+            if (childCard) {
+              childCard.classList.add('hero-bridge');
+              treeContainer.classList.add('fade-unfocused');
+
+              const startLocal = getLocalCenter(childCard, treeContainer, s.targetScale);
+              const vizRect = vizArea.getBoundingClientRect();
+
+              // If destination has saved state with item positions, use them
+              let futureScale = 1.1;
+              let futureBaseWidth = state.mode === 'discover' ? 80 : 128;
+              let futureScreenX = vizRect.width / 2;
+              let futureScreenY = vizRect.height / 2;
+
+              if (state.itemLocations?.[bridgeId] && state.cameraX !== undefined && state.cameraY !== undefined && state.cameraScale !== undefined) {
+                const futureLoc = state.itemLocations[bridgeId];
+                futureScale = state.cameraScale;
+                futureBaseWidth = futureLoc.w || futureBaseWidth;
+                futureScreenX = state.cameraX + futureLoc.x * futureScale;
+                futureScreenY = state.cameraY + futureLoc.y * futureScale;
+              }
+
+              const startBaseWidth = startLocal.w || 96;
+              const flyScale = futureScale * (futureBaseWidth / startBaseWidth);
+              const flyX = futureScreenX - startLocal.x * flyScale;
+              const flyY = futureScreenY - startLocal.y * flyScale;
+
+              s.setTarget(flyX, flyY, flyScale);
+
+              setTimeout(() => {
+                treeContainer.classList.remove('fade-unfocused');
+                void treeContainer.offsetWidth;
+                performCrossfade?.();
+                applyState();
+              }, 400);
+              return;
+            }
+          }
+        }
       }
+
+      // No bridge found or validation failed — just crossfade
+      s.setHighlightAfterNav(true);
+      performCrossfade?.();
+      applyState();
     };
 
     window.addEventListener('popstate', handlePopState);
