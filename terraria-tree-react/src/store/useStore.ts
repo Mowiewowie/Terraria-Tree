@@ -49,8 +49,8 @@ interface AppState {
   showTransmutations: boolean;
   showTotalQuantity: boolean;
 
-  // Navigation animation
-  highlightAfterNav: boolean;
+  // Navigation animation — which item to flash after transition
+  highlightItemId: string | null;
 
   // History engine
   appHistory: HistoryEntry[];
@@ -101,7 +101,7 @@ interface AppState {
   setShowTotalQuantity: (show: boolean) => void;
 
   // Navigation animation
-  setHighlightAfterNav: (v: boolean) => void;
+  setHighlightItemId: (id: string | null) => void;
 
   // History
   pushHistory: (entry: HistoryEntry) => void;
@@ -174,7 +174,7 @@ export const useStore = create<AppState>((set, get) => ({
   showTotalQuantity: false,
 
   // Navigation animation
-  highlightAfterNav: false,
+  highlightItemId: null,
 
   // History
   appHistory: [],
@@ -264,7 +264,7 @@ export const useStore = create<AppState>((set, get) => ({
   setShowTransmutations: (show) => set({ showTransmutations: show }),
   setShowTotalQuantity: (show) => set({ showTotalQuantity: show }),
 
-  setHighlightAfterNav: (v) => set({ highlightAfterNav: v }),
+  setHighlightItemId: (id) => set({ highlightItemId: id }),
 
   pushHistory: (entry) =>
     set((state) => {

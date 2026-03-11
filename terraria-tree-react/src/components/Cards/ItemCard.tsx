@@ -50,6 +50,8 @@ const ItemCard = memo(function ItemCard({
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
+    // Always dismiss tooltip on click
+    onTooltipHide?.();
 
     if (customClickHandler) {
       customClickHandler(e);
@@ -71,7 +73,7 @@ const ItemCard = memo(function ItemCard({
     if (cardRef.current && onNavigate) {
       onNavigate(cardRef.current, itemId);
     }
-  }, [customClickHandler, data.WikiUrl, data.Category, itemId, onNavigate, onCategoryView]);
+  }, [customClickHandler, data.WikiUrl, data.Category, itemId, onNavigate, onCategoryView, onTooltipHide]);
 
   const handleCheckClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();

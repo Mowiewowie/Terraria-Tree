@@ -58,7 +58,7 @@ export default function AppShell() {
   // --- Navigation handlers ---
 
   const handleSearchSelect = useCallback((item: ItemIndexEntry) => {
-    useStore.getState().setHighlightAfterNav(false);
+    useStore.getState().setHighlightItemId(null); // no flash on search
     performCrossfade();
     viewItem(item.id, true);
   }, [performCrossfade]);
@@ -69,7 +69,7 @@ export default function AppShell() {
 
     // Fallback: no refs, just crossfade
     if (!treeContainer || !vizArea) {
-      useStore.getState().setHighlightAfterNav(true);
+      useStore.getState().setHighlightItemId(id);
       performCrossfade();
       transitionToNewItem(id);
       return;
@@ -98,7 +98,8 @@ export default function AppShell() {
     const flyY = vizRect.height / 2 - startLocal.y * flyScale;
 
     s.setTarget(flyX, flyY, flyScale);
-    s.setHighlightAfterNav(true);
+    // Flash the clicked item (= new page's root) on the destination page
+    s.setHighlightItemId(id);
 
     // Wait for camera fly, then crossfade and swap content
     setTimeout(() => {
@@ -244,26 +245,31 @@ export default function AppShell() {
     const raf1 = requestAnimationFrame(() => {
       const raf2 = requestAnimationFrame(() => {
         if (!vizAreaRef.current || !treeContainerRef.current) return;
-        // Only auto-center if no saved camera state exists for this history entry
         const s = useStore.getState();
         const entry = s.appHistory[s.historyIdx];
+
+        // If coming from a hero fly transition, snap camera instead of lerping
+        // so the new page appears stationary while the ghost fades out
+        if (s.highlightItemId) {
+          s.setSnapNextCamera(true);
+        }
+
         if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
-          // Restore saved camera position
           s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
         } else {
           const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
           s.setTarget(x, y, scale);
         }
 
-        // Highlight root card after navigation — only for card clicks and back/forward
-        if (s.highlightAfterNav && currentViewType === 'tree' && currentTreeItemId) {
-          s.setHighlightAfterNav(false);
+        // Highlight the bridge item after navigation (card clicks and back/forward)
+        const hlId = s.highlightItemId;
+        if (hlId && currentViewType === 'tree') {
+          s.setHighlightItemId(null);
           setTimeout(() => {
             if (!treeContainerRef.current) return;
-            const rootCard =
-              treeContainerRef.current.querySelector<HTMLElement>(`.is-root > .relative > .item-card[data-id="${currentTreeItemId}"]`) ||
-              treeContainerRef.current.querySelector<HTMLElement>(`.item-card[data-id="${currentTreeItemId}"]`);
-            if (rootCard) highlightCard(rootCard);
+            const card =
+              treeContainerRef.current.querySelector<HTMLElement>(`.item-card[data-id="${hlId}"]`);
+            if (card) highlightCard(card);
           }, 600);
         }
       });

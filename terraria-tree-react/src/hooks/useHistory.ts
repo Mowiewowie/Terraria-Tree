@@ -74,11 +74,12 @@ export function useHistory(
       const treeContainer = treeContainerRef?.current;
       const vizArea = vizAreaRef?.current;
 
-      /** Apply destination state after crossfade */
-      const applyState = () => {
+      /** Apply destination state after crossfade. bridgeItemId = which card to flash. */
+      const applyState = (bridgeItemId?: string) => {
         const s2 = useStore.getState();
         s2.setHistoryIdx(targetIdx);
-        s2.setHighlightAfterNav(true);
+        // Flash the bridge item on the destination page (not always the root)
+        s2.setHighlightItemId(bridgeItemId || state.id || null);
         if (state.mode) s2.setTreeMode(state.mode);
         if (state.expanded) s2.setExpandedNodes(new Set(state.expanded));
         if (state.discoverItems) s2.setDiscoverBoxItems(state.discoverItems);
@@ -147,7 +148,8 @@ export function useHistory(
               treeContainer.classList.remove('fade-unfocused');
               void treeContainer.offsetWidth;
               performCrossfade?.();
-              applyState();
+              // For backward: flash the bridge item (current root) on the destination page
+              applyState(bridgeId || undefined);
             }, 400);
             return;
           }
@@ -200,9 +202,8 @@ export function useHistory(
       }
 
       // No bridge found or validation failed — just crossfade
-      s.setHighlightAfterNav(true);
       performCrossfade?.();
-      applyState();
+      applyState(); // uses default bridgeItemId = state.id (root)
     };
 
     window.addEventListener('popstate', handlePopState);

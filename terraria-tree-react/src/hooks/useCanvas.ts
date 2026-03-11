@@ -80,7 +80,13 @@ export function useCanvas(
 
     // Performance mode during fast movement
     if (isPanning.current || initialPinchDist.current || diff > 1.5) {
-      container.style.pointerEvents = 'none';
+      // Only block clicks during active drag/pinch or programmatic animations
+      // Allow clicks during settle phase after user releases
+      if (isPanning.current || initialPinchDist.current || !wasUserDrag.current) {
+        container.style.pointerEvents = 'none';
+      } else {
+        container.style.pointerEvents = '';
+      }
       container.classList.add('fast-panning');
       // Keep user-dragging through settle phase so icons stay visible
       if (wasUserDrag.current) {
