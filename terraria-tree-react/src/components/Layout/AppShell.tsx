@@ -248,13 +248,27 @@ export default function AppShell() {
         const s = useStore.getState();
         const entry = s.appHistory[s.historyIdx];
 
-        // If coming from a hero fly transition, snap camera instead of lerping
-        // so the new page appears stationary while the ghost fades out
+        // If coming from a hero fly transition, center the bridge card in the new tree
+        // at the same screen position as the ghost — so the crossfade is seamless
         if (s.highlightItemId) {
           s.setSnapNextCamera(true);
-        }
-
-        if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+          const bridgeCard = treeContainerRef.current.querySelector<HTMLElement>(
+            `.item-card[data-id="${s.highlightItemId}"]`,
+          );
+          if (bridgeCard) {
+            // Center bridge card on screen at the fly's scale
+            const local = getLocalCenter(bridgeCard, treeContainerRef.current, s.targetScale);
+            const vizRect = vizAreaRef.current.getBoundingClientRect();
+            s.setTarget(
+              vizRect.width / 2 - local.x * s.targetScale,
+              vizRect.height / 2 - local.y * s.targetScale,
+              s.targetScale,
+            );
+          } else if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+            s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
+          }
+          // If neither bridge card nor saved state, keep fly destination (don't recalculate)
+        } else if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
           s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
         } else {
           const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);

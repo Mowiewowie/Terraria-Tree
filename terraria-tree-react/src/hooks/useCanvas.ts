@@ -66,12 +66,7 @@ export function useCanvas(
     }
 
     // GPU-accelerated transform
-    const transformStr = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
-    container.style.transform = transformStr;
-
-    // Sync ghost overlay transform so crossfade stays aligned
-    const ghost = container.parentNode?.querySelector('#ghostContainer') as HTMLElement | null;
-    if (ghost) ghost.style.transform = transformStr;
+    container.style.transform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
 
     const diff =
       Math.abs(store.targetX - currentX.current) +
@@ -111,10 +106,7 @@ export function useCanvas(
       currentX.current = store.targetX;
       currentY.current = store.targetY;
       currentScale.current = store.targetScale;
-      const settledTransform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
-      container.style.transform = settledTransform;
-      const settledGhost = container.parentNode?.querySelector('#ghostContainer') as HTMLElement | null;
-      if (settledGhost) settledGhost.style.transform = settledTransform;
+      container.style.transform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
       isAnimating.current = false;
     } else {
       requestAnimationFrame(renderLoop);
