@@ -32,7 +32,7 @@ export default function CanvasContainer({
       <div
         ref={treeContainerRef}
         id="treeContainer"
-        className={`transition-opacity duration-500 ${treeClassName}`}
+        className={treeClassName || undefined}
         style={{ transformOrigin: '0 0' }}
       >
         {children}

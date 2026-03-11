@@ -66,7 +66,12 @@ export function useCanvas(
     }
 
     // GPU-accelerated transform
-    container.style.transform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
+    const transformStr = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
+    container.style.transform = transformStr;
+
+    // Sync ghost overlay transform so crossfade stays aligned
+    const ghost = container.parentNode?.querySelector('#ghostContainer') as HTMLElement | null;
+    if (ghost) ghost.style.transform = transformStr;
 
     const diff =
       Math.abs(store.targetX - currentX.current) +
@@ -78,15 +83,16 @@ export function useCanvas(
       wasUserDrag.current = true;
     }
 
-    // Performance mode during fast movement
+    // Pointer events: only block during active drag/pinch to prevent accidental clicks.
+    // Allow clicks during programmatic animations and settle phase.
+    if (isPanning.current || initialPinchDist.current) {
+      container.style.pointerEvents = 'none';
+    } else {
+      container.style.pointerEvents = '';
+    }
+
+    // Performance mode during fast movement (strips box-shadows, transitions)
     if (isPanning.current || initialPinchDist.current || diff > 1.5) {
-      // Only block clicks during active drag/pinch or programmatic animations
-      // Allow clicks during settle phase after user releases
-      if (isPanning.current || initialPinchDist.current || !wasUserDrag.current) {
-        container.style.pointerEvents = 'none';
-      } else {
-        container.style.pointerEvents = '';
-      }
       container.classList.add('fast-panning');
       // Keep user-dragging through settle phase so icons stay visible
       if (wasUserDrag.current) {
@@ -95,7 +101,6 @@ export function useCanvas(
         container.classList.remove('user-dragging');
       }
     } else {
-      container.style.pointerEvents = '';
       container.classList.remove('fast-panning');
       container.classList.remove('user-dragging');
       wasUserDrag.current = false;
@@ -106,7 +111,10 @@ export function useCanvas(
       currentX.current = store.targetX;
       currentY.current = store.targetY;
       currentScale.current = store.targetScale;
-      container.style.transform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
+      const settledTransform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
+      container.style.transform = settledTransform;
+      const settledGhost = container.parentNode?.querySelector('#ghostContainer') as HTMLElement | null;
+      if (settledGhost) settledGhost.style.transform = settledTransform;
       isAnimating.current = false;
     } else {
       requestAnimationFrame(renderLoop);
