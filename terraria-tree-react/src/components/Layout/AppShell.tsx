@@ -248,29 +248,13 @@ export default function AppShell() {
         const s = useStore.getState();
         const entry = s.appHistory[s.historyIdx];
 
-        // If coming from a hero fly transition, center the bridge card in the new tree
-        // at the same screen position as the ghost — so the crossfade is seamless
-        if (s.highlightItemId) {
-          s.setSnapNextCamera(true);
-          const bridgeCard = treeContainerRef.current.querySelector<HTMLElement>(
-            `.item-card[data-id="${s.highlightItemId}"]`,
-          );
-          if (bridgeCard) {
-            // Center bridge card on screen at the fly's scale
-            const local = getLocalCenter(bridgeCard, treeContainerRef.current, s.targetScale);
-            const vizRect = vizAreaRef.current.getBoundingClientRect();
-            s.setTarget(
-              vizRect.width / 2 - local.x * s.targetScale,
-              vizRect.height / 2 - local.y * s.targetScale,
-              s.targetScale,
-            );
-          } else if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
-            s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
-          }
-          // If neither bridge card nor saved state, keep fly destination (don't recalculate)
-        } else if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+        if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+          // Saved camera state (back/forward) — snap to exact saved position
+          if (s.highlightItemId) s.setSnapNextCamera(true);
           s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
         } else {
+          // New page (forward click or search) — smooth animate to natural framing
+          // No snap: camera lerps from fly destination to reset view during crossfade
           const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
           s.setTarget(x, y, scale);
         }
