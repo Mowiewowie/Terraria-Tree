@@ -47,12 +47,20 @@ export function useCanvas(
     const container = treeContainerRef.current;
     if (!container) return;
 
-    const factor = 0.15;
     const store = useStore.getState();
 
-    currentX.current += (store.targetX - currentX.current) * factor;
-    currentY.current += (store.targetY - currentY.current) * factor;
-    currentScale.current += (store.targetScale - currentScale.current) * factor;
+    // Snap mode: jump directly to target (no lerp animation)
+    if (store.snapNextCamera) {
+      currentX.current = store.targetX;
+      currentY.current = store.targetY;
+      currentScale.current = store.targetScale;
+      store.setSnapNextCamera(false);
+    } else {
+      const factor = 0.15;
+      currentX.current += (store.targetX - currentX.current) * factor;
+      currentY.current += (store.targetY - currentY.current) * factor;
+      currentScale.current += (store.targetScale - currentScale.current) * factor;
+    }
 
     // GPU-accelerated transform
     container.style.transform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
@@ -66,9 +74,16 @@ export function useCanvas(
     if (isPanning.current || initialPinchDist.current || diff > 1.5) {
       container.style.pointerEvents = 'none';
       container.classList.add('fast-panning');
+      // Track whether this is a manual drag vs camera fly for image hiding logic
+      if (isPanning.current || initialPinchDist.current) {
+        container.classList.add('user-dragging');
+      } else {
+        container.classList.remove('user-dragging');
+      }
     } else {
       container.style.pointerEvents = '';
       container.classList.remove('fast-panning');
+      container.classList.remove('user-dragging');
     }
 
     // Settle when visually negligible

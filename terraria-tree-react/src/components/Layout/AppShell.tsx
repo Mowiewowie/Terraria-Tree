@@ -125,11 +125,12 @@ export default function AppShell() {
 
   // Tier-by-tier expand: expands one layer at a time to distribute render work
   // across multiple frames, preventing UI freezes on massive trees.
-  const doExpandAll = useCallback(() => {
+  const doExpandAll = useCallback((snapAtEnd = false) => {
     let iteration = 0;
     const expandNextTier = () => {
       const treeContainer = treeContainerRef.current;
       if (!treeContainer || iteration >= 20) {
+        if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
         resetViewDelayed();
         return;
       }
@@ -157,10 +158,13 @@ export default function AppShell() {
       }
 
       if (!expanded) {
+        if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
         resetViewDelayed();
         return;
       }
 
+      // Snap each intermediate tier too so the camera doesn't fly across
+      if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
       s.setExpandedNodes(next);
       // Wait for React to render this tier, then expand the next
       requestAnimationFrame(() => requestAnimationFrame(expandNextTier));
@@ -225,6 +229,19 @@ export default function AppShell() {
     });
     return () => cancelAnimationFrame(raf1);
   }, [currentViewType, currentTreeItemId, currentCategoryName, treeMode]);
+
+  // Toggle large-tree class for performance optimizations (image hiding during camera fly)
+  const expandedNodes = useStore((s) => s.expandedNodes);
+  useEffect(() => {
+    const container = treeContainerRef.current;
+    if (!container) return;
+    // Use rAF to measure after React renders new nodes
+    const raf = requestAnimationFrame(() => {
+      const count = container.querySelectorAll('.item-card').length;
+      container.classList.toggle('large-tree', count >= 200);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [currentViewType, currentTreeItemId, treeMode, expandedNodes]);
 
   // Save state periodically and on unload
   useEffect(() => {
@@ -450,7 +467,10 @@ export default function AppShell() {
               </button>
               <button
                 className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
-                onClick={() => { setExpandWarning({ show: false, count: 0 }); doExpandAll(); }}
+                onClick={() => {
+                  setExpandWarning({ show: false, count: 0 });
+                  doExpandAll(true);
+                }}
               >
                 Expand Anyway
               </button>

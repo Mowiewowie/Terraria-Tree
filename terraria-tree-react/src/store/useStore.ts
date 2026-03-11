@@ -65,6 +65,8 @@ interface AppState {
 
   // Camera
   setTarget: (x: number, y: number, scale: number) => void;
+  snapNextCamera: boolean;
+  setSnapNextCamera: (snap: boolean) => void;
 
   // View
   setViewType: (viewType: ViewType) => void;
@@ -182,6 +184,9 @@ export const useStore = create<AppState>((set, get) => ({
       statusText: status.statusText ?? state.statusText,
       loadError: status.loadError !== undefined ? status.loadError : state.loadError,
     })),
+
+  snapNextCamera: false,
+  setSnapNextCamera: (snap) => set({ snapNextCamera: snap }),
 
   setTarget: (x, y, scale) => set({ targetX: x, targetY: y, targetScale: scale }),
 

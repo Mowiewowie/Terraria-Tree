@@ -73,6 +73,7 @@ body {
     justify-content: center;
     min-width: 100%;
     padding: 60px;
+    will-change: transform;
 }
 
 /* --- No-Pan Interactive Elements --- */
@@ -85,10 +86,13 @@ button.no-pan { cursor: pointer !important; }
 .fast-panning .item-card.convergence-target { transition: none !important; }
 .fast-panning .item-card span { box-shadow: none !important; }
 .fast-panning .discover-box-container { box-shadow: none !important; transition: none !important; }
-.fast-panning .item-card img { opacity: 0 !important; }
+/* Hide images only on large trees during camera fly (not manual drag) */
+.fast-panning.large-tree:not(.user-dragging) .item-card img { opacity: 0 !important; }
 
 /* --- Tree Line Geometry --- */
 .tree-node { position: relative; display: flex; flex-direction: column; align-items: center; padding: 24px 8px 0 8px; }
+/* content-visibility: auto skips layout/paint for off-screen subtrees — major perf win on large trees */
+.tree-children > .tree-node { content-visibility: auto; contain-intrinsic-size: auto 120px auto 120px; }
 .tree-children { display: flex; justify-content: center; padding-top: 24px; position: relative; }
 .tree-children.hidden { display: none !important; }
 
@@ -184,7 +188,7 @@ button.no-pan { cursor: pointer !important; }
 .fade-unfocused .expand-btn, .fade-unfocused .category-header, .fade-unfocused .tree-children::before {
     opacity: 0 !important; transition: opacity 0.2s ease;
 }
-.fade-unfocused .item-card:not(.hero-active), .fade-unfocused .discover-box-container:not(.hero-active) {
+.fade-unfocused .item-card:not(.hero-active):not(.hero-bridge), .fade-unfocused .discover-box-container:not(.hero-active):not(.hero-bridge) {
     opacity: 0.3 !important; filter: blur(1px); transition: opacity 0.3s ease, filter 0.3s ease;
 }
 .item-card.hero-active, .discover-box-container.hero-active {

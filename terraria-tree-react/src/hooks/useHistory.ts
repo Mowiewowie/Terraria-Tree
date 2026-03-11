@@ -90,8 +90,10 @@ export function useHistory(
       };
 
       if (bridgeCard && treeContainer && vizAreaRef?.current) {
-        // Hero fly animation: zoom to bridge card, then crossfade
-        bridgeCard.classList.add('hero-active');
+        // Fly camera to bridge card position, then crossfade to new content.
+        // hero-bridge keeps the card visible (not dimmed) but without scale/glow.
+        // The flash happens on the DESTINATION page via AppShell's highlightCard effect.
+        bridgeCard.classList.add('hero-bridge');
         treeContainer.classList.add('fade-unfocused');
 
         const localCenter = getLocalCenter(bridgeCard, treeContainer, s.targetScale);
