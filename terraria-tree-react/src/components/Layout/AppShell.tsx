@@ -248,13 +248,40 @@ export default function AppShell() {
         const s = useStore.getState();
         const entry = s.appHistory[s.historyIdx];
 
-        if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
-          // Saved camera state (back/forward) — snap to exact saved position
-          if (s.highlightItemId) s.setSnapNextCamera(true);
+        if (s.highlightItemId) {
+          // Coming from hero fly (card click or back/forward).
+          // Snap camera so new page appears stationary behind fading ghost.
+          s.setSnapNextCamera(true);
+
+          if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+            // Back/forward: restore exact saved camera position
+            s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
+          } else {
+            // New forward click: center root card at scale 1.1 (matches vanilla JS postAlign).
+            // Ghost has bridge card at screen center (from fly). New tree also gets
+            // root card (same item) at screen center → seamless crossfade.
+            const rootCard = treeContainerRef.current.querySelector<HTMLElement>(
+              `.item-card[data-id="${s.highlightItemId}"]`,
+            ) || treeContainerRef.current.querySelector<HTMLElement>(
+              '.is-root > .relative > .item-card, .is-root .item-card',
+            );
+            if (rootCard) {
+              const local = getLocalCenter(rootCard, treeContainerRef.current, s.targetScale);
+              const vizRect = vizAreaRef.current.getBoundingClientRect();
+              const newScale = 1.1;
+              s.setTarget(
+                vizRect.width / 2 - local.x * newScale,
+                vizRect.height / 2 - local.y * newScale,
+                newScale,
+              );
+            } else {
+              const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
+              s.setTarget(x, y, scale);
+            }
+          }
+        } else if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
           s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
         } else {
-          // New page (forward click or search) — smooth animate to natural framing
-          // No snap: camera lerps from fly destination to reset view during crossfade
           const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
           s.setTarget(x, y, scale);
         }

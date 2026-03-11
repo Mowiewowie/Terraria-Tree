@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { useStore } from '../store/useStore';
 
 /**
  * Hook providing IK (Inverse Kinematics) transition logic.
@@ -36,6 +37,12 @@ export function useTransition(
 
     const hasContent = container.innerHTML.trim() !== '';
     if (!hasContent) return;
+
+    // Snap container to exact target position before cloning.
+    // The render loop may still be mid-lerp (~98%); the vanilla JS snaps
+    // to 100% before cloning to prevent position mismatch in the ghost.
+    const s = useStore.getState();
+    container.style.transform = `translate3d(${s.targetX}px, ${s.targetY}px, 0) scale(${s.targetScale})`;
 
     // Create ghost clone
     const ghost = container.cloneNode(true) as HTMLDivElement;
