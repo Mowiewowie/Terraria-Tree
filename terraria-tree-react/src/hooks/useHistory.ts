@@ -147,6 +147,10 @@ export function useHistory(
             setTimeout(() => {
               treeContainer.classList.remove('fade-unfocused');
               void treeContainer.offsetWidth;
+              // Pre-snap target to saved camera position so ghost matches destination
+              if (state.cameraX !== undefined && state.cameraY !== undefined && state.cameraScale !== undefined) {
+                useStore.getState().setTarget(state.cameraX, state.cameraY, state.cameraScale);
+              }
               performCrossfade?.();
               // For backward: flash the bridge item (current root) on the destination page
               applyState(bridgeId || undefined);
@@ -192,6 +196,10 @@ export function useHistory(
               setTimeout(() => {
                 treeContainer.classList.remove('fade-unfocused');
                 void treeContainer.offsetWidth;
+                // Pre-snap target to saved camera position so ghost matches destination
+                if (state.cameraX !== undefined && state.cameraY !== undefined && state.cameraScale !== undefined) {
+                  useStore.getState().setTarget(state.cameraX, state.cameraY, state.cameraScale);
+                }
                 performCrossfade?.();
                 applyState();
               }, 400);

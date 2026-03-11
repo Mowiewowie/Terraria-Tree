@@ -105,6 +105,14 @@ export default function AppShell() {
     setTimeout(() => {
       treeContainer.classList.remove('fade-unfocused');
       void treeContainer.offsetWidth; // force reflow before ghost clone
+
+      // Pre-snap target to calculateResetView of the OLD tree before cloning ghost.
+      // This gives the ghost a natural framing position (whole-tree view) instead of
+      // the zoomed-in fly position. The new tree will also use calculateResetView,
+      // so ghost and new tree are at similar positions → smooth crossfade.
+      const resetView = calculateResetView(vizArea, treeContainer);
+      useStore.getState().setTarget(resetView.x, resetView.y, resetView.scale);
+
       performCrossfade();
       transitionToNewItem(id, true); // skipSave — already saved above
     }, 400);
@@ -257,27 +265,26 @@ export default function AppShell() {
             // Back/forward: restore exact saved camera position
             s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
           } else {
-            // New forward click: center root card at scale 1.1 (matches vanilla JS postAlign).
-            // Ghost has bridge card at screen center (from fly). New tree also gets
-            // root card (same item) at screen center → seamless crossfade.
+            // New forward click: frame entire tree naturally (calculateResetView).
+            // Ghost was pre-snapped to calculateResetView of old tree, so positions match.
+            let { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
+
+            // Ensure root card is visible: if it would be off-screen vertically,
+            // keep horizontal centering but shift Y so root appears near the top.
             const rootCard = treeContainerRef.current.querySelector<HTMLElement>(
-              `.item-card[data-id="${s.highlightItemId}"]`,
-            ) || treeContainerRef.current.querySelector<HTMLElement>(
-              '.is-root > .relative > .item-card, .is-root .item-card',
+              `.item-card[data-id="${s.highlightItemId}"], .is-root .item-card`,
             );
             if (rootCard) {
-              const local = getLocalCenter(rootCard, treeContainerRef.current, s.targetScale);
+              const local = getLocalCenter(rootCard, treeContainerRef.current, scale);
               const vizRect = vizAreaRef.current.getBoundingClientRect();
-              const newScale = 1.1;
-              s.setTarget(
-                vizRect.width / 2 - local.x * newScale,
-                vizRect.height / 2 - local.y * newScale,
-                newScale,
-              );
-            } else {
-              const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
-              s.setTarget(x, y, scale);
+              const rootScreenY = y + local.y * scale;
+              if (rootScreenY < 0 || rootScreenY > vizRect.height) {
+                // Root card is off-screen — position it near the top
+                y = 40 - local.y * scale + 60; // 40px top margin + 60px for toolbar
+              }
             }
+
+            s.setTarget(x, y, scale);
           }
         } else if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
           s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
