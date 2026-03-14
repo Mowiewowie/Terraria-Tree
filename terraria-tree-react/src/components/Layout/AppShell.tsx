@@ -77,41 +77,22 @@ export default function AppShell() {
 
     const s = useStore.getState();
 
-    // Save current state BEFORE fly (captures correct camera + itemLocations)
+    // Save current state BEFORE swap (captures correct camera + itemLocations)
     saveCurrentState();
 
-    // Get bridge card's local center on current page
-    const startLocal = getLocalCenter(cardEl, treeContainer, s.targetScale);
+    // Clone ghost of old tree at current camera position.
+    // Ghost and container transforms are synced by the render loop,
+    // so both move together as the camera lerps to the new position.
+    performCrossfade();
 
-    // Hero fly setup: dim other cards, keep bridge visible
-    cardEl.classList.add('hero-bridge');
-    treeContainer.classList.add('fade-unfocused');
-
-    // Calculate fly destination: where the bridge card will be on the new page.
-    // For new forward navigation, the destination is a collapsed tree (root only).
-    // calculateResetView will center it, so the root card will be roughly at
-    // viewport center. Fly the camera so the bridge card lands there at scale 1.1.
-    const vizRect = vizArea.getBoundingClientRect();
-    const futureScale = 1.1;
-    const flyX = vizRect.width / 2 - startLocal.x * futureScale;
-    const flyY = vizRect.height / 2 - startLocal.y * futureScale;
-
-    s.setTarget(flyX, flyY, futureScale);
     // Flash the clicked item (= new page's root) on the destination page
     s.setHighlightItemId(id);
 
-    // Wait for camera fly, then crossfade and swap content
-    setTimeout(() => {
-      treeContainer.classList.remove('fade-unfocused');
-      void treeContainer.offsetWidth; // force reflow before ghost clone
-
-      // Clone ghost at wherever the camera ended up after the fly.
-      // Don't pre-snap to resetView — old and new trees have different layouts,
-      // so snapping to old tree's resetView would mismatch with the new tree.
-      // The crossfade opacity transition masks the camera lerp to the new position.
-      performCrossfade();
-      transitionToNewItem(id, true); // skipSave — already saved above
-    }, 400);
+    // Swap to new tree. React re-renders new content in the invisible container.
+    // The auto-center effect (after render) calculates the exact resetView position
+    // and sets the camera target. The camera lerps there while the crossfade runs,
+    // creating a smooth morph where the bridge card pivots between trees.
+    transitionToNewItem(id, true); // skipSave — already saved above
   }, [performCrossfade]);
 
   const handleCategoryView = useCallback((category: string) => {

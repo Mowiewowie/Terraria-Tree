@@ -68,6 +68,10 @@ export function useCanvas(
     // GPU-accelerated transform
     container.style.transform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) scale(${currentScale.current})`;
 
+    // Keep ghost (crossfade overlay) in sync — prevents position mismatch during fade
+    const ghost = container.parentNode?.querySelector('#ghostContainer') as HTMLElement | null;
+    if (ghost) ghost.style.transform = container.style.transform;
+
     const diff =
       Math.abs(store.targetX - currentX.current) +
       Math.abs(store.targetY - currentY.current) +

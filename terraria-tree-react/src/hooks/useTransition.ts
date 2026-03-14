@@ -60,8 +60,8 @@ export function useTransition(
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        container.style.transition = 'opacity 0.4s ease';
-        ghost.style.transition = 'opacity 0.4s ease';
+        container.style.transition = 'opacity 0.6s ease';
+        ghost.style.transition = 'opacity 0.6s ease';
         ghost.style.opacity = '0';
         container.style.opacity = '1';
 
@@ -69,7 +69,7 @@ export function useTransition(
           if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
           ghostRef.current = null;
           container.style.transition = '';
-        }, 450);
+        }, 650);
       });
     });
   }, [treeContainerRef]);
