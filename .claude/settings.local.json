@@ -4,7 +4,13 @@
       "Bash(npx tsc --noEmit)",
       "Bash(npx vite build)",
       "Bash(npm run build)",
-      "Bash(grep -n \"function createTreeNode\\\\|function transitionToNewItem\\\\|function removeHomeMode\\\\|function performIKTransition\" /c/Users/georg/OneDrive/Documents/Repos/Terraria-Tree/app-js/*.js)"
+      "Bash(grep -n \"function createTreeNode\\\\|function transitionToNewItem\\\\|function removeHomeMode\\\\|function performIKTransition\" /c/Users/georg/OneDrive/Documents/Repos/Terraria-Tree/app-js/*.js)",
+      "Bash(while IFS= read -r line)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(sed 's/.*\"\"\"\"content\"\"\"\":\\\\[//')",
+      "Bash(sed 's/.*\"\"\"\"text\"\"\"\":\"\"\"\"//')",
+      "Bash(sed 's/\"\"\"\".*//')"
     ]
   }
 }

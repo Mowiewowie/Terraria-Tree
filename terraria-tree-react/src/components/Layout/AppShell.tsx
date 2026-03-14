@@ -87,17 +87,16 @@ export default function AppShell() {
     cardEl.classList.add('hero-bridge');
     treeContainer.classList.add('fade-unfocused');
 
-    // Calculate fly destination: where the bridge card will be on the new page
-    // For new forward navigation, no saved state exists — aim for center at scale 1.1
+    // Calculate fly destination: where the bridge card will be on the new page.
+    // For new forward navigation, the destination is a collapsed tree (root only).
+    // calculateResetView will center it, so the root card will be roughly at
+    // viewport center. Fly the camera so the bridge card lands there at scale 1.1.
     const vizRect = vizArea.getBoundingClientRect();
     const futureScale = 1.1;
-    const futureBaseWidth = 128; // standard card width
-    const startBaseWidth = startLocal.w || 96;
-    const flyScale = futureScale * (futureBaseWidth / startBaseWidth);
-    const flyX = vizRect.width / 2 - startLocal.x * flyScale;
-    const flyY = vizRect.height / 2 - startLocal.y * flyScale;
+    const flyX = vizRect.width / 2 - startLocal.x * futureScale;
+    const flyY = vizRect.height / 2 - startLocal.y * futureScale;
 
-    s.setTarget(flyX, flyY, flyScale);
+    s.setTarget(flyX, flyY, futureScale);
     // Flash the clicked item (= new page's root) on the destination page
     s.setHighlightItemId(id);
 
@@ -106,13 +105,10 @@ export default function AppShell() {
       treeContainer.classList.remove('fade-unfocused');
       void treeContainer.offsetWidth; // force reflow before ghost clone
 
-      // Pre-snap target to calculateResetView of the OLD tree before cloning ghost.
-      // This gives the ghost a natural framing position (whole-tree view) instead of
-      // the zoomed-in fly position. The new tree will also use calculateResetView,
-      // so ghost and new tree are at similar positions → smooth crossfade.
-      const resetView = calculateResetView(vizArea, treeContainer);
-      useStore.getState().setTarget(resetView.x, resetView.y, resetView.scale);
-
+      // Clone ghost at wherever the camera ended up after the fly.
+      // Don't pre-snap to resetView — old and new trees have different layouts,
+      // so snapping to old tree's resetView would mismatch with the new tree.
+      // The crossfade opacity transition masks the camera lerp to the new position.
       performCrossfade();
       transitionToNewItem(id, true); // skipSave — already saved above
     }, 400);
@@ -258,15 +254,16 @@ export default function AppShell() {
 
         if (s.highlightItemId) {
           // Coming from hero fly (card click or back/forward).
-          // Snap camera so new page appears stationary behind fading ghost.
-          s.setSnapNextCamera(true);
 
           if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
-            // Back/forward: restore exact saved camera position
+            // Back/forward: restore exact saved camera position with snap
+            // (ghost was pre-snapped to saved position, so they match)
+            s.setSnapNextCamera(true);
             s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
           } else {
             // New forward click: frame entire tree naturally (calculateResetView).
-            // Ghost was pre-snapped to calculateResetView of old tree, so positions match.
+            // Don't snap — let the camera lerp smoothly from the fly position
+            // to the new resetView while the crossfade masks the transition.
             let { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
 
             // Ensure root card is visible: if it would be off-screen vertically,
