@@ -242,9 +242,11 @@ export default function AppShell() {
 
   useEffect(() => {
     if (currentViewType === 'home') return;
-    // Wait for React to render the new tree content, then center
+    // Wait for React to render the new tree content, then center.
+    // Track both rAF IDs for proper cleanup.
+    let raf2: number;
     const raf1 = requestAnimationFrame(() => {
-      const raf2 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
         if (!vizAreaRef.current || !treeContainerRef.current) return;
         const s = useStore.getState();
         const entry = s.appHistory[s.historyIdx];
@@ -252,14 +254,15 @@ export default function AppShell() {
         if (s.highlightItemId) {
           // Coming from hero fly (card click or back/forward).
           // Calculate the final camera position for the new tree.
+          const hasSavedCamera = entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined;
 
           let finalX: number, finalY: number, finalScale: number;
 
-          if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+          if (hasSavedCamera) {
             // Back/forward: restore exact saved camera position
-            finalX = entry.cameraX;
-            finalY = entry.cameraY;
-            finalScale = entry.cameraScale;
+            finalX = entry!.cameraX!;
+            finalY = entry!.cameraY!;
+            finalScale = entry!.cameraScale!;
           } else {
             // New forward click: frame entire tree naturally
             const rv = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
@@ -267,12 +270,12 @@ export default function AppShell() {
             finalY = rv.y;
             finalScale = rv.scale;
 
-            // Ensure root card is visible
-            const rootCard = treeContainerRef.current.querySelector<HTMLElement>(
+            // Ensure root card is visible at final position
+            const rootCheck = treeContainerRef.current.querySelector<HTMLElement>(
               `.item-card[data-id="${s.highlightItemId}"], .is-root .item-card`,
             );
-            if (rootCard) {
-              const local = getLocalCenter(rootCard, treeContainerRef.current, finalScale);
+            if (rootCheck) {
+              const local = getLocalCenter(rootCheck, treeContainerRef.current, finalScale);
               const vizRect = vizAreaRef.current.getBoundingClientRect();
               const rootScreenY = finalY + local.y * finalScale;
               if (rootScreenY < 0 || rootScreenY > vizRect.height) {
@@ -281,19 +284,62 @@ export default function AppShell() {
             }
           }
 
-          // Snap camera to final position BEFORE starting fade.
-          // This ensures ghost and container are at the same position
-          // when the opacity crossfade begins — no flash.
-          s.setSnapNextCamera(true);
-          s.setTarget(finalX, finalY, finalScale);
+          if (!hasSavedCamera) {
+            // Forward item click: position the new tree so the root card
+            // (= the clicked item) is at viewport center, matching where
+            // the ghost's bridge card ended up after the 400ms fly.
+            // Then animate from that position to the final resetView.
 
-          // Also directly snap the container's inline transform so it's
-          // at the correct position immediately (don't wait for renderLoop).
-          treeContainerRef.current.style.transform =
-            `translate3d(${finalX}px, ${finalY}px, 0) scale(${finalScale})`;
+            // Temporarily set container to final position to measure root card
+            treeContainerRef.current.style.transform =
+              `translate3d(${finalX}px, ${finalY}px, 0) scale(${finalScale})`;
+            void treeContainerRef.current.offsetWidth; // force reflow
 
-          // NOW start the crossfade — ghost syncs to container position first.
-          startFade();
+            const rootCard = treeContainerRef.current.querySelector<HTMLElement>(
+              `.item-card[data-id="${s.highlightItemId}"], .is-root .item-card`,
+            );
+
+            if (rootCard) {
+              const rootLocal = getLocalCenter(rootCard, treeContainerRef.current, finalScale);
+              const vizRect = vizAreaRef.current!.getBoundingClientRect();
+
+              // Start position: root card centered in viewport
+              const startX = vizRect.width / 2 - rootLocal.x * finalScale;
+              const startY = vizRect.height / 2 - rootLocal.y * finalScale;
+
+              // Snap camera + container to start position
+              s.setSnapNextCamera(true);
+              s.setTarget(startX, startY, finalScale);
+              treeContainerRef.current.style.transform =
+                `translate3d(${startX}px, ${startY}px, 0) scale(${finalScale})`;
+
+              // Begin crossfade (ghost fades out, container fades in)
+              startFade();
+
+              // Animate camera from center-based to final position during crossfade.
+              // The 15% lerp takes ~30 frames (~500ms) — nicely overlaps with
+              // the 600ms crossfade, creating a smooth pivot effect.
+              requestAnimationFrame(() => {
+                useStore.getState().setTarget(finalX, finalY, finalScale);
+              });
+            } else {
+              // No root card found — just snap to final and crossfade
+              s.setSnapNextCamera(true);
+              s.setTarget(finalX, finalY, finalScale);
+              treeContainerRef.current.style.transform =
+                `translate3d(${finalX}px, ${finalY}px, 0) scale(${finalScale})`;
+              startFade();
+            }
+          } else {
+            // Back/forward: snap directly to saved position and crossfade.
+            // Ghost and container are already at the same position (both snapped
+            // to saved state before ghost was created).
+            s.setSnapNextCamera(true);
+            s.setTarget(finalX, finalY, finalScale);
+            treeContainerRef.current.style.transform =
+              `translate3d(${finalX}px, ${finalY}px, 0) scale(${finalScale})`;
+            startFade();
+          }
 
           // Highlight the bridge item after the crossfade settles
           const hlId = s.highlightItemId;
@@ -313,9 +359,8 @@ export default function AppShell() {
           s.setTarget(x, y, scale);
         }
       });
-      return () => cancelAnimationFrame(raf2);
     });
-    return () => cancelAnimationFrame(raf1);
+    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
   }, [currentViewType, currentTreeItemId, currentCategoryName, treeMode, startFade]);
 
   // Toggle large-tree class for performance optimizations (image hiding during camera fly)

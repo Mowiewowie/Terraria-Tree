@@ -214,8 +214,10 @@ export function useHistory(
         }
       }
 
-      // No bridge found or validation failed — just crossfade
-      performCrossfade?.();
+      // No bridge found or validation failed — clone ghost, let auto-center
+      // handle startFade(). Using createGhost instead of performCrossfade
+      // avoids double-calling startFade (once here, once in auto-center).
+      createGhost?.();
       applyState(); // uses default bridgeItemId = state.id (root)
     };
 

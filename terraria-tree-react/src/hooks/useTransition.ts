@@ -78,12 +78,21 @@ export function useTransition(
   const startFade = useCallback(() => {
     const ghost = ghostRef.current;
     const container = treeContainerRef.current;
-    if (!ghost || !container) return;
+    if (!container) return;
 
-    // Sync ghost position to container's current transform.
-    // At this point, the camera has been snapped to its final position,
-    // so both ghost and container will be at the same position.
-    ghost.style.transform = container.style.transform;
+    // Safety: if no ghost exists (already cleaned up or never created),
+    // just ensure container is visible to prevent stuck invisible state.
+    if (!ghost) {
+      container.style.transition = '';
+      container.style.opacity = '1';
+      return;
+    }
+
+    // Don't sync ghost position to container — for item clicks, the ghost
+    // was cloned at the fly-end position while the container was snapped to
+    // the new tree's resetView. Syncing would cause a visible jump (flash).
+    // Instead, let the crossfade dissolve between the two positions.
+    // For back/forward, positions already match (both at saved state).
 
     // Start opacity crossfade
     requestAnimationFrame(() => {
