@@ -63,7 +63,7 @@ export default function AppShell() {
     viewItem(item.id, true);
   }, [performCrossfade]);
 
-  const handleNavigate = useCallback((cardEl: HTMLDivElement, id: string) => {
+  const handleNavigate = useCallback((_cardEl: HTMLDivElement, id: string) => {
     const treeContainer = treeContainerRef.current;
     const vizArea = vizAreaRef.current;
 
