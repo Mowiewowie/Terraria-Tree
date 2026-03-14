@@ -5,9 +5,13 @@ import { useStore } from '../store/useStore';
  * Hook providing IK (Inverse Kinematics) transition logic.
  * Manages ghost container crossfade between old and new tree content.
  *
- * In the React version, the DOM swap is handled by React's reconciliation,
- * so this hook primarily manages the opacity crossfade effect and
- * provides a way to trigger camera fly animations before content changes.
+ * Split into two phases to avoid race conditions:
+ *   1. createGhost() — clone old tree, hide container (no fade yet)
+ *   2. startFade()   — sync ghost position, begin opacity crossfade
+ *
+ * The auto-center effect calls startFade() AFTER finalizing the camera
+ * position, ensuring ghost and container are at the same position when
+ * the opacity transition begins. This eliminates flash/jitter.
  */
 export function useTransition(
   treeContainerRef: React.RefObject<HTMLDivElement | null>,
@@ -15,34 +19,41 @@ export function useTransition(
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const ghostRef = useRef<HTMLDivElement | null>(null);
 
-  /**
-   * Perform a crossfade transition on the tree container.
-   * 1. Clone current content as a ghost overlay
-   * 2. Fade out ghost while fading in new content
-   */
-  const performCrossfade = useCallback((skipFade = false) => {
-    const container = treeContainerRef.current;
-    if (!container) return;
-
-    // Clean up any previous ghost
+  /** Clean up any existing ghost + timeout */
+  const cleanupGhost = useCallback(() => {
     if (ghostRef.current?.parentNode) {
       ghostRef.current.parentNode.removeChild(ghostRef.current);
       ghostRef.current = null;
     }
     if (transitionTimeoutRef.current) {
       clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = undefined;
     }
+  }, []);
 
-    if (skipFade) return;
+  /**
+   * Phase 1: Clone current content as a ghost overlay.
+   * Hides the container (opacity 0) but does NOT start the fade.
+   * Call startFade() later after camera position is finalized.
+   */
+  const createGhost = useCallback(() => {
+    const container = treeContainerRef.current;
+    if (!container) return;
+
+    cleanupGhost();
 
     const hasContent = container.innerHTML.trim() !== '';
     if (!hasContent) return;
 
     // Snap container to exact target position before cloning.
-    // The render loop may still be mid-lerp (~98%); the vanilla JS snaps
-    // to 100% before cloning to prevent position mismatch in the ghost.
+    // The render loop may still be mid-lerp; snap to 100% to prevent
+    // position mismatch in the ghost.
     const s = useStore.getState();
     container.style.transform = `translate3d(${s.targetX}px, ${s.targetY}px, 0) scale(${s.targetScale})`;
+
+    // Also snap the render loop's current position so it doesn't
+    // overwrite the container transform in the next frame.
+    s.setSnapNextCamera(true);
 
     // Create ghost clone
     const ghost = container.cloneNode(true) as HTMLDivElement;
@@ -54,10 +65,27 @@ export function useTransition(
     container.parentNode?.insertBefore(ghost, container);
     ghostRef.current = ghost;
 
-    // Fade out old, fade in new
+    // Hide container (new content will render here invisibly)
     container.style.transition = 'none';
     container.style.opacity = '0';
+  }, [treeContainerRef, cleanupGhost]);
 
+  /**
+   * Phase 2: Start the opacity crossfade.
+   * Must be called AFTER camera position is finalized (snapped).
+   * Syncs ghost transform to match container before fading.
+   */
+  const startFade = useCallback(() => {
+    const ghost = ghostRef.current;
+    const container = treeContainerRef.current;
+    if (!ghost || !container) return;
+
+    // Sync ghost position to container's current transform.
+    // At this point, the camera has been snapped to its final position,
+    // so both ghost and container will be at the same position.
+    ghost.style.transform = container.style.transform;
+
+    // Start opacity crossfade
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         container.style.transition = 'opacity 0.6s ease';
@@ -75,17 +103,18 @@ export function useTransition(
   }, [treeContainerRef]);
 
   /**
-   * Clean up ghost on unmount.
+   * Combined: create ghost + start fade immediately.
+   * Use for non-hero transitions (search, mode switch) where
+   * the camera position doesn't change.
    */
-  const cleanup = useCallback(() => {
-    if (ghostRef.current?.parentNode) {
-      ghostRef.current.parentNode.removeChild(ghostRef.current);
-      ghostRef.current = null;
+  const performCrossfade = useCallback((skipFade = false) => {
+    if (skipFade) {
+      cleanupGhost();
+      return;
     }
-    if (transitionTimeoutRef.current) {
-      clearTimeout(transitionTimeoutRef.current);
-    }
-  }, []);
+    createGhost();
+    startFade();
+  }, [createGhost, startFade, cleanupGhost]);
 
-  return { performCrossfade, cleanup };
+  return { performCrossfade, createGhost, startFade, cleanup: cleanupGhost };
 }

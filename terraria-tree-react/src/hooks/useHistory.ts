@@ -18,6 +18,7 @@ export function useHistory(
   treeContainerRef?: React.RefObject<HTMLDivElement | null>,
   vizAreaRef?: React.RefObject<HTMLDivElement | null>,
   performCrossfade?: (skipFade?: boolean) => void,
+  createGhost?: () => void,
 ) {
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
@@ -147,11 +148,14 @@ export function useHistory(
             setTimeout(() => {
               treeContainer.classList.remove('fade-unfocused');
               void treeContainer.offsetWidth;
-              // Pre-snap target to saved camera position so ghost matches destination
+              // Pre-snap target to saved camera position before cloning ghost.
+              // createGhost will snap the render loop's currentX/Y to match.
               if (state.cameraX !== undefined && state.cameraY !== undefined && state.cameraScale !== undefined) {
                 useStore.getState().setTarget(state.cameraX, state.cameraY, state.cameraScale);
               }
-              performCrossfade?.();
+              // Clone ghost (no fade yet) — auto-center effect will call startFade()
+              // after confirming the camera position is finalized.
+              createGhost?.();
               // For backward: flash the bridge item (current root) on the destination page
               applyState(bridgeId || undefined);
             }, 400);
@@ -196,11 +200,12 @@ export function useHistory(
               setTimeout(() => {
                 treeContainer.classList.remove('fade-unfocused');
                 void treeContainer.offsetWidth;
-                // Pre-snap target to saved camera position so ghost matches destination
+                // Pre-snap target to saved camera position before cloning ghost.
                 if (state.cameraX !== undefined && state.cameraY !== undefined && state.cameraScale !== undefined) {
                   useStore.getState().setTarget(state.cameraX, state.cameraY, state.cameraScale);
                 }
-                performCrossfade?.();
+                // Clone ghost (no fade yet) — auto-center effect will call startFade()
+                createGhost?.();
                 applyState();
               }, 400);
               return;
@@ -216,5 +221,5 @@ export function useHistory(
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [treeContainerRef, vizAreaRef, performCrossfade]);
+  }, [treeContainerRef, vizAreaRef, performCrossfade, createGhost]);
 }
