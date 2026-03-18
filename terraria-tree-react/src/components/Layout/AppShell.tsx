@@ -59,9 +59,20 @@ export default function AppShell() {
     viewItem(item.id, true);
   }, []);
 
-  const handleNavigate = useCallback((_cardEl: HTMLDivElement, id: string) => {
+  const handleNavigate = useCallback((cardEl: HTMLDivElement, id: string) => {
+    // Capture clicked card's screen position for dot fly animation
+    const rect = cardEl.getBoundingClientRect();
+    const s = useStore.getState();
+    s.setHighlightOrigin({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
+
     saveCurrentState();
     transitionToNewItem(id, true);
+
+    // The clicked item becomes the root of the new tree — highlight it
+    s.setHighlightItemId(id);
   }, []);
 
   const handleCategoryView = useCallback((category: string) => {
@@ -209,7 +220,7 @@ export default function AppShell() {
     }
   }, [currentViewType, currentTreeItemId, currentCategoryName, treeMode]);
 
-  // Icon dot fly: animate a small dot from viewport center to bridge card on back/forward
+  // Icon dot fly: animate a small dot from origin position to bridge card on navigation
   const highlightItemId = useStore((s) => s.highlightItemId);
   useEffect(() => {
     if (!highlightItemId) return;
@@ -220,6 +231,14 @@ export default function AppShell() {
     const s = useStore.getState();
     const itemData = s.itemsDatabase[highlightItemId];
     const iconUrl = itemData?.IconUrl || createDirectImageUrl(itemData?.DisplayName);
+    const origin = s.highlightOrigin;
+
+    // Starting position: saved origin (card position on previous page) or viewport center
+    const startX = origin?.x ?? window.innerWidth / 2;
+    const startY = origin?.y ?? window.innerHeight / 2;
+
+    // Clear origin so it doesn't persist
+    s.setHighlightOrigin(null);
 
     // Hide container while dot flies
     container.style.transition = 'none';
@@ -240,8 +259,8 @@ export default function AppShell() {
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      left: 50%;
-      top: 50%;
+      left: ${startX}px;
+      top: ${startY}px;
       transform: translate(-50%, -50%);
       transition: none;
     `;
@@ -272,7 +291,7 @@ export default function AppShell() {
         const targetX = cardRect.left + cardRect.width / 2;
         const targetY = cardRect.top + cardRect.height / 2;
 
-        // Animate dot from center to card position
+        // Animate dot from origin to card position
         dot.style.transition = 'left 0.3s ease-out, top 0.3s ease-out';
         dot.style.left = `${targetX}px`;
         dot.style.top = `${targetY}px`;

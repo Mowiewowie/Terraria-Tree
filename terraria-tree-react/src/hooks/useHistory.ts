@@ -66,6 +66,22 @@ export function useHistory() {
       const goingBack = targetIdx < s.historyIdx;
       const bridgeEntry = goingBack ? s.appHistory[s.historyIdx] : s.appHistory[targetIdx];
       const bridgeId = bridgeEntry?.id || null;
+
+      // Capture bridge card's screen position on the CURRENT page before swap
+      if (bridgeId) {
+        const card = document.querySelector<HTMLElement>(
+          `.item-card[data-id="${CSS.escape(bridgeId)}"]`
+        );
+        if (card) {
+          const rect = card.getBoundingClientRect();
+          s2.setHighlightOrigin({
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2,
+          });
+        } else {
+          s2.setHighlightOrigin(null);
+        }
+      }
       s2.setHighlightItemId(bridgeId);
 
       if (state.mode) s2.setTreeMode(state.mode);

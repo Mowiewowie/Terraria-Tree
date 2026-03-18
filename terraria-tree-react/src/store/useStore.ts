@@ -51,6 +51,7 @@ interface AppState {
 
   // Navigation animation — which item to flash after transition
   highlightItemId: string | null;
+  highlightOrigin: { x: number; y: number } | null;
 
   // History engine
   appHistory: HistoryEntry[];
@@ -102,6 +103,7 @@ interface AppState {
 
   // Navigation animation
   setHighlightItemId: (id: string | null) => void;
+  setHighlightOrigin: (origin: { x: number; y: number } | null) => void;
 
   // History
   pushHistory: (entry: HistoryEntry) => void;
@@ -175,6 +177,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   // Navigation animation
   highlightItemId: null,
+  highlightOrigin: null,
 
   // History
   appHistory: [],
@@ -265,6 +268,7 @@ export const useStore = create<AppState>((set, get) => ({
   setShowTotalQuantity: (show) => set({ showTotalQuantity: show }),
 
   setHighlightItemId: (id) => set({ highlightItemId: id }),
+  setHighlightOrigin: (origin) => set({ highlightOrigin: origin }),
 
   pushHistory: (entry) =>
     set((state) => {
