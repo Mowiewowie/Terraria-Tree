@@ -245,67 +245,100 @@ export function calculateResetView(
 
 // --- Focus camera on expanded subtree ---
 
-export function focusSubtree(nodeEl: HTMLElement, mode: TreeMode): void {
+export function focusSubtree(nodeEl: HTMLElement, _mode: TreeMode): void {
   const treeContainer = document.getElementById('treeContainer');
   const vizArea = treeContainer?.parentElement;
   if (!treeContainer || !vizArea) return;
 
   const s = useStore.getState();
-  const scale = s.targetScale;
-  const tr = treeContainer.getBoundingClientRect();
+  const { targetX, targetY, targetScale } = s;
 
-  // Find the card and children container
+  // Use actual rendered scale for accurate local coord computation
+  const matrix = new DOMMatrix(getComputedStyle(treeContainer).transform);
+  const renderedScale = matrix.a || targetScale;
+
+  const tr = treeContainer.getBoundingClientRect();
   const card = nodeEl.querySelector('.item-card');
   const children = nodeEl.querySelector('.tree-children');
   if (!card) return;
 
+  // Content bounds in tree-local coordinates
   const cr = card.getBoundingClientRect();
-  const cardLocalLeft = (cr.left - tr.left) / scale;
-  const cardLocalRight = (cr.right - tr.left) / scale;
-  const cardLocalTop = (cr.top - tr.top) / scale;
-  const cardLocalBottom = (cr.bottom - tr.top) / scale;
-
-  let minX = cardLocalLeft, maxX = cardLocalRight;
-  let minY = cardLocalTop, maxY = cardLocalBottom;
+  let minX = (cr.left - tr.left) / renderedScale;
+  let maxX = (cr.right - tr.left) / renderedScale;
+  let minY = (cr.top - tr.top) / renderedScale;
+  let maxY = (cr.bottom - tr.top) / renderedScale;
 
   if (children) {
     const chr = children.getBoundingClientRect();
-    minX = Math.min(minX, (chr.left - tr.left) / scale);
-    maxX = Math.max(maxX, (chr.right - tr.left) / scale);
-    minY = Math.min(minY, (chr.top - tr.top) / scale);
-    maxY = Math.max(maxY, (chr.bottom - tr.top) / scale);
+    minX = Math.min(minX, (chr.left - tr.left) / renderedScale);
+    maxX = Math.max(maxX, (chr.right - tr.left) / renderedScale);
+    minY = Math.min(minY, (chr.top - tr.top) / renderedScale);
+    maxY = Math.max(maxY, (chr.bottom - tr.top) / renderedScale);
   }
 
+  // Viewport bounds with edge padding (in vizArea-relative screen pixels)
   const vizRect = vizArea.getBoundingClientRect();
-  const padX = 120, padY = 120;
-  const pLocalCenterX = (cardLocalLeft + cardLocalRight) / 2;
-  const distLeft = pLocalCenterX - minX;
-  const distRight = maxX - pLocalCenterX;
-  const maxDistX = Math.max(distLeft, distRight);
-  const totalHeight = maxY - minY;
-  const contentWidth = maxDistX * 2;
+  const pad = 40;
+  const vpLeft   = pad;
+  const vpRight  = vizRect.width - pad;
+  const vpTop    = pad;
+  const vpBottom = vizRect.height - pad;
+  const vpWidth  = vpRight - vpLeft;
+  const vpHeight = vpBottom - vpTop;
 
-  // Check if content fits at current scale (just pan, no zoom)
-  const viewWidth = (vizRect.width - padX) / scale;
-  const viewHeight = (vizRect.height - padY) / scale;
+  // Project content bounds to screen space using target camera position
+  const contentLeft   = targetX + minX * targetScale;
+  const contentRight  = targetX + maxX * targetScale;
+  const contentTop    = targetY + minY * targetScale;
+  const contentBottom = targetY + maxY * targetScale;
 
-  let newS = scale;
-  if (contentWidth > viewWidth || totalHeight > viewHeight) {
-    // Need to zoom out to fit
-    const sX = (vizRect.width - padX) / (contentWidth || 1);
-    const sY = (vizRect.height - padY) / (totalHeight || 1);
-    newS = Math.max(0.15, Math.min(sX, sY, scale)); // Only zoom out, never in
+  // Case 1: Everything already visible — do nothing
+  if (contentLeft >= vpLeft && contentRight <= vpRight &&
+      contentTop >= vpTop && contentBottom <= vpBottom) {
+    return;
   }
 
-  const newX = (vizRect.width / 2) - (pLocalCenterX * newS);
-  let newY: number;
-  if (mode === 'recipe' || mode === 'discover') {
-    newY = (padY / 2) - (minY * newS);
-  } else {
-    newY = vizRect.height - (padY / 2) - (maxY * newS);
+  const contentW = (maxX - minX) * targetScale;
+  const contentH = (maxY - minY) * targetScale;
+
+  // Case 2: Fits at current scale, just needs minimal pan
+  if (contentW <= vpWidth && contentH <= vpHeight) {
+    let dx = 0, dy = 0;
+    if (contentLeft < vpLeft)         dx = vpLeft - contentLeft;
+    else if (contentRight > vpRight)  dx = vpRight - contentRight;
+    if (contentTop < vpTop)           dy = vpTop - contentTop;
+    else if (contentBottom > vpBottom) dy = vpBottom - contentBottom;
+    s.setTarget(targetX + dx, targetY + dy, targetScale);
+    return;
   }
 
-  s.setTarget(newX, newY, newS);
+  // Case 3: Need to zoom out
+  const sX = vpWidth / (maxX - minX);
+  const sY = vpHeight / (maxY - minY);
+  const newScale = Math.max(0.15, Math.min(sX, sY, targetScale));
+
+  // Zoom around viewport center for visual stability
+  const vpCenterX = vizRect.width / 2;
+  const vpCenterY = vizRect.height / 2;
+  const localCenterX = (vpCenterX - targetX) / targetScale;
+  const localCenterY = (vpCenterY - targetY) / targetScale;
+  let newX = vpCenterX - localCenterX * newScale;
+  let newY = vpCenterY - localCenterY * newScale;
+
+  // Recompute content bounds at new zoom + position, then minimal pan
+  const newContentLeft   = newX + minX * newScale;
+  const newContentRight  = newX + maxX * newScale;
+  const newContentTop    = newY + minY * newScale;
+  const newContentBottom = newY + maxY * newScale;
+
+  let dx = 0, dy = 0;
+  if (newContentLeft < vpLeft)           dx = vpLeft - newContentLeft;
+  else if (newContentRight > vpRight)    dx = vpRight - newContentRight;
+  if (newContentTop < vpTop)             dy = vpTop - newContentTop;
+  else if (newContentBottom > vpBottom)  dy = vpBottom - newContentBottom;
+
+  s.setTarget(newX + dx, newY + dy, newScale);
 }
 
 // --- Estimate tree size for expand-all warning ---
