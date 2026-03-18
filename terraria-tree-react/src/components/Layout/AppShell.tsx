@@ -315,19 +315,23 @@ export default function AppShell() {
 
             if (rootCard && flyOrigin) {
               const rootLocal = getLocalCenter(rootCard, treeContainerRef.current, finalScale);
+              const vizRect = vizAreaRef.current!.getBoundingClientRect();
 
-              // Where the root card will be on screen at the final camera position
-              const targetScreenX = finalX + rootLocal.x * finalScale;
-              const targetScreenY = finalY + rootLocal.y * finalScale;
+              // Target position for root card in camera space (offset from vizArea origin).
+              // Camera coords: screenPos = vizRect.left + camX + localX * scale
+              const targetCamPosX = finalX + rootLocal.x * finalScale;
+              const targetCamPosY = finalY + rootLocal.y * finalScale;
 
-              // Calculate clicked card's local position on the old tree
-              const clickedLocalX = (flyOrigin.screenX - flyOrigin.camX) / flyOrigin.camScale;
-              const clickedLocalY = (flyOrigin.screenY - flyOrigin.camY) / flyOrigin.camScale;
+              // Clicked card's local position on the old tree.
+              // flyOrigin.screenX is in screen space (from getBoundingClientRect),
+              // so subtract vizArea's offset to convert to camera space first.
+              const clickedLocalX = (flyOrigin.screenX - vizRect.left - flyOrigin.camX) / flyOrigin.camScale;
+              const clickedLocalY = (flyOrigin.screenY - vizRect.top - flyOrigin.camY) / flyOrigin.camScale;
 
               // Ghost fly destination: move so the clicked card arrives at
-              // the target screen position, and scale to match the new tree
-              const ghostFlyX = targetScreenX - clickedLocalX * finalScale;
-              const ghostFlyY = targetScreenY - clickedLocalY * finalScale;
+              // the target position, and scale to match the new tree
+              const ghostFlyX = targetCamPosX - clickedLocalX * finalScale;
+              const ghostFlyY = targetCamPosY - clickedLocalY * finalScale;
 
               // Animate the ghost toward the destination
               const ghost = document.getElementById('ghostContainer');
