@@ -188,29 +188,22 @@ export default function AppShell() {
   const currentTreeItemId = useStore((s) => s.currentTreeItemId);
   const currentCategoryName = useStore((s) => s.currentCategoryName);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (currentViewType === 'home') return;
-    // Wait for React to render the new tree content, then center.
-    let raf2: number;
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        if (!vizAreaRef.current || !treeContainerRef.current) return;
-        const s = useStore.getState();
-        const entry = s.appHistory[s.historyIdx];
+    if (!vizAreaRef.current || !treeContainerRef.current) return;
+    const s = useStore.getState();
+    const entry = s.appHistory[s.historyIdx];
 
-        if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
-          // Restore saved camera position (back/forward or revisit)
-          s.setSnapNextCamera(true);
-          s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
-        } else {
-          // New page: center the tree
-          const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
-          s.setSnapNextCamera(true);
-          s.setTarget(x, y, scale);
-        }
-      });
-    });
-    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
+    if (entry?.cameraX !== undefined && entry?.cameraY !== undefined && entry?.cameraScale !== undefined) {
+      // Restore saved camera position (back/forward or revisit)
+      s.setSnapNextCamera(true);
+      s.setTarget(entry.cameraX, entry.cameraY, entry.cameraScale);
+    } else {
+      // New page: center the tree
+      const { x, y, scale } = calculateResetView(vizAreaRef.current!, treeContainerRef.current!);
+      s.setSnapNextCamera(true);
+      s.setTarget(x, y, scale);
+    }
   }, [currentViewType, currentTreeItemId, currentCategoryName, treeMode]);
 
   // Toggle large-tree class for performance optimizations (image hiding during camera fly)
