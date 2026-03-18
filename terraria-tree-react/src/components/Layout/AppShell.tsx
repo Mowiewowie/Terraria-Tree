@@ -523,17 +523,14 @@ export default function AppShell() {
       {/* Main content */}
       <main className="flex-grow w-full relative overflow-hidden transition-colors duration-300">
         {!isHome && (
-          <>
-            <Toolbar
-              visible={showToolbar}
-              onResetView={handleResetView}
-              onExpandTier={handleExpandTier}
-              onExpandAll={handleExpandAll}
-              onCollapseAll={handleCollapseAll}
-              onModeChange={handleModeChange}
-            />
-            <Breadcrumbs />
-          </>
+          <Toolbar
+            visible={showToolbar}
+            onResetView={handleResetView}
+            onExpandTier={handleExpandTier}
+            onExpandAll={handleExpandAll}
+            onCollapseAll={handleCollapseAll}
+            onModeChange={handleModeChange}
+          />
         )}
 
         <CanvasContainer
@@ -548,6 +545,8 @@ export default function AppShell() {
           {renderContent()}
         </CanvasContainer>
       </main>
+
+      {!isHome && <Breadcrumbs />}
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
