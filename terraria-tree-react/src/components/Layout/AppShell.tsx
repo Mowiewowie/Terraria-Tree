@@ -2,6 +2,8 @@ import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react
 import { useStore } from '../../store/useStore';
 import { useHistory } from '../../hooks/useHistory';
 import { viewItem, viewCategory, viewHome, switchMode, transitionToNewItem, calculateResetView, saveCurrentState, estimateTreeSize } from '../../router/navigation';
+import { highlightCard } from '../../utils/highlight';
+import { createDirectImageUrl, FALLBACK_ICON } from '../../utils/image';
 import SearchBar from './SearchBar';
 import Toolbar from './Toolbar';
 import SettingsModal from './SettingsModal';
@@ -9,6 +11,7 @@ import CanvasContainer from '../Canvas/CanvasContainer';
 import TreeView from '../Tree/TreeView';
 import CategoryView from '../Category/CategoryView';
 import DiscoverRoot from '../Discover/DiscoverRoot';
+import Breadcrumbs from './Breadcrumbs';
 import type { ItemIndexEntry, TreeMode } from '../../types/items';
 
 /** Abbreviate status text for narrow screens: "v1.4.5 (Vanilla, Calamity)" → "v1.4.5 V+C" */
@@ -206,6 +209,109 @@ export default function AppShell() {
     }
   }, [currentViewType, currentTreeItemId, currentCategoryName, treeMode]);
 
+  // Icon dot fly: animate a small dot from viewport center to bridge card on back/forward
+  const highlightItemId = useStore((s) => s.highlightItemId);
+  useEffect(() => {
+    if (!highlightItemId) return;
+    const container = treeContainerRef.current;
+    if (!container) return;
+
+    // Look up item info for the dot icon
+    const s = useStore.getState();
+    const itemData = s.itemsDatabase[highlightItemId];
+    const iconUrl = itemData?.IconUrl || createDirectImageUrl(itemData?.DisplayName);
+
+    // Hide container while dot flies
+    container.style.transition = 'none';
+    container.style.opacity = '0';
+
+    // Create the flying dot element (position: fixed, screen space)
+    const dot = document.createElement('div');
+    dot.style.cssText = `
+      position: fixed;
+      z-index: 9998;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 2px solid #f59e0b;
+      box-shadow: 0 0 12px 2px rgba(245, 158, 11, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: none;
+    `;
+    const img = document.createElement('img');
+    img.src = iconUrl;
+    img.style.cssText = 'width: 32px; height: 32px; object-fit: contain;';
+    img.onerror = () => { img.src = FALLBACK_ICON; };
+    dot.appendChild(img);
+    document.body.appendChild(dot);
+
+    // After tree renders + camera snaps, find the bridge card and animate dot to it
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        const card = document.querySelector<HTMLElement>(
+          `.item-card[data-id="${CSS.escape(highlightItemId)}"]`
+        );
+
+        if (!card) {
+          // Bridge card not visible (collapsed) — just show tree immediately
+          dot.remove();
+          container.style.transition = '';
+          container.style.opacity = '1';
+          useStore.getState().setHighlightItemId(null);
+          return;
+        }
+
+        const cardRect = card.getBoundingClientRect();
+        const targetX = cardRect.left + cardRect.width / 2;
+        const targetY = cardRect.top + cardRect.height / 2;
+
+        // Animate dot from center to card position
+        dot.style.transition = 'left 0.3s ease-out, top 0.3s ease-out';
+        dot.style.left = `${targetX}px`;
+        dot.style.top = `${targetY}px`;
+
+        const onEnd = () => {
+          dot.removeEventListener('transitionend', onEnd);
+          // Fade in the tree container
+          container.style.transition = 'opacity 0.15s ease';
+          container.style.opacity = '1';
+          // Remove dot
+          dot.remove();
+          // Highlight the bridge card with glow
+          highlightCard(card, '#f59e0b');
+          useStore.getState().setHighlightItemId(null);
+        };
+        dot.addEventListener('transitionend', onEnd);
+
+        // Safety timeout in case transitionend doesn't fire
+        setTimeout(() => {
+          if (dot.parentNode) {
+            dot.remove();
+            container.style.transition = '';
+            container.style.opacity = '1';
+            useStore.getState().setHighlightItemId(null);
+          }
+        }, 500);
+      });
+
+      return () => cancelAnimationFrame(raf2);
+    });
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      if (dot.parentNode) dot.remove();
+      container.style.transition = '';
+      container.style.opacity = '1';
+    };
+  }, [highlightItemId]);
+
   // Toggle large-tree class for performance optimizations (image hiding during camera fly)
   const expandedNodes = useStore((s) => s.expandedNodes);
   useEffect(() => {
@@ -398,14 +504,17 @@ export default function AppShell() {
       {/* Main content */}
       <main className="flex-grow w-full relative overflow-hidden transition-colors duration-300">
         {!isHome && (
-          <Toolbar
-            visible={showToolbar}
-            onResetView={handleResetView}
-            onExpandTier={handleExpandTier}
-            onExpandAll={handleExpandAll}
-            onCollapseAll={handleCollapseAll}
-            onModeChange={handleModeChange}
-          />
+          <>
+            <Toolbar
+              visible={showToolbar}
+              onResetView={handleResetView}
+              onExpandTier={handleExpandTier}
+              onExpandAll={handleExpandAll}
+              onCollapseAll={handleCollapseAll}
+              onModeChange={handleModeChange}
+            />
+            <Breadcrumbs />
+          </>
         )}
 
         <CanvasContainer

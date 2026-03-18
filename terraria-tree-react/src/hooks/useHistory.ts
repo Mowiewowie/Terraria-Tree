@@ -59,7 +59,15 @@ export function useHistory() {
       // Tree view — restore all saved state
       const s2 = useStore.getState();
       s2.setHistoryIdx(targetIdx);
-      s2.setHighlightItemId(null);
+
+      // Determine bridge item: the item connecting this page to where we came from
+      // Back: bridge = root of the page we just left (exists on this page's tree)
+      // Forward: bridge = root of the destination page
+      const goingBack = targetIdx < s.historyIdx;
+      const bridgeEntry = goingBack ? s.appHistory[s.historyIdx] : s.appHistory[targetIdx];
+      const bridgeId = bridgeEntry?.id || null;
+      s2.setHighlightItemId(bridgeId);
+
       if (state.mode) s2.setTreeMode(state.mode);
       if (state.expanded) s2.setExpandedNodes(new Set(state.expanded));
       if (state.discoverItems) s2.setDiscoverBoxItems(state.discoverItems);
