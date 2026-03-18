@@ -180,15 +180,19 @@ export default function ConvergenceOverlay({
   const expandedNodes = useStore((s) => s.expandedNodes);
 
   // Redraw on layout changes and when expanded nodes change (new cards may be visible)
+  // Debounced: tier-by-tier expand-all fires multiple expandedNodes changes in rapid
+  // succession. Debounce ensures we only redraw once after all tiers finish.
   useEffect(() => {
-    // Triple rAF to ensure layout is settled (especially after auto-expand)
     let raf1: number, raf2: number, raf3: number;
-    raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        raf3 = requestAnimationFrame(redraw);
+    const timeout = setTimeout(() => {
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          raf3 = requestAnimationFrame(redraw);
+        });
       });
-    });
+    }, 100);
     return () => {
+      clearTimeout(timeout);
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
       cancelAnimationFrame(raf3);

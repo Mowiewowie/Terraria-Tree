@@ -76,20 +76,17 @@ const ForwardChainNode = memo(function ForwardChainNode({
 
   return (
     <div ref={nodeRef} className="tree-node">
-      <div
-        className={`${isConvergenceTarget ? 'convergence-target' : ''}`}
-        style={convergenceStyle}
-      >
-        <ItemCard
-          data={data}
-          onTooltipShow={onTooltipShow}
-          onTooltipMove={onTooltipMove}
-          onTooltipHide={onTooltipHide}
-          onNavigate={onNavigate}
-          onCategoryView={onCategoryView}
-          onCollectedToggle={onCollectedToggle}
-        />
-      </div>
+      <ItemCard
+        data={data}
+        extraClassName={isConvergenceTarget ? 'convergence-target' : undefined}
+        extraStyle={convergenceStyle}
+        onTooltipShow={onTooltipShow}
+        onTooltipMove={onTooltipMove}
+        onTooltipHide={onTooltipHide}
+        onNavigate={onNavigate}
+        onCategoryView={onCategoryView}
+        onCollectedToggle={onCollectedToggle}
+      />
 
       {hasChildren && (
         <>

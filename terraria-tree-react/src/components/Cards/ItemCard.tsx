@@ -16,6 +16,8 @@ interface ItemCardProps {
   onNavigate?: (cardEl: HTMLDivElement, id: string) => void;
   onCategoryView?: (category: string) => void;
   onCollectedToggle?: (id: string) => boolean;
+  extraClassName?: string;
+  extraStyle?: React.CSSProperties;
 }
 
 const ItemCard = memo(function ItemCard({
@@ -29,6 +31,8 @@ const ItemCard = memo(function ItemCard({
   onNavigate,
   onCategoryView,
   onCollectedToggle,
+  extraClassName,
+  extraStyle,
 }: ItemCardProps) {
   const collectedItems = useStore((s) => s.collectedItems);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -96,8 +100,8 @@ const ItemCard = memo(function ItemCard({
   return (
     <div
       ref={cardRef}
-      className={`item-card relative flex flex-col items-center justify-center rounded-lg ${isLarge ? 'w-32 h-32' : 'w-24 h-24'} ${isCollected ? 'item-card-collected' : ''}`}
-      style={bgStyle}
+      className={`item-card relative flex flex-col items-center justify-center rounded-lg ${isLarge ? 'w-32 h-32' : 'w-24 h-24'} ${isCollected ? 'item-card-collected' : ''} ${extraClassName || ''}`}
+      style={extraStyle ? { ...bgStyle, ...extraStyle } : bgStyle}
       data-id={itemId}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
