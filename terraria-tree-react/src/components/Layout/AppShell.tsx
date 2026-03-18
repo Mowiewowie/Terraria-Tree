@@ -80,7 +80,30 @@ export default function AppShell() {
   }, []);
 
   const handleModeSwitch = useCallback((mode: TreeMode) => {
+    const s = useStore.getState();
+    if (s.treeMode === mode) return;
+
+    // Capture root card position for dot fly on mode switch
+    const rootId = s.currentTreeItemId;
+    if (rootId) {
+      const card = document.querySelector<HTMLElement>(
+        `.item-card[data-id="${CSS.escape(rootId)}"]`
+      );
+      if (card) {
+        const rect = card.getBoundingClientRect();
+        s.setHighlightOrigin({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        });
+      }
+    }
+
     switchMode(mode);
+
+    // Trigger dot fly to root card on new tree
+    if (rootId) {
+      s.setHighlightItemId(rootId);
+    }
   }, []);
 
   const handleHomeClick = useCallback(() => {
