@@ -89,31 +89,34 @@ export default function AppShell() {
     // Save current state BEFORE swap (captures correct camera + itemLocations)
     saveCurrentState();
 
-    // Capture clicked card's screen position + current camera state.
-    // The auto-center effect will use this to fly the ghost (old tree)
-    // toward the correct destination before crossfading.
-    const cardRect = cardEl.getBoundingClientRect();
-    flyOriginRef.current = {
-      screenX: cardRect.left + cardRect.width / 2,
-      screenY: cardRect.top + cardRect.height / 2,
-      camX: s.targetX,
-      camY: s.targetY,
-      camScale: s.targetScale,
-      itemId: id,
-    };
-
     // Flash the clicked item (= new page's root) on the destination page
     s.setHighlightItemId(id);
 
-    // Clone ghost of old tree at current camera position, hide container
+    // Clone ghost of old tree — createGhost snaps to targetX/Y before cloning
     createGhost();
 
-    // Add dim effect to ghost: highlight clicked card, dim everything else
+    // Measure card position from the GHOST (not the original cardEl).
+    // createGhost snaps the container to targetX/Y before cloning, so
+    // the ghost is at targetX/Y. Measuring from the ghost ensures the
+    // screen position and camX/Y/Scale are consistent.
     const ghost = document.getElementById('ghostContainer');
     if (ghost) {
+      const ghostCard = ghost.querySelector<HTMLElement>(`.item-card[data-id="${id}"]`);
+      if (ghostCard) {
+        const cardRect = ghostCard.getBoundingClientRect();
+        flyOriginRef.current = {
+          screenX: cardRect.left + cardRect.width / 2,
+          screenY: cardRect.top + cardRect.height / 2,
+          camX: s.targetX,
+          camY: s.targetY,
+          camScale: s.targetScale,
+          itemId: id,
+        };
+      }
+
+      // Add dim effect to ghost: highlight clicked card, dim everything else
       ghost.classList.add('fade-unfocused');
-      const bridgeCard = ghost.querySelector<HTMLElement>(`.item-card[data-id="${id}"]`);
-      if (bridgeCard) bridgeCard.classList.add('hero-bridge');
+      if (ghostCard) ghostCard.classList.add('hero-bridge');
     }
 
     // Swap content to new tree (invisible — container is at opacity 0)
