@@ -49,6 +49,10 @@ export default function AppShell() {
   const vizAreaRef = useRef<HTMLDivElement>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
 
+  // Stores the clicked card's screen position so the auto-center effect
+  // can position the new tree with the root card at that same spot.
+  const flyOriginRef = useRef<{ screenX: number; screenY: number } | null>(null);
+
   // Crossfade transitions (split into createGhost + startFade to avoid race conditions)
   const { performCrossfade, createGhost, startFade } = useTransition(treeContainerRef);
 
@@ -77,38 +81,25 @@ export default function AppShell() {
 
     const s = useStore.getState();
 
-    // Save current state BEFORE fly (captures correct camera + itemLocations)
+    // Save current state BEFORE swap (captures correct camera + itemLocations)
     saveCurrentState();
 
-    // Get bridge card's local center on current page
-    const startLocal = getLocalCenter(cardEl, treeContainer, s.targetScale);
-
-    // Hero fly setup: dim other cards, keep bridge visible
-    cardEl.classList.add('hero-bridge');
-    treeContainer.classList.add('fade-unfocused');
-
-    // Fly toward approximate destination (center at scale 1.1).
-    // The exact position is calculated after the new tree renders.
-    const vizRect = vizArea.getBoundingClientRect();
-    const futureScale = 1.1;
-    const flyX = vizRect.width / 2 - startLocal.x * futureScale;
-    const flyY = vizRect.height / 2 - startLocal.y * futureScale;
-    s.setTarget(flyX, flyY, futureScale);
+    // Capture where the clicked card is on screen — the auto-center effect
+    // will position the new tree so the root card appears at this same spot,
+    // creating a visual "pivot" around the clicked card.
+    const cardRect = cardEl.getBoundingClientRect();
+    flyOriginRef.current = {
+      screenX: cardRect.left + cardRect.width / 2,
+      screenY: cardRect.top + cardRect.height / 2,
+    };
 
     // Flash the clicked item (= new page's root) on the destination page
     s.setHighlightItemId(id);
 
-    // Wait for camera fly, then clone ghost and swap content
-    setTimeout(() => {
-      treeContainer.classList.remove('fade-unfocused');
-      void treeContainer.offsetWidth; // force reflow before ghost clone
-
-      // Phase 1: Clone ghost of old tree at fly-end position.
-      // Don't start fade yet — auto-center will call startFade()
-      // after calculating the exact camera position for the new tree.
-      createGhost();
-      transitionToNewItem(id, true); // skipSave — already saved above
-    }, 400);
+    // Immediately clone ghost of old tree and swap content.
+    // No fly animation — the crossfade + camera lerp provides the transition.
+    createGhost();
+    transitionToNewItem(id, true); // skipSave — already saved above
   }, [performCrossfade, createGhost]);
 
   const handleCategoryView = useCallback((category: string) => {
@@ -286,9 +277,14 @@ export default function AppShell() {
 
           if (!hasSavedCamera) {
             // Forward item click: position the new tree so the root card
-            // (= the clicked item) is at viewport center, matching where
-            // the ghost's bridge card ended up after the 400ms fly.
+            // appears at the same screen position as the clicked card.
+            // This creates a visual "pivot" — the card stays put while
+            // old content fades away and new content fades in around it.
             // Then animate from that position to the final resetView.
+
+            // Consume the fly origin (clicked card's screen position)
+            const flyOrigin = flyOriginRef.current;
+            flyOriginRef.current = null;
 
             // Temporarily set container to final position to measure root card
             treeContainerRef.current.style.transform =
@@ -299,13 +295,12 @@ export default function AppShell() {
               `.item-card[data-id="${s.highlightItemId}"], .is-root .item-card`,
             );
 
-            if (rootCard) {
+            if (rootCard && flyOrigin) {
               const rootLocal = getLocalCenter(rootCard, treeContainerRef.current, finalScale);
-              const vizRect = vizAreaRef.current!.getBoundingClientRect();
 
-              // Start position: root card centered in viewport
-              const startX = vizRect.width / 2 - rootLocal.x * finalScale;
-              const startY = vizRect.height / 2 - rootLocal.y * finalScale;
+              // Start position: root card at the clicked card's screen position
+              const startX = flyOrigin.screenX - rootLocal.x * finalScale;
+              const startY = flyOrigin.screenY - rootLocal.y * finalScale;
 
               // Snap camera + container to start position
               s.setSnapNextCamera(true);
@@ -316,14 +311,14 @@ export default function AppShell() {
               // Begin crossfade (ghost fades out, container fades in)
               startFade();
 
-              // Animate camera from center-based to final position during crossfade.
+              // Animate camera from card position to final resetView during crossfade.
               // The 15% lerp takes ~30 frames (~500ms) — nicely overlaps with
               // the 600ms crossfade, creating a smooth pivot effect.
               requestAnimationFrame(() => {
                 useStore.getState().setTarget(finalX, finalY, finalScale);
               });
             } else {
-              // No root card found — just snap to final and crossfade
+              // No root card or no fly origin — just snap to final and crossfade
               s.setSnapNextCamera(true);
               s.setTarget(finalX, finalY, finalScale);
               treeContainerRef.current.style.transform =
