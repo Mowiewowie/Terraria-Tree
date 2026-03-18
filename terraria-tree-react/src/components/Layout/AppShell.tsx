@@ -49,9 +49,14 @@ export default function AppShell() {
   const vizAreaRef = useRef<HTMLDivElement>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
 
-  // Stores the clicked card's screen position so the auto-center effect
-  // can position the new tree with the root card at that same spot.
-  const flyOriginRef = useRef<{ screenX: number; screenY: number } | null>(null);
+  // Stores the clicked card's screen position + camera state at click time.
+  // The auto-center effect uses this to fly the ghost toward the correct
+  // destination before crossfading to the new tree.
+  const flyOriginRef = useRef<{
+    screenX: number; screenY: number;
+    camX: number; camY: number; camScale: number;
+    itemId: string;
+  } | null>(null);
 
   // Crossfade transitions (split into createGhost + startFade to avoid race conditions)
   const { performCrossfade, createGhost, startFade } = useTransition(treeContainerRef);
@@ -84,21 +89,34 @@ export default function AppShell() {
     // Save current state BEFORE swap (captures correct camera + itemLocations)
     saveCurrentState();
 
-    // Capture where the clicked card is on screen — the auto-center effect
-    // will position the new tree so the root card appears at this same spot,
-    // creating a visual "pivot" around the clicked card.
+    // Capture clicked card's screen position + current camera state.
+    // The auto-center effect will use this to fly the ghost (old tree)
+    // toward the correct destination before crossfading.
     const cardRect = cardEl.getBoundingClientRect();
     flyOriginRef.current = {
       screenX: cardRect.left + cardRect.width / 2,
       screenY: cardRect.top + cardRect.height / 2,
+      camX: s.targetX,
+      camY: s.targetY,
+      camScale: s.targetScale,
+      itemId: id,
     };
 
     // Flash the clicked item (= new page's root) on the destination page
     s.setHighlightItemId(id);
 
-    // Immediately clone ghost of old tree and swap content.
-    // No fly animation — the crossfade + camera lerp provides the transition.
+    // Clone ghost of old tree at current camera position, hide container
     createGhost();
+
+    // Add dim effect to ghost: highlight clicked card, dim everything else
+    const ghost = document.getElementById('ghostContainer');
+    if (ghost) {
+      ghost.classList.add('fade-unfocused');
+      const bridgeCard = ghost.querySelector<HTMLElement>(`.item-card[data-id="${id}"]`);
+      if (bridgeCard) bridgeCard.classList.add('hero-bridge');
+    }
+
+    // Swap content to new tree (invisible — container is at opacity 0)
     transitionToNewItem(id, true); // skipSave — already saved above
   }, [performCrossfade, createGhost]);
 
@@ -276,13 +294,10 @@ export default function AppShell() {
           }
 
           if (!hasSavedCamera) {
-            // Forward item click: position the new tree so the root card
-            // appears at the same screen position as the clicked card.
-            // This creates a visual "pivot" — the card stays put while
-            // old content fades away and new content fades in around it.
-            // Then animate from that position to the final resetView.
+            // Forward item click: fly the ghost (old tree) toward where
+            // the clicked item will be on the new tree, THEN crossfade.
 
-            // Consume the fly origin (clicked card's screen position)
+            // Consume the fly origin
             const flyOrigin = flyOriginRef.current;
             flyOriginRef.current = null;
 
@@ -298,25 +313,42 @@ export default function AppShell() {
             if (rootCard && flyOrigin) {
               const rootLocal = getLocalCenter(rootCard, treeContainerRef.current, finalScale);
 
-              // Start position: root card at the clicked card's screen position
-              const startX = flyOrigin.screenX - rootLocal.x * finalScale;
-              const startY = flyOrigin.screenY - rootLocal.y * finalScale;
+              // Where the root card will be on screen at the final camera position
+              const targetScreenX = finalX + rootLocal.x * finalScale;
+              const targetScreenY = finalY + rootLocal.y * finalScale;
 
-              // Snap camera + container to start position
+              // Calculate clicked card's local position on the old tree
+              const clickedLocalX = (flyOrigin.screenX - flyOrigin.camX) / flyOrigin.camScale;
+              const clickedLocalY = (flyOrigin.screenY - flyOrigin.camY) / flyOrigin.camScale;
+
+              // Ghost fly destination: move so the clicked card arrives at
+              // the target screen position, and scale to match the new tree
+              const ghostFlyX = targetScreenX - clickedLocalX * finalScale;
+              const ghostFlyY = targetScreenY - clickedLocalY * finalScale;
+
+              // Animate the ghost toward the destination
+              const ghost = document.getElementById('ghostContainer');
+              if (ghost) {
+                ghost.style.transition = 'transform 0.4s ease-in-out';
+                ghost.style.transform = `translate3d(${ghostFlyX}px, ${ghostFlyY}px, 0) scale(${finalScale})`;
+              }
+
+              // Snap container to final position (still invisible at opacity 0)
               s.setSnapNextCamera(true);
-              s.setTarget(startX, startY, finalScale);
+              s.setTarget(finalX, finalY, finalScale);
               treeContainerRef.current.style.transform =
-                `translate3d(${startX}px, ${startY}px, 0) scale(${finalScale})`;
+                `translate3d(${finalX}px, ${finalY}px, 0) scale(${finalScale})`;
 
-              // Begin crossfade (ghost fades out, container fades in)
-              startFade();
-
-              // Animate camera from card position to final resetView during crossfade.
-              // The 15% lerp takes ~30 frames (~500ms) — nicely overlaps with
-              // the 600ms crossfade, creating a smooth pivot effect.
-              requestAnimationFrame(() => {
-                useStore.getState().setTarget(finalX, finalY, finalScale);
-              });
+              // After ghost fly completes → crossfade
+              setTimeout(() => {
+                // Un-dim the ghost before crossfading for smoother transition
+                const g = document.getElementById('ghostContainer');
+                if (g) {
+                  g.classList.remove('fade-unfocused');
+                  void g.offsetWidth;
+                }
+                startFade();
+              }, 400);
             } else {
               // No root card or no fly origin — just snap to final and crossfade
               s.setSnapNextCamera(true);
