@@ -100,13 +100,11 @@ export default function Breadcrumbs() {
                 {label}
               </span>
               {entry.mode && entry.viewType === 'tree' && (
-                <span className={`text-[8px] sm:text-[9px] opacity-60 ${
-                  entry.mode === 'recipe' ? 'text-blue-500' :
-                  entry.mode === 'usage' ? 'text-purple-500' :
-                  'text-emerald-500'
-                }`}>
-                  {entry.mode === 'recipe' ? 'R' : entry.mode === 'usage' ? 'U' : 'D'}
-                </span>
+                <i className={`text-[8px] sm:text-[9px] opacity-60 fa-solid ${
+                  entry.mode === 'recipe' ? 'fa-hammer text-blue-500' :
+                  entry.mode === 'usage' ? 'fa-code-branch text-purple-500' :
+                  'fa-compass text-emerald-500'
+                }`} />
               )}
             </button>
           </div>
