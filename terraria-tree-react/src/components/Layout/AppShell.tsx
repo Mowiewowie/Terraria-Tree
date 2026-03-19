@@ -157,45 +157,10 @@ export default function AppShell() {
   // Tier-by-tier expand: expands one layer at a time to distribute render work
   // across multiple frames, preventing UI freezes on massive trees.
   const doExpandAll = useCallback((snapAtEnd = false) => {
-    const vizArea = vizAreaRef.current;
-    const treeContainer = treeContainerRef.current;
-    if (!treeContainer || !vizArea) return;
-
-    // For large trees, pre-snap camera to root at minScale before expanding.
-    // This avoids relying on post-expansion measurements (unreliable with content-visibility)
-    // and prevents the jarring camera fly after expansion completes.
-    const s0 = useStore.getState();
-    const estimated = estimateTreeSize(s0.currentTreeItemId, s0.treeMode);
-    if (estimated > 50) {
-      const vizRect = vizArea.getBoundingClientRect();
-      const vWidth = vizRect.width || window.innerWidth;
-      const vHeight = vizRect.height || window.innerHeight;
-      const minScale = vWidth < 768 ? 0.4 : 0.25;
-
-      const rootCard = treeContainer.querySelector<HTMLElement>('.is-root .item-card')
-        || treeContainer.querySelector<HTMLElement>('.is-root');
-      if (rootCard) {
-        const trRect = treeContainer.getBoundingClientRect();
-        const matrix = new DOMMatrix(getComputedStyle(treeContainer).transform);
-        const currentScale = matrix.a || 1;
-        const rootRect = rootCard.getBoundingClientRect();
-        const rootLocalCX = (rootRect.left + rootRect.width / 2 - trRect.left) / currentScale;
-        const rootLocalTop = (rootRect.top - trRect.top) / currentScale;
-
-        const isUsageMode = treeContainer.classList.contains('mode-usage');
-        const newX = vWidth / 2 - rootLocalCX * minScale;
-        const newY = isUsageMode
-          ? (vHeight - 60) - (rootLocalTop + rootRect.height / currentScale) * minScale
-          : 40 - rootLocalTop * minScale;
-
-        s0.setSnapNextCamera(true);
-        s0.setTarget(newX, newY, minScale);
-      }
-    }
-
     let iteration = 0;
     const expandNextTier = () => {
-      if (!treeContainerRef.current || iteration >= 20) {
+      const treeContainer = treeContainerRef.current;
+      if (!treeContainer || iteration >= 20) {
         if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
         resetViewDelayed();
         return;
