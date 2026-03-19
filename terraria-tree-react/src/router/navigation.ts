@@ -239,15 +239,13 @@ export function calculateResetView(
   const scaleY = (vHeight - paddingY) / (treeHeight || 1);
   const scale = Math.max(minScale, Math.min(scaleX, scaleY, 1.1));
 
-  // Horizontal: center the tree
-  const x = (vWidth - (treeWidth * scale)) / 2;
-
-  // Vertical: anchor to root card for reliable positioning
-  // (scrollHeight can be inaccurate with content-visibility: auto)
+  // Anchor camera to root card for reliable positioning
+  // (scrollWidth/scrollHeight can be inaccurate with content-visibility: auto)
   const isUsageMode = treeContainer.classList.contains('mode-usage');
   const rootCard = treeContainer.querySelector<HTMLElement>('.is-root .item-card')
     || treeContainer.querySelector<HTMLElement>('.is-root');
 
+  let x: number;
   let y: number;
   if (rootCard) {
     const trRect = treeContainer.getBoundingClientRect();
@@ -255,8 +253,12 @@ export function calculateResetView(
     const currentScale = matrix.a || 1;
 
     const rootRect = rootCard.getBoundingClientRect();
+    const rootLocalCX = (rootRect.left + rootRect.width / 2 - trRect.left) / currentScale;
     const rootLocalTop = (rootRect.top - trRect.top) / currentScale;
     const rootLocalBottom = rootLocalTop + rootRect.height / currentScale;
+
+    // Horizontal: center viewport on root card (root is always at tree center by CSS layout)
+    x = vWidth / 2 - rootLocalCX * scale;
 
     if (isUsageMode) {
       // Usage mode (column-reverse): root at bottom, show near bottom of viewport
@@ -274,7 +276,8 @@ export function calculateResetView(
       if (centeredY > topPad) y = centeredY;
     }
   } else {
-    // Fallback: center vertically
+    // Fallback: center based on scroll dimensions
+    x = (vWidth - (treeWidth * scale)) / 2;
     y = Math.max(40, (vHeight - (treeHeight * scale)) / 2);
   }
 
