@@ -47,8 +47,10 @@ export default function AppShell() {
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [expandWarning, setExpandWarning] = useState<{ show: boolean; count: number }>({ show: false, count: 0 });
+  const [isStabilizing, setIsStabilizing] = useState(false);
   const vizAreaRef = useRef<HTMLDivElement>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
+  const stabilizeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Wire up browser history (popstate) — no animations
   useHistory();
@@ -112,12 +114,62 @@ export default function AppShell() {
 
   // --- Toolbar handlers ---
 
-  const handleResetView = useCallback(() => {
-    if (!vizAreaRef.current || !treeContainerRef.current) return;
-    const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
-    useStore.getState().setTarget(x, y, scale);
-    saveCurrentState();
+  // Iterative camera stabilization: keeps calling calculateResetView() until the
+  // output converges. Needed because content-visibility: auto makes scrollWidth/Height
+  // unreliable — each snap brings new nodes into viewport, changing dimensions.
+  const stabilizeView = useCallback((snap = false) => {
+    const vizArea = vizAreaRef.current;
+    const treeContainer = treeContainerRef.current;
+    if (!vizArea || !treeContainer) return;
+
+    // Cancel any in-progress stabilization
+    if (stabilizeRef.current) clearTimeout(stabilizeRef.current);
+
+    setIsStabilizing(true);
+    let iteration = 0;
+    let prevX = NaN, prevY = NaN, prevScale = NaN;
+
+    const step = () => {
+      if (!vizAreaRef.current || !treeContainerRef.current) {
+        setIsStabilizing(false);
+        return;
+      }
+
+      const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
+
+      // Check convergence: output matches previous iteration within epsilon
+      const converged = iteration > 0 &&
+        Math.abs(x - prevX) < 5 &&
+        Math.abs(y - prevY) < 5 &&
+        Math.abs(scale - prevScale) < 0.02;
+
+      if (converged || iteration >= 10) {
+        const s = useStore.getState();
+        if (snap || iteration > 1) s.setSnapNextCamera(true);
+        s.setTarget(x, y, scale);
+        saveCurrentState();
+        setIsStabilizing(false);
+        stabilizeRef.current = null;
+        return;
+      }
+
+      // Snap camera to current best guess
+      const s = useStore.getState();
+      s.setSnapNextCamera(true);
+      s.setTarget(x, y, scale);
+      prevX = x; prevY = y; prevScale = scale;
+      iteration++;
+
+      // Wait for browser to lay out newly-visible content-visibility nodes
+      stabilizeRef.current = setTimeout(step, 150);
+    };
+
+    step();
   }, []);
+
+  const handleResetView = useCallback(() => {
+    stabilizeView();
+  }, [stabilizeView]);
 
   // Reset view after a delay (lets React render new nodes first)
   const resetViewDelayed = useCallback(() => {
@@ -159,8 +211,7 @@ export default function AppShell() {
     const expandNextTier = () => {
       const treeContainer = treeContainerRef.current;
       if (!treeContainer || iteration >= 20) {
-        if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
-        resetViewDelayed();
+        stabilizeView(snapAtEnd);
         return;
       }
       iteration++;
@@ -187,8 +238,7 @@ export default function AppShell() {
       }
 
       if (!expanded) {
-        if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
-        resetViewDelayed();
+        stabilizeView(snapAtEnd);
         return;
       }
 
@@ -200,7 +250,7 @@ export default function AppShell() {
     };
 
     expandNextTier();
-  }, [resetViewDelayed]);
+  }, [stabilizeView]);
 
   const handleExpandAll = useCallback(() => {
     const s = useStore.getState();
@@ -366,6 +416,13 @@ export default function AppShell() {
     });
     return () => cancelAnimationFrame(raf);
   }, [currentViewType, currentTreeItemId, treeMode, expandedNodes]);
+
+  // Cleanup stabilization timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (stabilizeRef.current) clearTimeout(stabilizeRef.current);
+    };
+  }, []);
 
   // Save state periodically and on unload
   useEffect(() => {
@@ -572,6 +629,15 @@ export default function AppShell() {
       {!isHome && <Breadcrumbs />}
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+
+      {/* Stabilization overlay — blocks interaction while camera converges */}
+      {isStabilizing && (
+        <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/20 pointer-events-auto select-none">
+          <div className="bg-white/90 dark:bg-slate-800/90 px-4 py-2 rounded-lg shadow-lg text-sm text-slate-600 dark:text-slate-300 flex items-center gap-2">
+            <i className="fa-solid fa-spinner fa-spin" /> Centering view...
+          </div>
+        </div>
+      )}
 
       {/* Expand All warning modal */}
       {expandWarning.show && (
