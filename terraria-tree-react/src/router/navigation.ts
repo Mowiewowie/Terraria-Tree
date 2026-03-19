@@ -221,12 +221,7 @@ export function calculateResetView(
   vizArea: HTMLElement,
   treeContainer: HTMLElement,
 ): { x: number; y: number; scale: number } {
-  // Temporarily disable content-visibility so scrollWidth/scrollHeight and
-  // getBoundingClientRect() reflect the actual fully-laid-out tree dimensions.
-  // Without this, content-visibility: auto defers layout for off-screen nodes,
-  // causing inaccurate measurements that shift the root card off-center.
-  treeContainer.classList.add('measuring-layout');
-  void treeContainer.offsetWidth; // force full reflow with content-visibility disabled
+  void vizArea.offsetWidth; // force reflow
   const vizRect = vizArea.getBoundingClientRect();
 
   const vWidth = vizRect.width || window.innerWidth;
@@ -285,9 +280,6 @@ export function calculateResetView(
     x = (vWidth - (treeWidth * scale)) / 2;
     y = Math.max(40, (vHeight - (treeHeight * scale)) / 2);
   }
-
-  // Re-enable content-visibility for rendering performance
-  treeContainer.classList.remove('measuring-layout');
 
   return { x, y, scale };
 }

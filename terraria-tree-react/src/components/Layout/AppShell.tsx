@@ -117,7 +117,10 @@ export default function AppShell() {
     const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
     useStore.getState().setTarget(x, y, scale);
     saveCurrentState();
-  }, []);
+    // Re-center again after content-visibility layout stabilizes
+    setTimeout(resetViewDelayed, 300);
+    setTimeout(resetViewDelayed, 800);
+  }, [resetViewDelayed]);
 
   // Reset view after layout settles (double-rAF ensures React has committed DOM)
   const resetViewDelayed = useCallback(() => {
@@ -162,7 +165,13 @@ export default function AppShell() {
       const treeContainer = treeContainerRef.current;
       if (!treeContainer || iteration >= 20) {
         if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
+        // After all tiers expanded, re-center multiple times to track
+        // the root card as content-visibility progressively lays out nodes.
+        // Each pass re-measures the root card's position (which shifts as
+        // the browser lazily lays out off-screen nodes, changing tree width).
         resetViewDelayed();
+        setTimeout(resetViewDelayed, 300);
+        setTimeout(resetViewDelayed, 800);
         return;
       }
       iteration++;
@@ -191,6 +200,8 @@ export default function AppShell() {
       if (!expanded) {
         if (snapAtEnd) useStore.getState().setSnapNextCamera(true);
         resetViewDelayed();
+        setTimeout(resetViewDelayed, 300);
+        setTimeout(resetViewDelayed, 800);
         return;
       }
 
