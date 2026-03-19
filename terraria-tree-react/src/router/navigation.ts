@@ -230,15 +230,53 @@ export function calculateResetView(
   const treeWidth = treeContainer.scrollWidth;
   const treeHeight = treeContainer.scrollHeight;
 
+  // Responsive min scale: higher on mobile for readability, prevents lag on large trees
+  const minScale = vWidth < 768 ? 0.4 : 0.25;
+
   const paddingX = 80;
   const paddingY = 80;
   const scaleX = (vWidth - paddingX) / (treeWidth || 1);
   const scaleY = (vHeight - paddingY) / (treeHeight || 1);
-
-  const minScale = Math.min(0.15, 200 / Math.max(vWidth, 1));
   const scale = Math.max(minScale, Math.min(scaleX, scaleY, 1.1));
-  const x = (vWidth - ((treeWidth || 0) * scale)) / 2;
-  const y = Math.max(40, (vHeight - ((treeHeight || 0) * scale)) / 2);
+
+  // Horizontal: center the tree
+  const x = (vWidth - (treeWidth * scale)) / 2;
+
+  // Vertical: anchor to root card for reliable positioning
+  // (scrollHeight can be inaccurate with content-visibility: auto)
+  const isUsageMode = treeContainer.classList.contains('mode-usage');
+  const rootCard = treeContainer.querySelector<HTMLElement>('.is-root .item-card')
+    || treeContainer.querySelector<HTMLElement>('.is-root');
+
+  let y: number;
+  if (rootCard) {
+    const trRect = treeContainer.getBoundingClientRect();
+    const matrix = new DOMMatrix(getComputedStyle(treeContainer).transform);
+    const currentScale = matrix.a || 1;
+
+    const rootRect = rootCard.getBoundingClientRect();
+    const rootLocalTop = (rootRect.top - trRect.top) / currentScale;
+    const rootLocalBottom = rootLocalTop + rootRect.height / currentScale;
+
+    if (isUsageMode) {
+      // Usage mode (column-reverse): root at bottom, show near bottom of viewport
+      y = (vHeight - 60) - rootLocalBottom * scale;
+      // If tree fits entirely, center instead
+      if (treeHeight * scale <= vHeight - paddingY) {
+        y = (vHeight - (treeHeight * scale)) / 2;
+      }
+    } else {
+      // Recipe/Discover: root at top, show near top of viewport
+      const topPad = 40;
+      y = topPad - rootLocalTop * scale;
+      // If tree fits entirely, center instead
+      const centeredY = (vHeight - (treeHeight * scale)) / 2;
+      if (centeredY > topPad) y = centeredY;
+    }
+  } else {
+    // Fallback: center vertically
+    y = Math.max(40, (vHeight - (treeHeight * scale)) / 2);
+  }
 
   return { x, y, scale };
 }
@@ -316,7 +354,8 @@ export function focusSubtree(nodeEl: HTMLElement, _mode: TreeMode): void {
   // Case 3: Need to zoom out
   const sX = vpWidth / (maxX - minX);
   const sY = vpHeight / (maxY - minY);
-  const newScale = Math.max(0.15, Math.min(sX, sY, targetScale));
+  const minScale = vizRect.width < 768 ? 0.4 : 0.25;
+  const newScale = Math.max(minScale, Math.min(sX, sY, targetScale));
 
   // Zoom around viewport center for visual stability
   const vpCenterX = vizRect.width / 2;

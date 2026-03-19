@@ -161,7 +161,7 @@ export function useCanvas(
       const localY = (mouseY - s.targetY) / s.targetScale;
       const zoomDelta = -e.deltaY * 0.0015;
 
-      const newScale = Math.max(0.02, Math.min(s.targetScale + zoomDelta, 4));
+      const newScale = Math.max(0.1, Math.min(s.targetScale + zoomDelta, 4));
       const newX = mouseX - localX * newScale;
       const newY = mouseY - localY * newScale;
       s.setTarget(newX, newY, newScale);
@@ -262,7 +262,7 @@ export function useCanvas(
         const localX = (mouseX - s.targetX) / s.targetScale;
         const localY = (mouseY - s.targetY) / s.targetScale;
 
-        const newScale = Math.max(0.02, Math.min(initialScaleRef.current * zoomDelta, 4));
+        const newScale = Math.max(0.1, Math.min(initialScaleRef.current * zoomDelta, 4));
         if (Number.isFinite(newScale)) {
           s.setTarget(mouseX - localX * newScale, mouseY - localY * newScale, newScale);
           triggerAnimation();

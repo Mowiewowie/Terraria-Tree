@@ -119,14 +119,16 @@ export default function AppShell() {
     saveCurrentState();
   }, []);
 
-  // Reset view after a delay (lets React render new nodes first)
+  // Reset view after layout settles (double-rAF ensures React has committed DOM)
   const resetViewDelayed = useCallback(() => {
-    setTimeout(() => {
-      if (!vizAreaRef.current || !treeContainerRef.current) return;
-      const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
-      useStore.getState().setTarget(x, y, scale);
-      saveCurrentState();
-    }, 100);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!vizAreaRef.current || !treeContainerRef.current) return;
+        const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
+        useStore.getState().setTarget(x, y, scale);
+        saveCurrentState();
+      });
+    });
   }, []);
 
   const handleExpandTier = useCallback(() => {
