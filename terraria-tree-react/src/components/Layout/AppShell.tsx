@@ -112,16 +112,6 @@ export default function AppShell() {
 
   // --- Toolbar handlers ---
 
-  const handleResetView = useCallback(() => {
-    if (!vizAreaRef.current || !treeContainerRef.current) return;
-    const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
-    useStore.getState().setTarget(x, y, scale);
-    saveCurrentState();
-    // Re-center again after content-visibility layout stabilizes
-    setTimeout(resetViewDelayed, 300);
-    setTimeout(resetViewDelayed, 800);
-  }, [resetViewDelayed]);
-
   // Reset view after layout settles (double-rAF ensures React has committed DOM)
   const resetViewDelayed = useCallback(() => {
     requestAnimationFrame(() => {
@@ -133,6 +123,16 @@ export default function AppShell() {
       });
     });
   }, []);
+
+  const handleResetView = useCallback(() => {
+    if (!vizAreaRef.current || !treeContainerRef.current) return;
+    const { x, y, scale } = calculateResetView(vizAreaRef.current, treeContainerRef.current);
+    useStore.getState().setTarget(x, y, scale);
+    saveCurrentState();
+    // Re-center again after content-visibility layout stabilizes
+    setTimeout(resetViewDelayed, 300);
+    setTimeout(resetViewDelayed, 800);
+  }, [resetViewDelayed]);
 
   const handleExpandTier = useCallback(() => {
     const treeContainer = treeContainerRef.current;
