@@ -5,6 +5,12 @@ import { isMobileUX } from '../../utils/helpers';
 import type { ItemRecord, Recipe } from '../../types/items';
 import type { GroupTooltipData } from '../../hooks/useTooltip';
 
+// Track which item currently has mobile tooltip open (module-level, shared across all ItemCards)
+let mobileTooltipItemId: string | null = null;
+
+/** Clear mobile tooltip tracking state (called when tooltip is dismissed externally). */
+export function clearMobileTooltip() { mobileTooltipItemId = null; }
+
 interface ItemCardProps {
   data: ItemRecord;
   sizeClass?: 'sm' | 'lg';
@@ -54,7 +60,29 @@ const ItemCard = memo(function ItemCard({
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    // Always dismiss tooltip on click
+
+    // Mobile: first tap shows tooltip, second tap navigates
+    if (isMobileUX() && !customClickHandler) {
+      const tooltipEl = document.querySelector('.tooltip') as HTMLElement | null;
+      const isTooltipVisibleForThis = mobileTooltipItemId === itemId &&
+        tooltipEl && tooltipEl.style.visibility !== 'hidden';
+
+      if (isTooltipVisibleForThis) {
+        // Second tap — dismiss tooltip and navigate
+        mobileTooltipItemId = null;
+        onTooltipHide?.();
+        if (cardRef.current && onNavigate) {
+          onNavigate(cardRef.current, itemId);
+        }
+      } else {
+        // First tap — show tooltip, don't navigate
+        mobileTooltipItemId = itemId;
+        onTooltipShow?.(e, data, contextRecipe);
+      }
+      return;
+    }
+
+    // Desktop: dismiss tooltip on click
     onTooltipHide?.();
 
     if (customClickHandler) {
@@ -77,7 +105,7 @@ const ItemCard = memo(function ItemCard({
     if (cardRef.current && onNavigate) {
       onNavigate(cardRef.current, itemId);
     }
-  }, [customClickHandler, data.WikiUrl, data.Category, itemId, onNavigate, onCategoryView, onTooltipHide]);
+  }, [customClickHandler, data, contextRecipe, itemId, onNavigate, onCategoryView, onTooltipHide, onTooltipShow]);
 
   const handleCheckClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();

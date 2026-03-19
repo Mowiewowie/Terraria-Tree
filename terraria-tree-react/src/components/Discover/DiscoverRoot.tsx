@@ -325,6 +325,7 @@ export default function DiscoverRoot({ onNavigate, onCategoryView, onModeSwitch 
         elRef={tooltipElRef}
         onWikiClick={(url) => window.open(url, '_blank')}
         onCategoryClick={onCategoryView}
+        onDismiss={tooltipHide}
       />
     </div>
   );

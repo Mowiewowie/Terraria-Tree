@@ -60,6 +60,7 @@ export default function CategoryView({ onNavigate, onCategoryView }: CategoryVie
         elRef={tooltipElRef}
         onWikiClick={(url) => window.open(url, '_blank')}
         onCategoryClick={onCategoryView}
+        onDismiss={hide}
       />
     </div>
   );

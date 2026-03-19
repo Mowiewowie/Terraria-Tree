@@ -12,9 +12,10 @@ interface TooltipProps {
   elRef: React.RefObject<HTMLDivElement | null>;
   onWikiClick?: (url: string) => void;
   onCategoryClick?: (category: string) => void;
+  onDismiss?: () => void;
 }
 
-export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: TooltipProps) {
+export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick, onDismiss }: TooltipProps) {
   const showTransmutations = useStore((s) => s.showTransmutations);
   const selectedRecipeIndices = useStore((s) => s.selectedRecipeIndices);
   const itemsDatabase = useStore((s) => s.itemsDatabase);
@@ -47,7 +48,7 @@ export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: T
             <h3 className="terraria-text font-bold text-lg leading-tight text-amber-500">{gd.name}</h3>
             {mobile && (
               <div className="mt-3 flex gap-2 pointer-events-auto">
-                <button onClick={() => onWikiClick?.(gd.url)} className="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
+                <button onClick={() => { onWikiClick?.(gd.url); onDismiss?.(); }} className="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
                   <i className="fa-solid fa-external-link-alt" /> Wiki
                 </button>
               </div>
@@ -140,12 +141,12 @@ export default function Tooltip({ data, elRef, onWikiClick, onCategoryClick }: T
           {mobile && (
             <div className="mt-3 flex gap-2 pointer-events-auto">
               {item.WikiUrl && (
-                <button onClick={() => onWikiClick?.(item.WikiUrl)} className="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
+                <button onClick={() => { onWikiClick?.(item.WikiUrl); onDismiss?.(); }} className="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
                   <i className="fa-solid fa-external-link-alt" /> Wiki
                 </button>
               )}
               {item.Category && (
-                <button onClick={() => onCategoryClick?.(item.Category)} className="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
+                <button onClick={() => { onCategoryClick?.(item.Category); onDismiss?.(); }} className="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white py-1.5 px-2 rounded shadow text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-600">
                   <i className="fa-solid fa-layer-group" /> Category
                 </button>
               )}

@@ -1,4 +1,6 @@
-import { useState, useCallback, useRef, useLayoutEffect } from 'react';
+import { useState, useCallback, useRef, useLayoutEffect, useEffect } from 'react';
+import { isMobileUX } from '../utils/helpers';
+import { clearMobileTooltip } from '../components/Cards/ItemCard';
 import type { ItemRecord, Recipe } from '../types/items';
 
 export interface TooltipData {
@@ -90,6 +92,7 @@ export function useTooltip() {
       tooltipElRef.current.style.visibility = 'hidden';
     }
     clearTimeout(lineTimeoutRef.current);
+    clearMobileTooltip();
   }, []);
 
   const showDelayed = useCallback(
@@ -107,6 +110,19 @@ export function useTooltip() {
   const cancelDelayed = useCallback(() => {
     clearTimeout(lineTimeoutRef.current);
   }, []);
+
+  // Auto-dismiss tooltip on mobile when tapping outside item cards and tooltip
+  useEffect(() => {
+    if (!tooltip.visible || !isMobileUX()) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('.tooltip') || target.closest('.item-card')) return;
+      hide();
+    };
+    // setTimeout(0) avoids catching the current tap that opened the tooltip
+    const timeout = setTimeout(() => document.addEventListener('click', handler), 0);
+    return () => { clearTimeout(timeout); document.removeEventListener('click', handler); };
+  }, [tooltip.visible, hide]);
 
   return { tooltip, tooltipElRef, show, move, hide, showDelayed, cancelDelayed };
 }

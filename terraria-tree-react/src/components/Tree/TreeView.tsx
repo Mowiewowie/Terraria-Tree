@@ -47,6 +47,7 @@ export default function TreeView({ onNavigate, onCategoryView, onModeSwitch }: T
         elRef={tooltipElRef}
         onWikiClick={(url) => window.open(url, '_blank')}
         onCategoryClick={onCategoryView}
+        onDismiss={hide}
       />
     </div>
   );
