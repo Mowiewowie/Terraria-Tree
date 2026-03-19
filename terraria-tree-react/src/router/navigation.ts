@@ -237,49 +237,10 @@ export function calculateResetView(
   const paddingY = 80;
   const scaleX = (vWidth - paddingX) / (treeWidth || 1);
   const scaleY = (vHeight - paddingY) / (treeHeight || 1);
+
   const scale = Math.max(minScale, Math.min(scaleX, scaleY, 1.1));
-
-  // Anchor camera to root card for reliable positioning
-  // (scrollWidth/scrollHeight can be inaccurate with content-visibility: auto)
-  const isUsageMode = treeContainer.classList.contains('mode-usage');
-  const rootCard = treeContainer.querySelector<HTMLElement>('.is-root .item-card')
-    || treeContainer.querySelector<HTMLElement>('.is-root');
-
-  let x: number;
-  let y: number;
-  if (rootCard) {
-    const trRect = treeContainer.getBoundingClientRect();
-    const matrix = new DOMMatrix(getComputedStyle(treeContainer).transform);
-    const currentScale = matrix.a || 1;
-
-    const rootRect = rootCard.getBoundingClientRect();
-    const rootLocalCX = (rootRect.left + rootRect.width / 2 - trRect.left) / currentScale;
-    const rootLocalTop = (rootRect.top - trRect.top) / currentScale;
-    const rootLocalBottom = rootLocalTop + rootRect.height / currentScale;
-
-    // Horizontal: center viewport on root card (root is always at tree center by CSS layout)
-    x = vWidth / 2 - rootLocalCX * scale;
-
-    if (isUsageMode) {
-      // Usage mode (column-reverse): root at bottom, show near bottom of viewport
-      y = (vHeight - 60) - rootLocalBottom * scale;
-      // If tree fits entirely, center instead
-      if (treeHeight * scale <= vHeight - paddingY) {
-        y = (vHeight - (treeHeight * scale)) / 2;
-      }
-    } else {
-      // Recipe/Discover: root at top, show near top of viewport
-      const topPad = 40;
-      y = topPad - rootLocalTop * scale;
-      // If tree fits entirely, center instead
-      const centeredY = (vHeight - (treeHeight * scale)) / 2;
-      if (centeredY > topPad) y = centeredY;
-    }
-  } else {
-    // Fallback: center based on scroll dimensions
-    x = (vWidth - (treeWidth * scale)) / 2;
-    y = Math.max(40, (vHeight - (treeHeight * scale)) / 2);
-  }
+  const x = (vWidth - ((treeWidth || 0) * scale)) / 2;
+  const y = Math.max(40, (vHeight - ((treeHeight || 0) * scale)) / 2);
 
   return { x, y, scale };
 }
