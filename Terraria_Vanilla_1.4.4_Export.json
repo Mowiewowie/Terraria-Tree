@@ -982,7 +982,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -1169,7 +1169,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -1344,7 +1344,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -1531,7 +1531,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -2057,7 +2057,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.53%",
+        "DropChance": "2.68%",
         "Conditions": null
       },
       {
@@ -2339,7 +2339,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.53%",
+        "DropChance": "2.68%",
         "Conditions": null
       },
       {
@@ -2566,7 +2566,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.53%",
+        "DropChance": "2.68%",
         "Conditions": null
       },
       {
@@ -6351,7 +6351,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "27.48%",
+        "DropChance": "48.28%",
         "Conditions": null
       },
       {
@@ -20148,7 +20148,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "4.58%",
+        "DropChance": "4.17%",
         "Conditions": null
       },
       {
@@ -20931,7 +20931,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "4.58%",
+        "DropChance": "4.17%",
         "Conditions": null
       },
       {
@@ -21658,7 +21658,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "4.58%",
+        "DropChance": "4.17%",
         "Conditions": null
       },
       {
@@ -21879,7 +21879,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "4.58%",
+        "DropChance": "4.17%",
         "Conditions": null
       },
       {
@@ -25282,7 +25282,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.31%",
+        "DropChance": "2.3%",
         "Conditions": null
       },
       {
@@ -25397,7 +25397,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.31%",
+        "DropChance": "2.3%",
         "Conditions": null
       },
       {
@@ -25506,7 +25506,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.31%",
+        "DropChance": "2.3%",
         "Conditions": null
       },
       {
@@ -26399,7 +26399,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "3.05%",
+        "DropChance": "5.36%",
         "Conditions": null
       },
       {
@@ -26528,7 +26528,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "3.05%",
+        "DropChance": "5.36%",
         "Conditions": null
       },
       {
@@ -27114,7 +27114,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "3.05%",
+        "DropChance": "5.36%",
         "Conditions": null
       },
       {
@@ -33237,7 +33237,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "54.97%",
+        "DropChance": "50%",
         "Conditions": null
       }
     ],
@@ -34248,7 +34248,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "54.97%",
+        "DropChance": "50%",
         "Conditions": null
       }
     ],
@@ -44875,7 +44875,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -45062,7 +45062,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -45249,7 +45249,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -45424,7 +45424,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "0.98%",
+        "DropChance": "1.72%",
         "Conditions": null
       },
       {
@@ -45719,7 +45719,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.53%",
+        "DropChance": "2.68%",
         "Conditions": null
       },
       {
@@ -45920,7 +45920,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.53%",
+        "DropChance": "2.68%",
         "Conditions": null
       },
       {
@@ -46109,7 +46109,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.53%",
+        "DropChance": "2.68%",
         "Conditions": null
       },
       {
@@ -70401,7 +70401,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.31%",
+        "DropChance": "2.3%",
         "Conditions": null
       },
       {
@@ -70516,7 +70516,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.31%",
+        "DropChance": "2.3%",
         "Conditions": null
       },
       {
@@ -70625,7 +70625,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "1.31%",
+        "DropChance": "2.3%",
         "Conditions": null
       },
       {
@@ -74922,7 +74922,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "3.05%",
+        "DropChance": "5.36%",
         "Conditions": null
       },
       {
@@ -75387,7 +75387,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "3.05%",
+        "DropChance": "5.36%",
         "Conditions": null
       },
       {
@@ -75846,7 +75846,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "3.05%",
+        "DropChance": "5.36%",
         "Conditions": null
       },
       {
@@ -136236,7 +136236,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "4.58%",
+        "DropChance": "4.17%",
         "Conditions": null
       },
       {
@@ -136459,7 +136459,7 @@
       {
         "SourceNPC_ID": -1,
         "SourceNPC_Name": "Chest/Crate/Bag: Divine Crate",
-        "DropChance": "4.58%",
+        "DropChance": "4.17%",
         "Conditions": null
       },
       {
