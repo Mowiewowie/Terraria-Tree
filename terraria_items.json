@@ -5127,6 +5127,11 @@
             },
             {
                 "type": "drop",
+                "source": "Treasure Bag       (Desktop, Console and Mobile versions)     (Moon Lord)",
+                "rate": "100%"
+            },
+            {
+                "type": "drop",
                 "source": "Treasure Bag       (Desktop, Console and Mobile versions)     (Plantera)",
                 "rate": "100%"
             },
@@ -8744,11 +8749,6 @@
         "acquisition": [
             {
                 "type": "drop",
-                "source": "Goblin Archer",
-                "rate": "0.5%"
-            },
-            {
-                "type": "drop",
                 "source": "Goblin Peon",
                 "rate": "0.5%"
             },
@@ -8794,11 +8794,6 @@
             "recipes": []
         },
         "acquisition": [
-            {
-                "type": "drop",
-                "source": "Goblin Archer",
-                "rate": "49.75%"
-            },
             {
                 "type": "drop",
                 "source": "Goblin Peon",
@@ -21047,7 +21042,7 @@
     "437": {
         "id": 437,
         "name": "Dual Hook",
-        "description": "Press {InputTrigger_Grapple} to launch hook",
+        "description": "Press    Grapple    to launch hook",
         "url": "https://terraria.wiki.gg/wiki/Dual_Hook",
         "image_url": "/sprites/Dual_Hook.png",
         "generic_types": [
@@ -23420,7 +23415,7 @@
         "specific_type": "Magic Weapon",
         "damage_class": "Magic",
         "stats": {
-            "damage": 30.0,
+            "damage": 35.0,
             "knockback": 3.75,
             "usetime": 8.0,
             "velocity": 12.0,
@@ -51532,7 +51527,7 @@
             {
                 "type": "drop",
                 "source": "Angry Trapper",
-                "rate": "1%       (Desktop, Console and Mobile versions)   0.5%       (Old-gen console and 3DS versions)"
+                "rate": "1%"
             }
         ],
         "hardmode": true
@@ -84265,8 +84260,10 @@
         "description": "Can be extractinated",
         "url": "https://terraria.wiki.gg/wiki/Old_Shoe",
         "image_url": "/sprites/Old_Shoe.png",
-        "generic_types": [],
-        "specific_type": "Item",
+        "generic_types": [
+            "Miscellaneous"
+        ],
+        "specific_type": "Miscellaneous",
         "damage_class": "",
         "stats": {
             "usetime": 15.0,
@@ -84284,7 +84281,9 @@
         "description": "Can be extractinated",
         "url": "https://terraria.wiki.gg/wiki/Seaweed",
         "image_url": "/sprites/Seaweed.png",
-        "generic_types": [],
+        "generic_types": [
+            "Miscellaneous"
+        ],
         "specific_type": "Pet",
         "damage_class": "",
         "stats": {
@@ -84319,8 +84318,10 @@
         "description": "Can be extractinated",
         "url": "https://terraria.wiki.gg/wiki/Tin_Can",
         "image_url": "/sprites/Tin_Can.png",
-        "generic_types": [],
-        "specific_type": "Item",
+        "generic_types": [
+            "Miscellaneous"
+        ],
+        "specific_type": "Miscellaneous",
         "damage_class": "",
         "stats": {
             "usetime": 15.0,
@@ -99854,7 +99855,7 @@
     "2800": {
         "id": 2800,
         "name": "Anti-Gravity Hook",
-        "description": "Press {InputTrigger_Grapple} to launch hook",
+        "description": "Press    Grapple    to launch hook",
         "url": "https://terraria.wiki.gg/wiki/Anti-Gravity_Hook",
         "image_url": "/sprites/Anti-Gravity_Hook.png",
         "generic_types": [
@@ -103834,28 +103835,6 @@
         "acquisition": [],
         "hardmode": true
     },
-    "2927": {
-        "id": 2927,
-        "name": "Goblin Archer Banner",
-        "description": "Nearby players get a bonus against: Goblin Archer",
-        "url": "https://terraria.wiki.gg/wiki/Goblin_Archer_Banner",
-        "image_url": "/sprites/Goblin_Archer_Banner.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 2.0,
-            "rarity": 1
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
     "2928": {
         "id": 2928,
         "name": "Green Slime Banner",
@@ -107321,7 +107300,7 @@
         "specific_type": "Weapon",
         "damage_class": "Melee",
         "stats": {
-            "damage": 43.0,
+            "damage": 38.0,
             "knockback": 5.75,
             "usetime": 12.0,
             "velocity": 13.0,
@@ -120060,9 +120039,9 @@
         "url": "https://terraria.wiki.gg/wiki/Damage_Booster",
         "image_url": "/sprites/Damage_Booster.png",
         "generic_types": [
-            "Potion"
+            "Miscellaneous"
         ],
-        "specific_type": "Potion",
+        "specific_type": "Miscellaneous",
         "damage_class": "",
         "stats": {
             "rarity": 0
@@ -120081,9 +120060,9 @@
         "url": "https://terraria.wiki.gg/wiki/Life_Booster",
         "image_url": "/sprites/Life_Booster.png",
         "generic_types": [
-            "Potion"
+            "Miscellaneous"
         ],
-        "specific_type": "Potion",
+        "specific_type": "Miscellaneous",
         "damage_class": "",
         "stats": {
             "rarity": 0
@@ -120102,9 +120081,9 @@
         "url": "https://terraria.wiki.gg/wiki/Mana_Booster",
         "image_url": "/sprites/Mana_Booster.png",
         "generic_types": [
-            "Potion"
+            "Miscellaneous"
         ],
-        "specific_type": "Potion",
+        "specific_type": "Miscellaneous",
         "damage_class": "",
         "stats": {
             "rarity": 0
@@ -125357,8 +125336,7 @@
         "image_url": "/sprites/Conveyor_Belt_Clockwise.png",
         "generic_types": [
             "Mechanism",
-            "Block",
-            "Crafting material"
+            "Block"
         ],
         "specific_type": "Block",
         "damage_class": "",
@@ -125394,8 +125372,7 @@
         "image_url": "/sprites/Conveyor_Belt_Counter_Clockwise.png",
         "generic_types": [
             "Mechanism",
-            "Block",
-            "Crafting material"
+            "Block"
         ],
         "specific_type": "Block",
         "damage_class": "",
@@ -125823,7 +125800,7 @@
     "3623": {
         "id": 3623,
         "name": "Static Hook",
-        "description": "Press {InputTrigger_Grapple} to launch hook",
+        "description": "Press    Grapple    to launch hook",
         "url": "https://terraria.wiki.gg/wiki/Static_Hook",
         "image_url": "/sprites/Static_Hook.png",
         "generic_types": [
@@ -132293,14 +132270,14 @@
             "Weapon"
         ],
         "specific_type": "Weapon",
-        "damage_class": "Melee",
+        "damage_class": "melee",
         "stats": {
-            "damage": 32.0,
-            "knockback": 4.0,
-            "usetime": 32.0,
-            "velocity": 11.0,
-            "sell": 25.0,
-            "rarity": 2
+            "damage": 20.0,
+            "knockback": 7.0,
+            "usetime": 40.0,
+            "velocity": 6.5,
+            "sell": 1.0,
+            "rarity": 1
         },
         "crafting": {
             "is_craftable": false,
@@ -143211,10 +143188,10 @@
     },
     "4141": {
         "id": 4141,
-        "name": "Meteorite Toilet",
+        "name": "Meteor Toilet",
         "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Meteorite_Toilet",
-        "image_url": "/sprites/Meteorite_Toilet.png",
+        "url": "https://terraria.wiki.gg/wiki/Meteor_Toilet",
+        "image_url": "/sprites/Meteor_Toilet.png",
         "generic_types": [
             "Furniture"
         ],
@@ -170559,7 +170536,7 @@
     "4980": {
         "id": 4980,
         "name": "Hook of Dissonance",
-        "description": "Teleports you to the location of the hook Press {InputTrigger_Grapple} to launch hook",
+        "description": "Teleports you to the location of the hook Press    Grapple    to launch hook",
         "url": "https://terraria.wiki.gg/wiki/Hook_of_Dissonance",
         "image_url": "/sprites/Hook_of_Dissonance.png",
         "generic_types": [
@@ -179212,28 +179189,6 @@
         ],
         "hardmode": true
     },
-    "5238": {
-        "id": 5238,
-        "name": "Constellation",
-        "description": "'S. Grimson-Smith'",
-        "url": "https://terraria.wiki.gg/wiki/Constellation",
-        "image_url": "/sprites/Constellation.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
     "5239": {
         "id": 5239,
         "name": "Eyezorhead",
@@ -186856,7 +186811,8 @@
             "is_craftable": false,
             "recipes": []
         },
-        "acquisition": []
+        "acquisition": [],
+        "hardmode": true
     },
     "5462": {
         "id": 5462,
@@ -187602,39 +187558,6 @@
         },
         "acquisition": []
     },
-    "5483": {
-        "id": 5483,
-        "name": "Queen of Bees",
-        "description": "'C. Shadou'",
-        "url": "https://terraria.wiki.gg/wiki/Queen_of_Bees",
-        "image_url": "/sprites/Queen_of_Bees.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Queen Bee",
-                "rate": "6.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Treasure Bag       (Desktop, Console and Mobile versions)     (Queen Bee)",
-                "rate": "11%"
-            }
-        ]
-    },
     "5484": {
         "id": 5484,
         "name": "Cow Bell",
@@ -187712,254 +187635,6 @@
                 "rate": "1/168 (0.6%)"
             }
         ]
-    },
-    "5486": {
-        "id": 5486,
-        "name": "The Sea of Silence",
-        "description": "'R. Teare'",
-        "url": "https://terraria.wiki.gg/wiki/The_Sea_of_Silence",
-        "image_url": "/sprites/The_Sea_of_Silence.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Meteor Head",
-                "rate": "1%"
-            }
-        ]
-    },
-    "5487": {
-        "id": 5487,
-        "name": "Heroes From Another World",
-        "description": "'I. Martin'",
-        "url": "https://terraria.wiki.gg/wiki/Heroes_From_Another_World",
-        "image_url": "/sprites/Heroes_From_Another_World.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 2.0,
-            "sell": 50.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5488": {
-        "id": 5488,
-        "name": "Crystallize",
-        "description": "'G. Kalinkin'",
-        "url": "https://terraria.wiki.gg/wiki/Crystallize",
-        "image_url": "/sprites/Crystallize.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Chaos Elemental",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Enchanted Sword",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Dreamer Ghoul       (Desktop, Console and Mobile versions)",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Illuminant Bat",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Illuminant Slime",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Hallowed Mimic",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Pigron",
-                "rate": "0.5%   0.67%"
-            }
-        ]
-    },
-    "5489": {
-        "id": 5489,
-        "name": "Eater Of Life",
-        "description": "'G. Kalinkin'",
-        "url": "https://terraria.wiki.gg/wiki/Eater_Of_Life",
-        "image_url": "/sprites/Eater_Of_Life.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Clinger",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Corruptor",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Crimson Axe",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Cursed Hammer",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Desert Spirit       (Desktop, Console and Mobile versions)",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Floaty Gross",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Tainted Ghoul       (Desktop, Console and Mobile versions)",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Vile Ghoul       (Desktop, Console and Mobile versions)",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Ichor Sticker",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Lamia       (Desktop, Console and Mobile versions)    (Dark Lamia)",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Corrupt Mimic",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Crimson Mimic",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "Pigron",
-                "rate": "0.5%   0.67%"
-            },
-            {
-                "type": "drop",
-                "source": "World Feeder",
-                "rate": "0.5%   0.67%"
-            }
-        ]
-    },
-    "5490": {
-        "id": 5490,
-        "name": "Brasilian Skies",
-        "description": "'K. Lira'",
-        "url": "https://terraria.wiki.gg/wiki/Brasilian_Skies",
-        "image_url": "/sprites/Brasilian_Skies.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [],
-        "hardmode": true
-    },
-    "5491": {
-        "id": 5491,
-        "name": "Winter At Varingskollen",
-        "description": "'J. T. Kjexrud'",
-        "url": "https://terraria.wiki.gg/wiki/Winter_At_Varingskollen",
-        "image_url": "/sprites/Winter_At_Varingskollen.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 5.0,
-            "sell": 1.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
     },
     "5493": {
         "id": 5493,
@@ -188616,48 +188291,6 @@
             }
         ]
     },
-    "5510": {
-        "id": 5510,
-        "name": "Slasher's Mysterious Skull",
-        "description": "'Embrace your inner raptor - complete with nasty, big, pointy teeth!'",
-        "url": "https://terraria.wiki.gg/wiki/Slasher%27s_Mysterious_Skull",
-        "image_url": "/sprites/Slashers_Mysterious_Skull.png",
-        "generic_types": [
-            "Mount summon"
-        ],
-        "specific_type": "Mount",
-        "damage_class": "",
-        "stats": {
-            "usetime": 20.0,
-            "sell": 1.0,
-            "rarity": 8
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Iron Anvil",
-                    "ingredients": [
-                        {
-                            "name": "Amber",
-                            "amount": 5
-                        },
-                        {
-                            "name": "Fallen Star",
-                            "amount": 5
-                        },
-                        {
-                            "name": "Sturdy Fossil",
-                            "amount": 20
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5511": {
         "id": 5511,
         "name": "Pufferfish",
@@ -189140,34 +188773,6 @@
         "acquisition": [],
         "hardmode": true
     },
-    "5525": {
-        "id": 5525,
-        "name": "Cursed Piper Flute",
-        "description": "Inflicts the bearer with the nature of the rat",
-        "url": "https://terraria.wiki.gg/wiki/Cursed_Piper_Flute",
-        "image_url": "/sprites/Cursed_Piper_Flute.png",
-        "generic_types": [
-            "Mount summon"
-        ],
-        "specific_type": "Mount",
-        "damage_class": "",
-        "stats": {
-            "usetime": 20.0,
-            "sell": 1.0,
-            "rarity": 8
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Ivy Chest",
-                "rate": "1/10 (10%)"
-            }
-        ]
-    },
     "5526": {
         "id": 5526,
         "name": "Flairon",
@@ -189204,186 +188809,6 @@
             }
         ],
         "hardmode": true
-    },
-    "5527": {
-        "id": 5527,
-        "name": "Of Sea and Dreams",
-        "description": "'M. Gejdel'",
-        "url": "https://terraria.wiki.gg/wiki/Of_Sea_and_Dreams",
-        "image_url": "/sprites/Of_Sea_and_Dreams.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Ocean Crate       (Desktop, Console and Mobile versions)",
-                "rate": "1/5 (20%)"
-            },
-            {
-                "type": "drop",
-                "source": "Seaside Crate       (Desktop, Console and Mobile versions)",
-                "rate": "1/5 (20%)"
-            }
-        ],
-        "hardmode": true
-    },
-    "5528": {
-        "id": 5528,
-        "name": "The Runic Pixie",
-        "description": "'L. van Egdom'",
-        "url": "https://terraria.wiki.gg/wiki/The_Runic_Pixie",
-        "image_url": "/sprites/The_Runic_Pixie.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Living Wood Chest",
-                "rate": "2/3 (66.67%)"
-            }
-        ]
-    },
-    "5529": {
-        "id": 5529,
-        "name": "Banner of the Beast",
-        "description": "'Waasephi'",
-        "url": "https://terraria.wiki.gg/wiki/Banner_of_the_Beast",
-        "image_url": "/sprites/Banner_of_the_Beast.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5530": {
-        "id": 5530,
-        "name": "Stickman vs Terr Terr",
-        "description": "'W. Sangsuwan'",
-        "url": "https://terraria.wiki.gg/wiki/Stickman_vs_Terr_Terr",
-        "image_url": "/sprites/Stickman_vs_Terr_Terr.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 50.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5531": {
-        "id": 5531,
-        "name": "Cozy Window",
-        "description": "'L. Forestia'",
-        "url": "https://terraria.wiki.gg/wiki/Cozy_Window",
-        "image_url": "/sprites/Cozy_Window.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 1.0,
-            "sell": 20.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5532": {
-        "id": 5532,
-        "name": "Demon Altar",
-        "description": "'This is the real deal'",
-        "url": "https://terraria.wiki.gg/wiki/Demon_Altar",
-        "image_url": "/sprites/Demon_Altar.png",
-        "generic_types": [],
-        "specific_type": "Item",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "rarity": 1
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Eye of Cthulhu",
-                "rate": "100%"
-            }
-        ]
-    },
-    "5533": {
-        "id": 5533,
-        "name": "Crimson Altar",
-        "description": "'This is the real deal'",
-        "url": "https://terraria.wiki.gg/wiki/Crimson_Altar",
-        "image_url": "/sprites/Crimson_Altar.png",
-        "generic_types": [],
-        "specific_type": "Item",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "rarity": 1
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Eye of Cthulhu",
-                "rate": "100%"
-            }
-        ]
     },
     "5534": {
         "id": 5534,
@@ -190189,6 +189614,49 @@
         },
         "acquisition": []
     },
+    "5555": {
+        "id": 5555,
+        "name": "Aetherium Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Aetherium_Chandelier",
+        "image_url": "/sprites/Aetherium_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Aetherium Brick",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5556": {
         "id": 5556,
         "name": "Aetherium Chest",
@@ -190220,6 +189688,48 @@
                         {
                             "name": "Any Iron Bar",
                             "amount": 2
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5557": {
+        "id": 5557,
+        "name": "Aetherium Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Aetherium_Clock",
+        "image_url": "/sprites/Aetherium_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Aetherium Brick",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -190595,73 +190105,6 @@
                         {
                             "name": "Wire",
                             "amount": 10
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "5568": {
-        "id": 5568,
-        "name": "Aetherium Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Aetherium_Toilet",
-        "image_url": "/sprites/Aetherium_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Aetherium Brick",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "5569": {
-        "id": 5569,
-        "name": "Lava Cloud",
-        "description": "Prevents fall damage",
-        "url": "https://terraria.wiki.gg/wiki/Lava_Cloud",
-        "image_url": "/sprites/Lava_Cloud.png",
-        "generic_types": [
-            "Block"
-        ],
-        "specific_type": "Block",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sky Mill and Lava",
-                    "ingredients": [
-                        {
-                            "name": "Cloud",
-                            "amount": 1
                         }
                     ],
                     "version": "Desktop",
@@ -191130,28 +190573,6 @@
         "damage_class": "",
         "stats": {
             "sell": 5.0,
-            "rarity": 9
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [],
-        "hardmode": true
-    },
-    "5586": {
-        "id": 5586,
-        "name": "Chicken Bones' Wings",
-        "description": "'Great for impersonating devs!' Allows flight and slow fall",
-        "url": "https://terraria.wiki.gg/wiki/Chicken_Bones%27_Wings",
-        "image_url": "/sprites/Chicken_Bones_Wings.png",
-        "generic_types": [
-            "Accessory"
-        ],
-        "specific_type": "Developer Item",
-        "damage_class": "",
-        "stats": {
-            "sell": 8.0,
             "rarity": 9
         },
         "crafting": {
@@ -191922,6 +191343,49 @@
         },
         "acquisition": []
     },
+    "5608": {
+        "id": 5608,
+        "name": "Fallen Star Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Fallen_Star_Chandelier",
+        "image_url": "/sprites/Fallen_Star_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Fallen Star Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5609": {
         "id": 5609,
         "name": "Fallen Star Chest",
@@ -191953,6 +191417,48 @@
                         {
                             "name": "Fallen Star Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5610": {
+        "id": 5610,
+        "name": "Fallen Star Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Fallen_Star_Clock",
+        "image_url": "/sprites/Fallen_Star_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Fallen Star Block",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -192337,40 +191843,6 @@
         },
         "acquisition": []
     },
-    "5621": {
-        "id": 5621,
-        "name": "Fallen Star Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Fallen_Star_Toilet",
-        "image_url": "/sprites/Fallen_Star_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Fallen Star Block",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5622": {
         "id": 5622,
         "name": "Fallen Star Block",
@@ -192546,48 +192018,6 @@
             }
         ]
     },
-    "5627": {
-        "id": 5627,
-        "name": "Chippy's Cloak",
-        "description": "'Great for impersonating Terraria Enthusiasts!' Allows flight and slow fall",
-        "url": "https://terraria.wiki.gg/wiki/Chippy%27s_Cloak",
-        "image_url": "/sprites/Chippys_Cloak.png",
-        "generic_types": [
-            "Accessory"
-        ],
-        "specific_type": "Accessory",
-        "damage_class": "",
-        "stats": {
-            "sell": 8.0,
-            "rarity": 9
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Mythril Anvil",
-                    "ingredients": [
-                        {
-                            "name": "Chippy's Cloak (Inactive)",
-                            "amount": 1
-                        },
-                        {
-                            "name": "Hallowed Bar",
-                            "amount": 12
-                        },
-                        {
-                            "name": "Soul of Flight",
-                            "amount": 20
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": [],
-        "hardmode": true
-    },
     "5628": {
         "id": 5628,
         "name": "Chippy's Headband",
@@ -192667,172 +192097,6 @@
                 "rate": "1%"
             }
         ]
-    },
-    "5630": {
-        "id": 5630,
-        "name": "r/Terraria 2023",
-        "description": "'The Terraria Community'",
-        "url": "https://terraria.wiki.gg/wiki/r%2FTerraria_2023",
-        "image_url": "/sprites/rTerraria_2023.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 1.0,
-            "sell": 20.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5631": {
-        "id": 5631,
-        "name": "Bould and Bash",
-        "description": "'C. Rohde'",
-        "url": "https://terraria.wiki.gg/wiki/Bould_and_Bash",
-        "image_url": "/sprites/Bould_and_Bash.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5632": {
-        "id": 5632,
-        "name": "Dark Forebodings",
-        "description": "'The lunatic is on the grass... The lunatic is in my head...' 'C. Shadou'",
-        "url": "https://terraria.wiki.gg/wiki/Dark_Forebodings",
-        "image_url": "/sprites/Dark_Forebodings.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Dark Caster",
-                "rate": "0.67%"
-            }
-        ],
-        "hardmode": true
-    },
-    "5633": {
-        "id": 5633,
-        "name": "Oktober",
-        "description": "'The Terraria Community'",
-        "url": "https://terraria.wiki.gg/wiki/Oktober",
-        "image_url": "/sprites/Oktober.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 50.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5634": {
-        "id": 5634,
-        "name": "It's Scragglin' Time",
-        "description": "'C. Rohde'",
-        "url": "https://terraria.wiki.gg/wiki/It%27s_Scragglin%27_Time",
-        "image_url": "/sprites/Its_Scragglin_Time.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [],
-        "hardmode": true
-    },
-    "5635": {
-        "id": 5635,
-        "name": "Kaguya",
-        "description": "'C. Shadou'",
-        "url": "https://terraria.wiki.gg/wiki/Kaguya",
-        "image_url": "/sprites/Kaguya.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 1.0,
-            "sell": 20.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
-    "5636": {
-        "id": 5636,
-        "name": "Prost",
-        "description": "'The Terraria Community'",
-        "url": "https://terraria.wiki.gg/wiki/Prost",
-        "image_url": "/sprites/Prost.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "buy": 1.0,
-            "sell": 20.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
     },
     "5637": {
         "id": 5637,
@@ -193560,48 +192824,6 @@
         },
         "acquisition": []
     },
-    "5659": {
-        "id": 5659,
-        "name": "Heroicis' Wings",
-        "description": "Allows flight and slow fall 'At every setback, begin again... wiser.'",
-        "url": "https://terraria.wiki.gg/wiki/Heroicis%27_Wings",
-        "image_url": "/sprites/Heroicis_Wings.png",
-        "generic_types": [
-            "Accessory"
-        ],
-        "specific_type": "Accessory",
-        "damage_class": "",
-        "stats": {
-            "sell": 8.0,
-            "rarity": 9
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Mythril Anvil",
-                    "ingredients": [
-                        {
-                            "name": "Hallowed Bar",
-                            "amount": 12
-                        },
-                        {
-                            "name": "Heroicis' Wings (Inactive)",
-                            "amount": 1
-                        },
-                        {
-                            "name": "Soul of Flight",
-                            "amount": 20
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": [],
-        "hardmode": true
-    },
     "5660": {
         "id": 5660,
         "name": "Hallowed Crown",
@@ -193632,27 +192854,6 @@
                     "transmutation": false
                 }
             ]
-        },
-        "acquisition": []
-    },
-    "5661": {
-        "id": 5661,
-        "name": "Heroicis' Wings (Inactive)",
-        "description": "Can be activated with the right materials 'At every setback, begin again... wiser.'",
-        "url": "https://terraria.wiki.gg/wiki/Heroicis%27_Wings_%28Inactive%29",
-        "image_url": "/sprites/Heroicis_Wings_Inactive.png",
-        "generic_types": [
-            "Crafting material"
-        ],
-        "specific_type": "Crafting material",
-        "damage_class": "",
-        "stats": {
-            "sell": 2.0,
-            "rarity": 9
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
         },
         "acquisition": []
     },
@@ -194342,28 +193543,6 @@
         "acquisition": [],
         "hardmode": true
     },
-    "5686": {
-        "id": 5686,
-        "name": "Kazzymodus' Wings",
-        "description": "'Great for impersonating devs!' Allows flight and slow fall",
-        "url": "https://terraria.wiki.gg/wiki/Kazzymodus%27_Wings",
-        "image_url": "/sprites/Kazzymodus_Wings.png",
-        "generic_types": [
-            "Accessory"
-        ],
-        "specific_type": "Developer Item",
-        "damage_class": "",
-        "stats": {
-            "sell": 8.0,
-            "rarity": 9
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [],
-        "hardmode": true
-    },
     "5687": {
         "id": 5687,
         "name": "Slime Spear",
@@ -194695,6 +193874,49 @@
         },
         "acquisition": []
     },
+    "5696": {
+        "id": 5696,
+        "name": "Feywood Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Feywood_Chandelier",
+        "image_url": "/sprites/Feywood_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Living Loom",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Feywood",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5697": {
         "id": 5697,
         "name": "Feywood Chest",
@@ -194726,6 +193948,48 @@
                         {
                             "name": "Feywood",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5698": {
+        "id": 5698,
+        "name": "Feywood Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Feywood_Clock",
+        "image_url": "/sprites/Feywood_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Living Loom",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Feywood",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -195110,40 +194374,6 @@
         },
         "acquisition": []
     },
-    "5709": {
-        "id": 5709,
-        "name": "Feywood Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Feywood_Toilet",
-        "image_url": "/sprites/Feywood_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Living Loom",
-                    "ingredients": [
-                        {
-                            "name": "Feywood",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5710": {
         "id": 5710,
         "name": "Feywood",
@@ -195495,6 +194725,49 @@
         },
         "acquisition": []
     },
+    "5719": {
+        "id": 5719,
+        "name": "Hallowed Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Hallowed_Chandelier",
+        "image_url": "/sprites/Hallowed_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Hallowed Brick",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5720": {
         "id": 5720,
         "name": "Fancy Hallowed Chest",
@@ -195526,6 +194799,48 @@
                         {
                             "name": "Hallowed Brick",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5721": {
+        "id": 5721,
+        "name": "Hallowed Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Hallowed_Clock",
+        "image_url": "/sprites/Hallowed_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Hallowed Brick",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -195910,40 +195225,6 @@
         },
         "acquisition": []
     },
-    "5732": {
-        "id": 5732,
-        "name": "Hallowed Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Hallowed_Toilet",
-        "image_url": "/sprites/Hallowed_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Hallowed Brick",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5733": {
         "id": 5733,
         "name": "Hallowed Brick",
@@ -196083,33 +195364,6 @@
             "recipes": []
         },
         "acquisition": []
-    },
-    "5737": {
-        "id": 5737,
-        "name": "Chippy's Cloak (Inactive)",
-        "description": "'Great for impersonating Terraria Enthusiasts!' Can be activated with the right materials",
-        "url": "https://terraria.wiki.gg/wiki/Chippy%27s_Cloak_%28Inactive%29",
-        "image_url": "/sprites/Chippys_Cloak_Inactive.png",
-        "generic_types": [
-            "Crafting material"
-        ],
-        "specific_type": "Crafting material",
-        "damage_class": "",
-        "stats": {
-            "sell": 2.0,
-            "rarity": 9
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [
-            {
-                "type": "drop",
-                "source": "Skeletron   (Red Hat Skeletron)",
-                "rate": "100%"
-            }
-        ]
     },
     "5738": {
         "id": 5738,
@@ -196320,6 +195574,49 @@
         },
         "acquisition": []
     },
+    "5744": {
+        "id": 5744,
+        "name": "Gothic Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Gothic_Chandelier",
+        "image_url": "/sprites/Gothic_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Bone Welder",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Gothic Brick",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5745": {
         "id": 5745,
         "name": "Gothic Chest",
@@ -196351,6 +195648,48 @@
                         {
                             "name": "Gothic Brick",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5746": {
+        "id": 5746,
+        "name": "Gothic Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Gothic_Clock",
+        "image_url": "/sprites/Gothic_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Bone Welder",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Gothic Brick",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -196666,40 +196005,6 @@
         },
         "acquisition": []
     },
-    "5755": {
-        "id": 5755,
-        "name": "Gothic Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Gothic_Toilet",
-        "image_url": "/sprites/Gothic_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Bone Welder",
-                    "ingredients": [
-                        {
-                            "name": "Gothic Brick",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5756": {
         "id": 5756,
         "name": "Demonite Bathtub",
@@ -196923,6 +196228,49 @@
         },
         "acquisition": []
     },
+    "5762": {
+        "id": 5762,
+        "name": "Demonite Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Demonite_Chandelier",
+        "image_url": "/sprites/Demonite_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Demonite Brick",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5763": {
         "id": 5763,
         "name": "Demonite Chest",
@@ -196954,6 +196302,48 @@
                         {
                             "name": "Demonite Brick",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5764": {
+        "id": 5764,
+        "name": "Demonite Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Demonite_Clock",
+        "image_url": "/sprites/Demonite_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Demonite Brick",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -197298,40 +196688,6 @@
         },
         "acquisition": []
     },
-    "5774": {
-        "id": 5774,
-        "name": "Demonite Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Demonite_Toilet",
-        "image_url": "/sprites/Demonite_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Demonite Brick",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5775": {
         "id": 5775,
         "name": "Demonite Work Bench",
@@ -197629,6 +196985,49 @@
         },
         "acquisition": []
     },
+    "5783": {
+        "id": 5783,
+        "name": "Crimtane Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Crimtane_Chandelier",
+        "image_url": "/sprites/Crimtane_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Crimtane Brick",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5784": {
         "id": 5784,
         "name": "Crimtane Chest",
@@ -197660,6 +197059,48 @@
                         {
                             "name": "Crimtane Brick",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5785": {
+        "id": 5785,
+        "name": "Crimtane Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Crimtane_Clock",
+        "image_url": "/sprites/Crimtane_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Crimtane Brick",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -198004,40 +197445,6 @@
         },
         "acquisition": []
     },
-    "5795": {
-        "id": 5795,
-        "name": "Crimtane Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Crimtane_Toilet",
-        "image_url": "/sprites/Crimtane_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Crimtane Brick",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5796": {
         "id": 5796,
         "name": "Crimtane Work Bench",
@@ -198335,6 +197742,49 @@
         },
         "acquisition": []
     },
+    "5804": {
+        "id": 5804,
+        "name": "Snow Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Snow_Chandelier",
+        "image_url": "/sprites/Snow_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Ice Machine",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Snow Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5805": {
         "id": 5805,
         "name": "Snow Chest",
@@ -198366,6 +197816,48 @@
                         {
                             "name": "Snow Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5806": {
+        "id": 5806,
+        "name": "Snow Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Snow_Clock",
+        "image_url": "/sprites/Snow_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Ice Machine",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Snow Block",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -198710,40 +198202,6 @@
         },
         "acquisition": []
     },
-    "5816": {
-        "id": 5816,
-        "name": "Snow Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Snow_Toilet",
-        "image_url": "/sprites/Snow_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Ice Machine",
-                    "ingredients": [
-                        {
-                            "name": "Snow Block",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5817": {
         "id": 5817,
         "name": "Snow Work Bench",
@@ -199041,6 +198499,49 @@
         },
         "acquisition": []
     },
+    "5825": {
+        "id": 5825,
+        "name": "Flinx Fur Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Flinx_Fur_Chandelier",
+        "image_url": "/sprites/Flinx_Fur_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Flinx Fur Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5826": {
         "id": 5826,
         "name": "Flinx Fur Chest",
@@ -199072,6 +198573,48 @@
                         {
                             "name": "Flinx Fur Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5827": {
+        "id": 5827,
+        "name": "Flinx Fur Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Flinx_Fur_Clock",
+        "image_url": "/sprites/Flinx_Fur_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Flinx Fur Block",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -199416,40 +198959,6 @@
         },
         "acquisition": []
     },
-    "5837": {
-        "id": 5837,
-        "name": "Flinx Fur Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Flinx_Fur_Toilet",
-        "image_url": "/sprites/Flinx_Fur_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Flinx Fur Block",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5838": {
         "id": 5838,
         "name": "Flinx Fur Work Bench",
@@ -199784,6 +199293,68 @@
         },
         "acquisition": []
     },
+    "5845": {
+        "id": 5845,
+        "name": "Pine Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Pine_Chandelier",
+        "image_url": "/sprites/Pine_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Pine Tree Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                },
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Pine Wood",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5846": {
         "id": 5846,
         "name": "Pine Chest",
@@ -199830,6 +199401,67 @@
                         {
                             "name": "Pine Wood",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5847": {
+        "id": 5847,
+        "name": "Pine Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Pine_Clock",
+        "image_url": "/sprites/Pine_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Pine Tree Block",
+                            "amount": 10
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                },
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Pine Wood",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -200206,51 +199838,6 @@
         },
         "acquisition": []
     },
-    "5855": {
-        "id": 5855,
-        "name": "Pine Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Pine_Toilet",
-        "image_url": "/sprites/Pine_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Pine Tree Block",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                },
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Pine Wood",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5856": {
         "id": 5856,
         "name": "Pine Work Bench",
@@ -200559,6 +200146,49 @@
         },
         "acquisition": []
     },
+    "5864": {
+        "id": 5864,
+        "name": "Easter Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Easter_Chandelier",
+        "image_url": "/sprites/Easter_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Easter Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5865": {
         "id": 5865,
         "name": "Easter Chest",
@@ -200590,6 +200220,48 @@
                         {
                             "name": "Easter Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5866": {
+        "id": 5866,
+        "name": "Easter Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Easter_Clock",
+        "image_url": "/sprites/Easter_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Easter Block",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -200934,40 +200606,6 @@
         },
         "acquisition": []
     },
-    "5876": {
-        "id": 5876,
-        "name": "Easter Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Easter_Toilet",
-        "image_url": "/sprites/Easter_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Easter Block",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5877": {
         "id": 5877,
         "name": "Easter Work Bench",
@@ -201265,6 +200903,49 @@
         },
         "acquisition": []
     },
+    "5885": {
+        "id": 5885,
+        "name": "Stone Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Stone_Chandelier",
+        "image_url": "/sprites/Stone_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Heavy Assembler",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Gray Brick",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5886": {
         "id": 5886,
         "name": "Stone Chest",
@@ -201296,6 +200977,48 @@
                         {
                             "name": "Gray Brick",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5887": {
+        "id": 5887,
+        "name": "Stone Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Stone_Clock",
+        "image_url": "/sprites/Stone_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Heavy Assembler",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Gray Brick",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -201561,40 +201284,6 @@
                         {
                             "name": "Gray Brick",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "5895": {
-        "id": 5895,
-        "name": "Stone Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Stone_Toilet",
-        "image_url": "/sprites/Stone_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Heavy Assembler",
-                    "ingredients": [
-                        {
-                            "name": "Gray Brick",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -201901,6 +201590,49 @@
         },
         "acquisition": []
     },
+    "5904": {
+        "id": 5904,
+        "name": "Jellyfish Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Jellyfish_Chandelier",
+        "image_url": "/sprites/Jellyfish_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Jellyfish Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5905": {
         "id": 5905,
         "name": "Jellyfish Chest",
@@ -201932,6 +201664,48 @@
                         {
                             "name": "Jellyfish Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5906": {
+        "id": 5906,
+        "name": "Jellyfish Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Jellyfish_Clock",
+        "image_url": "/sprites/Jellyfish_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Jellyfish Block",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -202267,40 +202041,6 @@
                         {
                             "name": "Jellyfish Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "5916": {
-        "id": 5916,
-        "name": "Jellyfish Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Jellyfish_Toilet",
-        "image_url": "/sprites/Jellyfish_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Jellyfish Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -202795,28 +202535,6 @@
         "acquisition": [],
         "hardmode": true
     },
-    "5929": {
-        "id": 5929,
-        "name": "Remix",
-        "description": "'G. Kalinkin'",
-        "url": "https://terraria.wiki.gg/wiki/Remix",
-        "image_url": "/sprites/Remix.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 10.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": []
-    },
     "5930": {
         "id": 5930,
         "name": "Pine Wood",
@@ -203130,6 +202848,49 @@
         },
         "acquisition": []
     },
+    "5938": {
+        "id": 5938,
+        "name": "Harpy Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Harpy_Chandelier",
+        "image_url": "/sprites/Harpy_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sky Mill",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Harpy Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5939": {
         "id": 5939,
         "name": "Harpy Chest",
@@ -203161,6 +202922,48 @@
                         {
                             "name": "Harpy Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5940": {
+        "id": 5940,
+        "name": "Harpy Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Harpy_Clock",
+        "image_url": "/sprites/Harpy_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sky Mill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Harpy Block",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -203496,40 +203299,6 @@
                         {
                             "name": "Harpy Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "5950": {
-        "id": 5950,
-        "name": "Harpy Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Harpy_Toilet",
-        "image_url": "/sprites/Harpy_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sky Mill",
-                    "ingredients": [
-                        {
-                            "name": "Harpy Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -203926,6 +203695,49 @@
         },
         "acquisition": []
     },
+    "5961": {
+        "id": 5961,
+        "name": "Cloud Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Cloud_Chandelier",
+        "image_url": "/sprites/Cloud_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sky Mill",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Cloud",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5962": {
         "id": 5962,
         "name": "Cloud Chest",
@@ -203957,6 +203769,48 @@
                         {
                             "name": "Cloud",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5963": {
+        "id": 5963,
+        "name": "Cloud Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Cloud_Clock",
+        "image_url": "/sprites/Cloud_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sky Mill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Cloud",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -204266,40 +204120,6 @@
         },
         "acquisition": []
     },
-    "5972": {
-        "id": 5972,
-        "name": "Cloud Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Cloud_Toilet",
-        "image_url": "/sprites/Cloud_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sky Mill",
-                    "ingredients": [
-                        {
-                            "name": "Cloud",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "5973": {
         "id": 5973,
         "name": "Cloud Work Bench",
@@ -204597,6 +204417,49 @@
         },
         "acquisition": []
     },
+    "5981": {
+        "id": 5981,
+        "name": "Duskware Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Duskware_Chandelier",
+        "image_url": "/sprites/Duskware_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sky Mill",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Moonplate Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "5982": {
         "id": 5982,
         "name": "Duskware Chest",
@@ -204628,6 +204491,48 @@
                         {
                             "name": "Moonplate Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "5983": {
+        "id": 5983,
+        "name": "Duskware Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Duskware_Clock",
+        "image_url": "/sprites/Duskware_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sky Mill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Moonplate Block",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -204963,40 +204868,6 @@
                         {
                             "name": "Moonplate Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "5993": {
-        "id": 5993,
-        "name": "Duskware Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Duskware_Toilet",
-        "image_url": "/sprites/Duskware_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sky Mill",
-                    "ingredients": [
-                        {
-                            "name": "Moonplate Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -205404,6 +205275,49 @@
         },
         "acquisition": []
     },
+    "6004": {
+        "id": 6004,
+        "name": "Librarian Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Librarian_Chandelier",
+        "image_url": "/sprites/Librarian_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Bookcase",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Librarian Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "6005": {
         "id": 6005,
         "name": "Librarian Chest",
@@ -205435,6 +205349,48 @@
                         {
                             "name": "Librarian Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "6006": {
+        "id": 6006,
+        "name": "Librarian Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Librarian_Clock",
+        "image_url": "/sprites/Librarian_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Bookcase",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Librarian Block",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -205770,40 +205726,6 @@
                         {
                             "name": "Librarian Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "6016": {
-        "id": 6016,
-        "name": "Librarian Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Librarian_Toilet",
-        "image_url": "/sprites/Librarian_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Bookcase",
-                    "ingredients": [
-                        {
-                            "name": "Librarian Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -206204,6 +206126,49 @@
         },
         "acquisition": []
     },
+    "6027": {
+        "id": 6027,
+        "name": "Spike Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Spike_Chandelier",
+        "image_url": "/sprites/Spike_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Spike Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "6028": {
         "id": 6028,
         "name": "Spike Chest",
@@ -206235,6 +206200,48 @@
                         {
                             "name": "Spike Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "6029": {
+        "id": 6029,
+        "name": "Spike Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Spike_Clock",
+        "image_url": "/sprites/Spike_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Spike Block",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -206570,40 +206577,6 @@
                         {
                             "name": "Spike Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "6039": {
-        "id": 6039,
-        "name": "Spike Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Spike_Toilet",
-        "image_url": "/sprites/Spike_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Spike Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -207015,6 +206988,49 @@
         },
         "acquisition": []
     },
+    "6050": {
+        "id": 6050,
+        "name": "Office Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Office_Chandelier",
+        "image_url": "/sprites/Office_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Office Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "6051": {
         "id": 6051,
         "name": "Office Chest",
@@ -207046,6 +207062,48 @@
                         {
                             "name": "Office Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "6052": {
+        "id": 6052,
+        "name": "Office Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Office_Clock",
+        "image_url": "/sprites/Office_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        },
+                        {
+                            "name": "Office Block",
+                            "amount": 10
                         }
                     ],
                     "version": "Desktop",
@@ -207381,40 +207439,6 @@
                         {
                             "name": "Office Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "6062": {
-        "id": 6062,
-        "name": "Office Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Office_Toilet",
-        "image_url": "/sprites/Office_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Office Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -207815,6 +207839,49 @@
         },
         "acquisition": []
     },
+    "6073": {
+        "id": 6073,
+        "name": "Forbidden Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Forbidden_Chandelier",
+        "image_url": "/sprites/Forbidden_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Forbidden Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "6074": {
         "id": 6074,
         "name": "Forbidden Chest",
@@ -207846,6 +207913,48 @@
                         {
                             "name": "Forbidden Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "6075": {
+        "id": 6075,
+        "name": "Forbidden Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Forbidden_Clock",
+        "image_url": "/sprites/Forbidden_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Forbidden Block",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -208181,40 +208290,6 @@
                         {
                             "name": "Forbidden Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "6085": {
-        "id": 6085,
-        "name": "Forbidden Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Forbidden_Toilet",
-        "image_url": "/sprites/Forbidden_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Forbidden Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -208616,6 +208691,91 @@
         },
         "acquisition": []
     },
+    "6096": {
+        "id": 6096,
+        "name": "Aquarium Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Aquarium_Chandelier",
+        "image_url": "/sprites/Aquarium_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Iron Anvil",
+                    "ingredients": [
+                        {
+                            "name": "Aquarium Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "6097": {
+        "id": 6097,
+        "name": "Aquarium Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Aquarium_Clock",
+        "image_url": "/sprites/Aquarium_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Sawmill",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Aquarium Block",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "6098": {
         "id": 6098,
         "name": "Aquarium Door",
@@ -208942,40 +209102,6 @@
                         {
                             "name": "Aquarium Block",
                             "amount": 8
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
-    "6107": {
-        "id": 6107,
-        "name": "Aquarium Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Aquarium_Toilet",
-        "image_url": "/sprites/Aquarium_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Sawmill",
-                    "ingredients": [
-                        {
-                            "name": "Aquarium Block",
-                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -209333,6 +209459,49 @@
         },
         "acquisition": []
     },
+    "6117": {
+        "id": 6117,
+        "name": "Boulder Chandelier",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Boulder_Chandelier",
+        "image_url": "/sprites/Boulder_Chandelier.png",
+        "generic_types": [
+            "Furniture",
+            "Light source"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 6.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Heavy Assembler",
+                    "ingredients": [
+                        {
+                            "name": "Boulder Block",
+                            "amount": 4
+                        },
+                        {
+                            "name": "Chain",
+                            "amount": 1
+                        },
+                        {
+                            "name": "Torch",
+                            "amount": 4
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
     "6118": {
         "id": 6118,
         "name": "Boulder Chest",
@@ -209364,6 +209533,48 @@
                         {
                             "name": "Boulder Block",
                             "amount": 8
+                        }
+                    ],
+                    "version": "Desktop",
+                    "transmutation": false
+                }
+            ]
+        },
+        "acquisition": []
+    },
+    "6119": {
+        "id": 6119,
+        "name": "Boulder Clock",
+        "description": "N/A",
+        "url": "https://terraria.wiki.gg/wiki/Boulder_Clock",
+        "image_url": "/sprites/Boulder_Clock.png",
+        "generic_types": [
+            "Furniture"
+        ],
+        "specific_type": "Furniture",
+        "damage_class": "",
+        "stats": {
+            "usetime": 15.0,
+            "sell": 60.0,
+            "rarity": 0
+        },
+        "crafting": {
+            "is_craftable": true,
+            "recipes": [
+                {
+                    "station": "Heavy Assembler",
+                    "ingredients": [
+                        {
+                            "name": "Any Iron Bar",
+                            "amount": 3
+                        },
+                        {
+                            "name": "Boulder Block",
+                            "amount": 10
+                        },
+                        {
+                            "name": "Glass",
+                            "amount": 6
                         }
                     ],
                     "version": "Desktop",
@@ -209708,40 +209919,6 @@
         },
         "acquisition": []
     },
-    "6129": {
-        "id": 6129,
-        "name": "Boulder Toilet",
-        "description": "N/A",
-        "url": "https://terraria.wiki.gg/wiki/Boulder_Toilet",
-        "image_url": "/sprites/Boulder_Toilet.png",
-        "generic_types": [
-            "Furniture"
-        ],
-        "specific_type": "Furniture",
-        "damage_class": "",
-        "stats": {
-            "usetime": 15.0,
-            "sell": 30.0,
-            "rarity": 0
-        },
-        "crafting": {
-            "is_craftable": true,
-            "recipes": [
-                {
-                    "station": "Heavy Assembler",
-                    "ingredients": [
-                        {
-                            "name": "Boulder Block",
-                            "amount": 6
-                        }
-                    ],
-                    "version": "Desktop",
-                    "transmutation": false
-                }
-            ]
-        },
-        "acquisition": []
-    },
     "6130": {
         "id": 6130,
         "name": "Boulder Work Bench",
@@ -209997,28 +210174,6 @@
         "damage_class": "",
         "stats": {
             "sell": 5.0,
-            "rarity": 9
-        },
-        "crafting": {
-            "is_craftable": false,
-            "recipes": []
-        },
-        "acquisition": [],
-        "hardmode": true
-    },
-    "6140": {
-        "id": 6140,
-        "name": "Luna's Runic Pixie Wings",
-        "description": "'Great for impersonating devs!' Allows flight and slow fall",
-        "url": "https://terraria.wiki.gg/wiki/Luna%27s_Runic_Pixie_Wings",
-        "image_url": "/sprites/Lunas_Runic_Pixie_Wings.png",
-        "generic_types": [
-            "Accessory"
-        ],
-        "specific_type": "Developer Item",
-        "damage_class": "",
-        "stats": {
-            "sell": 8.0,
             "rarity": 9
         },
         "crafting": {
